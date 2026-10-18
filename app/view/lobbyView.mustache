@@ -1,0 +1,36 @@
+<div class="w3-content" style="max-width:900px">
+
+    <header class="lobby-header w3-panel w3-card w3-padding-16">
+        <h1>{{nombre}} · {{textoPosicion}} · {{puntaje}} pts</h1>
+        <a class="trampitas {{#sinTrampitas}}vacio{{/sinTrampitas}}" href="/trampita/comprar">
+            Trampitas: {{trampitas}}
+        </a>
+    </header>
+
+    <nav class="lobby-acciones">
+        <a href="/partida/nueva" class="w3-button w3-round">Nueva partida</a>
+        <a href="/ranking/index" class="w3-button w3-round">Ranking</a>
+        <a href="/pregunta/sugerir" class="w3-button w3-round">Sugerir pregunta</a>
+    </nav>
+
+    {{#hayDesafios}}
+        <section>
+            <h2>Desafíos pendientes</h2>
+            {{#desafios}}
+                {{> desafioItem}}
+            {{/desafios}}
+        </section>
+    {{/hayDesafios}}
+
+    <section>
+        <h2>Mis partidas</h2>
+        {{^hayPartidas}}
+            <p>Todavía no jugaste ninguna partida.</p>
+            <a href="/partida/nueva" class="w3-button w3-round">Empezar a jugar</a>
+        {{/hayPartidas}}
+        {{#partidas}}
+            {{> partidaItem}}
+        {{/partidas}}
+    </section>
+
+</div>
