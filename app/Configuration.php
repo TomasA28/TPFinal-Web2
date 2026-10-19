@@ -3,7 +3,9 @@
 namespace app;
 
 use app\controller\HomeController;
+use app\controller\RegistroController;
 use app\controller\LoginController;
+use app\model\RegistroModel;
 use app\model\LoginModel;
 use MustacheRender;
 use MyDatabase;
@@ -23,6 +25,14 @@ class Configuration
     public function getHomeController()
     {
         return new HomeController(
+            $this->getRender()
+        );
+    }
+
+    public function getRegistroController()
+    {
+        return new RegistroController(
+            $this->getRegistroModel(),
             $this->getRender()
         );
     }
@@ -48,6 +58,13 @@ class Configuration
     private function getRender()
     {
         return new MustacheRender();
+    }
+
+    private function getRegistroModel()
+    {
+        return new RegistroModel(
+            $this->getDatabase()
+        );
     }
 
     private function getLoginModel()
