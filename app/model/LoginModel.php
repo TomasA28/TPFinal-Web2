@@ -13,10 +13,8 @@ class LoginModel
     public function autenticar($usuario, $password)
     {
         $passwordHash = md5($password);
+        $sql = "SELECT id, usuario FROM usuarios WHERE usuario = ? AND password = ?";
 
-        // A propósito sin prepared statements: lo arreglamos en la clase de refactor
-        $sql = "SELECT id, usuario FROM usuarios WHERE usuario = '$usuario' AND password = '$passwordHash'";
-
-        return $this->database->queryOne($sql);
+        return $this->database->queryOne($sql, [$usuario, $passwordHash]);
     }
 }
