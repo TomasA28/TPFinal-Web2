@@ -1,7 +1,7 @@
 <article class="partida">
     <span>{{fecha_formateada}}</span>
     {{#esDesafio}}
-        <span>vs <a href="/perfil/ver?id={{rival_id}}">{{rival_nombre}}</a></span>
+        <span>vs <a href="/TPFinal-Web2/index.php?controller=perfil&method=show&id={{rival_id}}">{{rival_nombre}}</a></span>
     {{/esDesafio}}
     {{^esDesafio}}
         <span>Individual</span>
