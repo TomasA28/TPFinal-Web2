@@ -2,8 +2,6 @@
 
 namespace app\controller;
 
-use Request;
-
 class HomeController
 {
     private $render;
@@ -16,7 +14,7 @@ class HomeController
     public function show()
     {
         $data["logueado"] = isset($_SESSION['usuario']);
-        $data["error"] = Request:: get('login_error') !== null ? "Usuario o contraseña incorrectos." : null;
+        $data["usuario"] = $_SESSION['usuario'] ?? null;
 
         $this->render->renderiza("homeView", $data);
     }
