@@ -5,6 +5,8 @@ namespace app;
 use app\controller\HomeController;
 use app\controller\LoginController;
 use app\model\LoginModel;
+use app\controller\LobbyController;
+use app\model\LobbyModel;
 use MustacheRender;
 use MyDatabase;
 use Router;
@@ -53,6 +55,21 @@ class Configuration
     private function getLoginModel()
     {
         return new LoginModel(
+            $this->getDatabase()
+        );
+    }
+
+    public function getLobbyController()
+    {
+        return new LobbyController(
+            $this->getLobbyModel(),
+            $this->getRender()
+        );
+    }
+
+    private function getLobbyModel()
+    {
+        return new LobbyModel(
             $this->getDatabase()
         );
     }
