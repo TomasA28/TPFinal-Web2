@@ -40,7 +40,10 @@ class Configuration
     public function getLoginController()
     {
         return new LoginController(
-            $this->getLoginModel()
+            function () {
+                return $this->getLoginModel();
+            },
+            $this->getRender()
         );
     }
 
@@ -48,13 +51,13 @@ class Configuration
     {
         $config = parse_ini_file("config/config.ini");
 
-        return new MyDatabase($config["db_host"],
+        return new MyDatabase(
+            $config["db_host"],
             $config["db_user"],
             $config["db_pass"],
             $config["db_name"]
         );
     }
-
     private function getRender()
     {
         return new MustacheRender();
