@@ -1,0 +1,30 @@
+<main class="container">
+    {{#es_correcta}}
+        <div class="alert alert-success">
+            <h2>{{mensaje}}</h2>
+            <p>Tu puntaje actual es: {{puntaje_actual}}</p>
+            <a href="/juego/jugar" class="btn">Siguiente pregunta</a>
+        </div>
+    {{/es_correcta}}
+
+    {{#es_incorrecta}}
+        <div class="alert alert-danger">
+            <h2>{{mensaje}}</h2>
+            <p>Hiciste un total de: {{puntaje_final}} puntos.</p>
+            <a href="/lobby/mostrar" class="btn">Volver al Lobby</a>
+        </div>
+    {{/es_incorrecta}}
+        <div class="card-categoria {{categoria}}">
+            <h2>Categoría: {{categoria}}</h2>
+            <p class="pregunta-texto">{{pregunta}}</p>
+            
+            <form action="/juego/procesarRespuesta" method="POST">
+                <input type="hidden" name="pregunta_id" value="{{id}}">
+                
+                <button type="submit" name="respuesta" value="A" class="btn-opcion">{{opcionA}}</button>
+                <button type="submit" name="respuesta" value="B" class="btn-opcion">{{opcionB}}</button>
+                <button type="submit" name="respuesta" value="C" class="btn-opcion">{{opcionC}}</button>
+                <button type="submit" name="respuesta" value="D" class="btn-opcion">{{opcionD}}</button>
+            </form>
+        </div>
+</main>

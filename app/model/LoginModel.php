@@ -13,8 +13,8 @@ class LoginModel
     public function autenticar($usuario, $password)
     {
         $passwordHash = md5($password);
-        $sql = "SELECT id, usuario FROM usuarios WHERE usuario = ? AND password = ?";
+        $sql = "SELECT id, usuario FROM usuarios WHERE usuario = '$usuario' AND password = '$passwordHash'";
 
-        return $this->database->queryOne($sql, [$usuario, $passwordHash]);
+        return $this->database->queryOne($sql);
     }
 }
