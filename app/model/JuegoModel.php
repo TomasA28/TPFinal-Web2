@@ -21,23 +21,14 @@ class JuegoModel
             "SELECT respuesta_correcta FROM preguntas WHERE id = $preguntaId"
         );
 
-        if (
-            $respuestaCorrecta !== null
-            && $respuestaCorrecta['respuesta_correcta'] === $respuestaElegida
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+        return $respuestaCorrecta !== null
+            && $respuestaCorrecta['respuesta_correcta'] === $respuestaElegida ? true : false;
     }
 
-    public function getPuntajeActual()
+    public function guardarPartidaTerminada($usuarioId, $puntajeFinal)
     {
-        return 1;
+        $this->database->execute("INSERT INTO historial_partidas (usuario_id, puntaje) 
+        VALUES ('$usuarioId', '$puntajeFinal')");
     }
 
-    public function getPuntajeFinal()
-    {
-        return 4;
-    }
 }

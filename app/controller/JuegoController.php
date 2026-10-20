@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use Redirect;
 use Request;
 
 class JuegoController
@@ -13,14 +14,13 @@ class JuegoController
         $this->juegoModel = $juegoModel;
         $this->render = $render;
     }
-
     public function jugar()
     {
         $pregunta = $this->juegoModel->getPreguntaAleatoria();
 
         $data = [
             'id' => $pregunta['id'],
-            'categoria' => $pregunta['categoria'],
+            'categoria' => strtolower($pregunta['categoria']),
             'pregunta' => $pregunta['descripcion'],
             'opcionA' => $pregunta['opcion_a'],
             'opcionB' => $pregunta['opcion_b'],
@@ -38,15 +38,25 @@ class JuegoController
         $esCorrecta = $this->juegoModel->procesarRespuesta($respuestaElegida, $preguntaId);
 
         if ($esCorrecta) {
+            $_SESSION['puntaje_actual']++;
             $data = [
                 'es_correcta' => true,
-                'puntaje_actual' => $this->juegoModel->getPuntajeActual()
+                'puntaje_actual' => $_SESSION['puntaje_actual']
             ];
         } else {
+
+            $usuarioId = $_SESSION['usuario_id'];
+            $puntajeFinal = $_SESSION['puntaje_actual'];
+            $puntajeFinal === null ? $puntajeFinal = 0 : $puntajeFinal;
+
+            $this->juegoModel->guardarPartidaTerminada($usuarioId, $puntajeFinal);
+
             $data = [
                 'es_incorrecta' => true,
-                'puntaje_final' => $this->juegoModel->getPuntajeFinal()
+                'puntaje_final' => $puntajeFinal
             ];
+
+            unset($_SESSION['puntaje_actual']);
         }
 
         $this->render->renderiza('juegoView', $data);
