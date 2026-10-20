@@ -1,0 +1,32 @@
+<main class="w3-content juego-contenedor">
+    {{#es_correcta}}
+        <div class="resultado-juego" role="status">
+            <h2>{{mensaje}}</h2>
+            <p>Tu puntaje actual es: {{puntaje_actual}}</p>
+            <a href="/juego/jugar" class="w3-button btn-cancha w3-round">Siguiente pregunta</a>
+        </div>
+    {{/es_correcta}}
+
+    {{#es_incorrecta}}
+        <div class="resultado-juego resultado-juego--incorrecto" role="status">
+            <h2>{{mensaje}}</h2>
+            <p>Hiciste un total de: {{puntaje_final}} puntos.</p>
+            <a href="/lobby/mostrar" class="w3-button btn-cancha w3-round">Volver al Lobby</a>
+        </div>
+    {{/es_incorrecta}}
+    {{#pregunta}}
+        <section class="juego-tarjeta juego-tarjeta--{{categoria}} w3-card w3-padding-24">
+            <p class="juego-categoria">Categoría: {{categoria}}</p>
+            <p class="pregunta-texto">{{pregunta}}</p>
+
+            <form action="/juego/procesarRespuesta" method="POST" class="opciones-juego">
+                <input type="hidden" name="pregunta_id" value="{{id}}">
+
+                <button type="submit" name="respuesta" value="A" class="btn-opcion">{{opcionA}}</button>
+                <button type="submit" name="respuesta" value="B" class="btn-opcion">{{opcionB}}</button>
+                <button type="submit" name="respuesta" value="C" class="btn-opcion">{{opcionC}}</button>
+                <button type="submit" name="respuesta" value="D" class="btn-opcion">{{opcionD}}</button>
+            </form>
+        </section>
+    {{/pregunta}}
+</main>

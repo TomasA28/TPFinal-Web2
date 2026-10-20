@@ -4,7 +4,9 @@ namespace app;
 
 use app\controller\HomeController;
 use app\controller\LoginController;
+use app\controller\JuegoController;
 use app\model\LoginModel;
+use app\model\JuegoModel;
 use MustacheRender;
 use MyDatabase;
 use Router;
@@ -36,6 +38,13 @@ class Configuration
             $this->getRender()
         );
     }
+    public function getJuegoController()
+    {
+        return new JuegoController(
+            $this->getJuegoModel(),
+            $this->getRender()
+        );
+    }
 
     private function getDatabase()
     {
@@ -51,6 +60,10 @@ class Configuration
     private function getRender()
     {
         return new MustacheRender();
+    }
+    private function getJuegoModel()
+    {
+        return new JuegoModel($this->getDatabase());
     }
 
     private function getLoginModel()
