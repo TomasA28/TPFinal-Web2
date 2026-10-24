@@ -56,7 +56,7 @@ class RegistroModel
 
         //IMPORTANTE: x ahora solo guarda userNAme y passW. después modifico la Db y agrego lo demás
         $this->database->execute(
-            "INSERT INTO usuarios (usuario, password) VALUES ('$usuario', '$passwordHash')"
+            "INSERT INTO usuarios (usuario, password, mail, fechaNacimiento) VALUES ('$usuario', '$passwordHash', $mail, $fechaNac)"
         );
 
         return ["ok" => true];
