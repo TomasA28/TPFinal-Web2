@@ -9,5 +9,5 @@ CREATE TABLE usuarios (
     fechaNacimiento DATE NOT NULL
 );
 
-INSERT INTO usuarios (usuario, password) VALUES
-('admin', MD5('1234'));
+INSERT INTO usuarios (usuario, password, mail, fechaNacimiento) VALUES
+('admin', MD5('1234'), 'admin@devmail.com', "1998-12-12");
