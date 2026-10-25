@@ -9,3 +9,13 @@ CREATE TABLE usuarios (
 
 INSERT INTO usuarios (usuario, password) VALUES
 ('admin', MD5('1234'));
+
+
+
+CREATE TABLE partida (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        id_usuario INT NOT NULL,
+        puntaje INT DEFAULT 0,
+        fecha DATETIME,
+        FOREIGN KEY (id_usuario) REFERENCES usuario(id)
+);

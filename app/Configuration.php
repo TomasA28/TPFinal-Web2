@@ -7,6 +7,8 @@ use app\controller\LoginController;
 use app\model\LoginModel;
 use app\controller\LobbyController;
 use app\model\LobbyModel;
+use app\controller\RankingController;
+use app\model\RankingModel;
 use MustacheRender;
 use MyDatabase;
 use Router;
@@ -72,6 +74,20 @@ class Configuration
         return new LobbyModel(
             $this->getDatabase()
         );
+    }
+
+
+    public function getRankingController()
+    {
+        return new RankingController(
+            $this->getRankingModel(),
+            $this->getRender()
+        );
+    }
+
+    private function getRankingModel()
+    {
+        return new RankingModel($this->getDatabase());
     }
 
     public function getRouter()

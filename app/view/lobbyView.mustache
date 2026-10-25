@@ -1,37 +1,19 @@
-<div class="w3-content" style="max-width:900px">
+<h1>{{usuario.nombre}} - Puntaje: {{usuario.puntaje}}</h1>
 
-    <header class="lobby-header w3-panel w3-card w3-padding-16">
-        <h1>{{nombre}} · {{textoPosicion}} · {{puntaje}} pts</h1>
-        <a class="trampitas {{#sinTrampitas}}vacio{{/sinTrampitas}}"
-           href="/TPFinal-Web2/index.php?controller=trampita&method=show">
-            Trampitas: {{trampitas}}
-        </a>
-    </header>
+<form method="POST" action="/TPFinal-Web2/partida/crear">
+    <button type="submit">Nueva partida</button>
+</form>
 
-    <nav class="lobby-acciones">
-        <a href="/TPFinal-Web2/index.php?controller=partida&method=show" class="w3-button w3-round">Nueva partida</a>
-        <a href="/TPFinal-Web2/index.php?controller=ranking&method=show" class="w3-button w3-round">Ranking</a>
-        <a href="/TPFinal-Web2/index.php?controller=pregunta&method=show" class="w3-button w3-round">Sugerir pregunta</a>
-    </nav>
+<a href="/TPFinal-Web2/ranking/show"><button>Ranking</button></a>
 
-    {{#hayDesafios}}
-        <section>
-            <h2>Desafíos pendientes</h2>
-            {{#desafios}}
-                {{> desafioItem}}
-            {{/desafios}}
-        </section>
-    {{/hayDesafios}}
-
-    <section>
-        <h2>Mis partidas</h2>
-        {{^hayPartidas}}
-            <p>Todavía no jugaste ninguna partida.</p>
-            <a href="/TPFinal-Web2/index.php?controller=partida&method=show" class="w3-button w3-round">Empezar a jugar</a>
-        {{/hayPartidas}}
+<h2>Mis partidas</h2>
+{{#hay_partidas}}
+    <ul>
         {{#partidas}}
-            {{> partidaItem}}
+            <li>Partida #{{id}} - Puntaje: {{puntaje}} - {{fecha}}</li>
         {{/partidas}}
-    </section>
-
-</div>
+    </ul>
+{{/hay_partidas}}
+{{^hay_partidas}}
+    <p>Todavía no jugaste ninguna partida.</p>
+{{/hay_partidas}}
