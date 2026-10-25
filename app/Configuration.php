@@ -3,8 +3,10 @@
 namespace app;
 
 use app\controller\HomeController;
+use app\controller\RegistroController;
 use app\controller\LoginController;
 use app\controller\JuegoController;
+use app\model\RegistroModel;
 use app\model\LoginModel;
 use app\model\JuegoModel;
 use app\controller\LobbyController;
@@ -29,6 +31,14 @@ class Configuration
     public function getHomeController()
     {
         return new HomeController(
+            $this->getRender()
+        );
+    }
+
+    public function getRegistroController()
+    {
+        return new RegistroController(
+            $this->getRegistroModel(),
             $this->getRender()
         );
     }
@@ -68,6 +78,13 @@ class Configuration
     private function getJuegoModel()
     {
         return new JuegoModel($this->getDatabase());
+    }
+
+    private function getRegistroModel()
+    {
+        return new RegistroModel(
+            $this->getDatabase()
+        );
     }
 
     private function getLoginModel()
