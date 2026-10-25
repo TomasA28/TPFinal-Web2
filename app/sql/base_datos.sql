@@ -1,11 +1,23 @@
 CREATE DATABASE IF NOT EXISTS my_web CHARACTER SET utf8mb4;
 USE my_web;
 
-
-CREATE TABLE IF NOT EXISTS usuarios (
+CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(32) NOT NULL
+    password VARCHAR(32) NOT NULL,
+    mail VARCHAR(50) NOT NULL UNIQUE,
+    fechaNacimiento DATE NOT NULL
+);
+
+INSERT INTO usuarios (usuario, password, mail, fechaNacimiento) VALUES
+('admin', MD5('1234'), 'admin@devmail.com', "1998-12-12");
+
+CREATE TABLE partida (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        id_usuario INT NOT NULL,
+        puntaje INT DEFAULT 0,
+        fecha DATETIME,
+        FOREIGN KEY (id_usuario) REFERENCES usuario(id)
 );
 
 DROP TABLE IF EXISTS preguntas;
@@ -59,4 +71,3 @@ CREATE TABLE historial_partidas (
         FOREIGN KEY (usuario_id) 
         REFERENCES usuarios(id) 
         ON DELETE CASCADE
-);

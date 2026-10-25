@@ -1,0 +1,19 @@
+<h1>{{usuario.nombre}} - Puntaje: {{usuario.puntaje}}</h1>
+
+<form method="POST" action="/TPFinal-Web2/partida/crear">
+    <button type="submit">Nueva partida</button>
+</form>
+
+<a href="/TPFinal-Web2/ranking/show"><button>Ranking</button></a>
+
+<h2>Mis partidas</h2>
+{{#hay_partidas}}
+    <ul>
+        {{#partidas}}
+            <li>Partida #{{id}} - Puntaje: {{puntaje}} - {{fecha}}</li>
+        {{/partidas}}
+    </ul>
+{{/hay_partidas}}
+{{^hay_partidas}}
+    <p>Todavía no jugaste ninguna partida.</p>
+{{/hay_partidas}}
