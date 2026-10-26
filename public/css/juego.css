@@ -1,0 +1,128 @@
+.juego-contenedor {
+    width: min(100%, 800px);
+    padding: 2rem 1rem;
+}
+
+.juego-tarjeta {
+    --juego-fondo: var(--tarjeta);
+    --juego-opcion: #191A3A;
+    --juego-opcion-hover: #304572;
+    --juego-acento: var(--cian);
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    background: linear-gradient(145deg, var(--juego-fondo), var(--superficie));
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.32);
+    padding: 1.5rem !important;
+}
+
+.juego-tarjeta--historia {
+    --juego-fondo: #3B3150;
+    --juego-opcion: #292542;
+    --juego-opcion-hover: #4A3C5D;
+    --juego-acento: #E6BE68;
+}
+
+.juego-tarjeta--cultura {
+    --juego-fondo: #263B5A;
+    --juego-opcion: #1D2C48;
+    --juego-opcion-hover: #30496C;
+    --juego-acento: #7BC8E8;
+}
+
+.juego-tarjeta--deporte,
+.juego-tarjeta--deportes {
+    --juego-fondo: #493747;
+    --juego-opcion: #33283E;
+    --juego-opcion-hover: #5C4050;
+    --juego-acento: #F0A05E;
+}
+
+.juego-tarjeta--arte {
+    --juego-fondo: #4A2F49;
+    --juego-opcion: #35243E;
+    --juego-opcion-hover: #61405B;
+    --juego-acento: #E883A5;
+}
+
+.juego-tarjeta--ciencia {
+    --juego-fondo: #263B48;
+    --juego-opcion: #1D303C;
+    --juego-opcion-hover: #34515B;
+    --juego-acento: #6CCBC2;
+}
+
+.juego-categoria {
+    display: inline-block;
+    margin: 0 0 1rem;
+    padding: 0.4rem 0.8rem;
+    border: 1px solid var(--juego-acento);
+    border-radius: 999px;
+    background: rgba(9, 10, 28, 0.55);
+    color: var(--juego-acento);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.pregunta-texto {
+    margin: 0 0 1.5rem;
+    color: var(--texto);
+    font-size: clamp(1.2rem, 3vw, 1.55rem);
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+.opciones-juego {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+}
+
+.btn-opcion {
+    min-height: 3.5rem;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--juego-acento);
+    border-radius: 8px;
+    background: var(--juego-opcion);
+    color: var(--texto);
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+    transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.btn-opcion:hover,
+.btn-opcion:focus-visible {
+    border-color: var(--juego-acento);
+    background: var(--juego-opcion-hover);
+    box-shadow: 0 0 14px rgba(197, 168, 232, 0.14);
+    color: var(--texto);
+    transform: translateY(-1px);
+}
+
+.resultado-juego {
+    margin-bottom: 1.25rem;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    background: linear-gradient(145deg, var(--tarjeta), var(--superficie));
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+}
+
+.resultado-juego h2 {
+    margin-top: 0;
+}
+
+.resultado-juego--incorrecto {
+    border: 1px solid red;
+}
+
+@media (max-width: 520px) {
+    .opciones-juego {
+        grid-template-columns: 1fr;
+    }
+
+    .juego-tarjeta {
+        padding: 1.15rem !important;
+    }
+}

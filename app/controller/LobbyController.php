@@ -24,12 +24,19 @@ class LobbyController
         }
 
 
-        $idUsuario = $_SESSION['usuario_id'];
+        $idUsuario = (int) $_SESSION['usuario_id'];
+        $usuario = $this->model->getUsuario($idUsuario);
 
-        /*$data["usuario"] = $this->model->getUsuario($idUsuario);
-        $data["partidas"] = $this->model->getPartidas($idUsuario);
-        $data["hay_partidas"] = !empty($data["partidas"]);*/
+        if ($usuario === null) {
+            Redirect::toIndex();
+            exit;
+        }
 
-        $this->render->renderiza("lobbyView"/*, $data*/);
+        $data = [
+            'usuario' => $usuario,
+            'hay_partida' => $usuario['puntaje'] !== null,
+        ];
+
+        $this->render->renderiza("lobbyView", $data);
     }
 }
