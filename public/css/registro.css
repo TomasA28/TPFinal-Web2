@@ -1,4 +1,58 @@
-.registroForm{
+.registroForm {
     display: flex;
     flex-direction: column;
+    gap: 0.55rem;
+}
+
+.registroForm label {
+    margin-top: 0.65rem;
+}
+
+.registroForm input,
+.registroForm select {
+    width: 100%;
+    min-height: 2.85rem;
+    padding: 0.65rem 0.8rem;
+}
+
+.registroForm input[type="file"] {
+    height: auto;
+    padding: 0.45rem;
+}
+
+.registroForm button {
+    align-self: flex-start;
+    min-height: 3rem;
+    padding: 0.75rem 1.5rem !important;
+}
+
+.registroForm #mapa {
+    width: 100% !important;
+    max-width: 100%;
+    min-height: 18rem;
+    margin: 0.3rem 0 0.7rem;
+    overflow: hidden;
+    border: 1px solid var(--borde);
+    border-radius: 9px;
+    background: var(--superficie);
+}
+
+.registroForm+.link,
+.w3-content>.link {
+    display: inline-block;
+    margin-top: 1.25rem;
+}
+
+.w3-content>.w3-panel {
+    margin: 1.5rem auto 3rem;
+    padding: clamp(1.25rem, 4vw, 2.5rem) !important;
+}
+
+.w3-content>a:first-child {
+    display: inline-block;
+    margin-top: 1.5rem;
+}
+
+.w3-content h3 {
+    margin-top: 0.5rem;
 }

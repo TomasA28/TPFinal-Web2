@@ -1,13 +1,45 @@
-/*.loginBox {
-    background-image:url(/public/css/images/back.jpg);
-    background-size: cover;
-    background-repeat: no-repeat;
-    min-height: 100vh;
-    margin: 0;
+.loginBox {
+    width: min(100% - 2rem, 38rem);
+    margin: 0 auto;
+    padding: 2rem 0 3rem;
+}
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.loginBox > a:first-child {
+    display: inline-block;
+    margin: 0.5rem 0 0.75rem;
+}
 
-    color: white;
-}*/
+.loginBox .card-contenido {
+    margin-top: 0 !important;
+    padding: clamp(1.5rem, 4vw, 2.5rem) !important;
+}
+
+.loginBox h2 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
+.loginBox label {
+    display: block;
+    margin: 1rem 0 0.45rem;
+}
+
+.loginBox input {
+    width: 100%;
+    min-height: 2.9rem;
+    padding: 0.7rem 0.85rem;
+}
+
+.loginBox form button {
+    min-height: 3rem;
+    padding: 0.75rem 1.5rem !important;
+}
+
+.loginBox .w3-panel[role="alert"] {
+    border-color: rgba(212, 20, 216, 0.42);
+    background: rgba(74, 27, 83, 0.38) !important;
+}
+
+.loginBox p:last-child {
+    margin-bottom: 0;
+}

@@ -1,20 +1,23 @@
-<!--<h1>{{usuario.nombre}} - Puntaje: {{usuario.puntaje}}</h1>-->
+<link rel="stylesheet" href="/public/css/lobby.css">
+<main class="lobby-page">
+    <section class="lobby-card" aria-labelledby="lobby-title">
+        <h1 id="lobby-title">¡Hola, {{usuario.nombre}}!</h1>
+        <p class="lobby-intro">¿Listo para poner a prueba tus conocimientos?</p>
 
-<a href="/juego/jugar" class="w3-button w3-cyan w3-round w3-margin-left"> Iniciar Partida</a>
-<!--<form method="POST" action="/partida/crear">
-    <button type="submit">Nueva partida</button>
-</form>
+        <div class="lobby-status">
+            {{#hay_partida}}
+                <p class="lobby-status-label">Tu última partida</p>
+                <p class="lobby-score"><strong>{{usuario.puntaje}}</strong><span>puntos</span></p>
+            {{/hay_partida}}
+            {{^hay_partida}}
+                <p class="lobby-first-game">Todavía no jugaste una partida.<br>¡Esta puede ser la primera!</p>
+            {{/hay_partida}}
+        </div>
 
-<a href="/ranking/show"><button>Ranking</button></a>
-
-<h2>Mis partidas</h2>
-{{#hay_partidas}}
-    <ul>
-        {{#partidas}}
-            <li>Partida #{{id}} - Puntaje: {{puntaje}} - {{fecha}}</li>
-        {{/partidas}}
-    </ul>
-{{/hay_partidas}}
-{{^hay_partidas}}
-    <p>Todavía no jugaste ninguna partida.</p>
-{{/hay_partidas}}-->
+        <a href="/juego/jugar" class="lobby-play-button">
+            <span>Iniciar partida</span>
+            <span class="lobby-play-arrow" aria-hidden="true">→</span>
+        </a>
+        <p class="lobby-hint">Elegí una respuesta y acumulá puntos</p>
+    </section>
+</main>
