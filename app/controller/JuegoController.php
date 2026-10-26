@@ -37,6 +37,10 @@ class JuegoController
         $preguntaId = Request::post('pregunta_id');
         $esCorrecta = $this->juegoModel->procesarRespuesta($respuestaElegida, $preguntaId);
 
+        if (!isset($_SESSION['puntaje_actual'])) {
+        $_SESSION['puntaje_actual'] = 0;
+        }
+
         if ($esCorrecta) {
             $_SESSION['puntaje_actual']++;
             $data = [

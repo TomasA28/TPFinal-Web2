@@ -1,24 +1,10 @@
-<div class="w3-content" style="max-width:900px">
-    <div class="w3-panel card-contenido w3-padding-24 w3-margin-top w3-card">
-
-        <h1>HOLA MUNDOOOOO!!!</h1>
-        <h2>TP final - Programación Web II</h2>
-        <ul>
-            <li>Arreguez Tomás</li>
-            <li>Juan Pablo</li>
-            <li>Ivan</li>
-        </ul>
-
-        <hr>
-
-        {{#logueado}}
-            <p class="w3-large">Hola, <b>{{usuario}}</b> 👋</p>
-            <a href="/login/logout" class="w3-button w3-red w3-round w3-margin-left">Cerrar sesión</a>
-            <a href="/juego/jugar" class="w3-button w3-cyan w3-round w3-margin-left"> Jugar </a>
-        {{/logueado}}
-        {{^logueado}}
-            <a href="/login/show" class="w3-button btn-cancha w3-round w3-margin-top w3-padding-16">Iniciar sesión</a>
-        {{/logueado}}
-
+<link rel="stylesheet" href="/public/css/home.css">
+<div class="homeBackground">
+    <div class="logoBox">
+        <img src="/public/css/images/logo.png" alt="Trivia Night logo">
+    </div>
+    <div class="buttonBox">
+            <a href="/login/show">Iniciar sesión</a>
+            <a href="/registro/show">  Registrarse </a>
     </div>
 </div>

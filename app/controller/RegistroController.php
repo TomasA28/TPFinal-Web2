@@ -34,7 +34,7 @@ class RegistroController
         $resultado = $this->model->registrar($usuario, $mail, $password, $passwordCheck, $fechaNac);
         
         if($resultado['ok']) {
-            Redirect::to('/?registro_ok=1');
+            Redirect::to('/login/show');
         }
 
         $data["error"] = $resultado['error'];

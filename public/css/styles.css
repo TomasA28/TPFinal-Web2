@@ -1,0 +1,59 @@
+/*NAV BAR*/
+.barraNav{
+    background: radial-gradient(#0b162b);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 4em;
+    padding: 0em 1em 1em 1em;
+}
+
+.barraNav img {
+    max-height: 2em;
+    width: auto;
+    vertical-align: middle;
+}
+
+.botonNav{
+    height: 1em;
+}
+
+#botonSalir{
+    transition: transform 0.3s ease;
+}
+
+#botonSalir:hover{
+    transform: scale(1.05);
+    box-shadow:
+        0 15px 35px rgb(242, 243, 241),
+        0 0 15px #fbfdfb;
+}
+
+
+ /*BODY*/
+ body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+/*FOOTER*/
+footer {
+    margin-top: auto;
+}
+
+.footerDiv {
+    background:#05070c;
+    height: 4em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.footerDiv p {
+    color: white;
+}

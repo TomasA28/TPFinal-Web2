@@ -47,7 +47,7 @@ class LoginController
         session_regenerate_id(true);
         $_SESSION['usuario_id'] = $usuario['id'];
         $_SESSION['usuario'] = $usuario['usuario'];
-        Redirect::toIndex();
+        Redirect::to('/lobby/show');
     }
 
     public function logout()

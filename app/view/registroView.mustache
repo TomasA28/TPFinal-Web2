@@ -1,4 +1,6 @@
+<link rel="stylesheet" href="/public/css/registro.css">
 <div class="w3-content" style="max-width:900px">
+<a href="/">← Volver al inicio</a class="backButton">
     <div class="w3-panel card-contenido w3-padding-24 w3-margin-top w3-card">
 
         <h3>Crea tu cuenta</h3>
@@ -15,9 +17,25 @@
             </div>
         {{/exito}}
 
-        <form method="post" action="/registro/crear">
-            <label for="userName">Nombre de usuario:</label>
-            <input type="text" id="userName" name="userName" required>
+        <form method="post" action="/registro/crear" enctype="multipart/form-data" class="registroForm">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+
+            <label for="apellido">Apellido:</label>
+            <input type="text" id="apellido" name="apellido" required>
+
+            <label for="fechaNac">Fecha de nacimiento:</label>
+            <input type="date" id="fechaNac" name="fechaNac" required>
+
+            <label for="sexo">Sexo:</label>
+            <select id="sexo" name="sexo" required>
+                <option value="1">Masculino</option>
+                <option value="2">Femenino</option>
+                <option value="3">Prefiero no decirlo</option>
+            </select>
+
+            <label for="CiudadYPais">Ciudad y país:</label>
+            <div id="mapa" style="width:300px; height:300px;"></div>
 
             <label for="Mail">Correo electrónico:</label>
             <input type="email" id="Mail" name="Mail" required>
@@ -28,12 +46,15 @@
             <label for="Confirmar">Confirmar contraseña:</label>
             <input type="password" id="Confirmar" name="Confirmar" required>
 
-            <label for="fechaNac">Fecha de nacimiento:</label>
-            <input type="date" id="fechaNac" name="fechaNac" required>
+            <label for="userName">Nombre de usuario:</label>
+            <input type="text" id="userName" name="userName" required>
+
+            <label for="fotoDePerfil">Foto de perfil:</label>
+        <input type="file" id="fotoDePerfil" name="fotoDePerfil" required>
 
             <button type="submit" class="w3-button btn-cancha w3-round w3-margin-top w3-padding-16">Crear cuenta</button>
         </form>
 
-        <a class="link" href="*">Ya tenés una cuenta? Inicia Sesión</a>
+        <a class="link" href="/login/show">¿Ya tenés una cuenta? Inicia Sesión</a>
     </div>
 </div>

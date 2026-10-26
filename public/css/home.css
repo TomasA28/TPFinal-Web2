@@ -1,0 +1,55 @@
+.homeBackground{
+    background-image:url(/public/css/images/back.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    margin: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding-top: 8em;
+}
+
+.logoBox{
+    margin-bottom: 6em;
+}
+
+.logoBox img{
+    height: 5em;
+}
+
+.buttonBox a{
+    padding: 20px 50px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: 0;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    box-shadow: 0 8px 25px rgba(9, 132, 227, 0.6);
+    cursor: pointer;
+    transition:
+        transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+        box-shadow 0.4s ease;
+}
+
+.buttonBox a:visited{
+    text-decoration: none;
+    color: white;
+}
+
+.buttonBox a:hover{
+    transform: translateY(-5px) scale(1.05);
+    box-shadow:
+        0 15px 35px rgba(9, 132, 227, 0.8),
+        0 0 15px #fff;
+}
+
+.buttonBox a:active{
+    transform: translateY(2px);
+}

@@ -47,16 +47,16 @@ class RegistroModel
             return ["ok" => false, "error" => "La fecha de nacimiento no es válida."];
         }
 
-        $mayorDeEdad = date("Y-m-d", strtotime("-18 years"));
+        $mayorDeEdad = date("Y-m-d", strtotime("-15 years"));
         if ($fechaNac > $mayorDeEdad) {
-            return ["ok" => false, "error" => "Debe tener 18 años o más para crear una cuenta."];
+            return ["ok" => false, "error" => "Debe tener 15 años o más para crear una cuenta."];
         }
 
         $passwordHash = md5($password);
 
         //IMPORTANTE: x ahora solo guarda userNAme y passW. después modifico la Db y agrego lo demás
         $this->database->execute(
-            "INSERT INTO usuarios (usuario, password, mail, fechaNacimiento) VALUES ('$usuario', '$passwordHash', $mail, $fechaNac)"
+            "INSERT INTO usuarios (usuario, password, mail, fechaNacimiento) VALUES ('$usuario', '$passwordHash', '$mail', '$fechaNac')"
         );
 
         return ["ok" => true];

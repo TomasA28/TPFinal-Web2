@@ -11,7 +11,7 @@ class LobbyModel
         $this->database = $database;
     }
 
-    public function getUsuario($idUsuario)
+    /*public function getUsuario($idUsuario)
     {
         $idUsuario = (int) $idUsuario;
         return $this->database->queryOne(
@@ -21,9 +21,9 @@ class LobbyModel
              WHERE u.id = $idUsuario
              GROUP BY u.id, u.usuario"
         );
-    }
+    }*/
 
-    public function getPartidas($idUsuario)
+    /*public function getPartidas($idUsuario)
     {
         $idUsuario = (int) $idUsuario;
         return $this->database->queryAll(
@@ -33,5 +33,5 @@ class LobbyModel
              WHERE pj.usuario_id = $idUsuario
              ORDER BY p.fecha DESC"
         );
-    }
+    }*/
 }

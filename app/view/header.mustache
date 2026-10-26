@@ -3,174 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Página Principal</title>
+    <title>Trivia Night</title>
+    <link rel="icon" type="image/x-icon" href="/public/css/images/icon.ico">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <style>
-        :root {
-            --celeste: #75AADB;
-            --celeste-oscuro: #4A7AAE;
-            --blanco: #FFFFFF;
-            --verde-cancha: #2E7D32;
-            --dorado: #F4C542;
+    <link rel="stylesheet" href="/public/css/styles.css">
+    <script src = "http://maps.googleapis.com/maps/api/js?key=AIzaSyAiq3xISXSZYgkd9GDAOdajy4NK2d3L7dY"></script>
+    <script>
+        function loadMap() {
+
+            var mapOptions = {
+                center:new google.maps.LatLng(-34.6686986,-58.5614947),
+                zoom:12,
+                mapTypeControl:false,
+                mapTypeId:google.maps.MapTypeId.ROADMAP
+            };
+
+            var map = new google.maps.Map(document.getElementById("mapa"),mapOptions);
+
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng(-34.6686986,-58.5614947),
+                map: map,
+                animation:google.maps.Animation.BOUNCE,
+                draggable:true,
+            });
+
+            var info = new google.maps.InfoWindow({
+                content:"Florencio Varela 1903, San Justo, Buenos Aires, Argentina"
+            });
+
+            google.maps.event.addListener(marker, "click", function (event) {
+                var latitude = event.latLng.lat();
+                var longitude = event.latLng.lng();
+                alert( latitude + ', ' + longitude );
+            });
         }
 
-        body {
-            background: linear-gradient(180deg,
-            var(--celeste) 0%, var(--celeste) 15%,
-            var(--blanco) 15%, var(--blanco) 30%,
-            var(--celeste) 30%, var(--celeste) 100%);
-            background-attachment: fixed;
-            font-family: 'Segoe UI', Arial, sans-serif;
-        }
-
-        .header-evento {
-            background-color: var(--celeste-oscuro);
-            border-bottom: 6px solid var(--dorado);
-        }
-
-        .header-evento h1 {
-            color: var(--blanco);
-        }
-
-        .card-contenido {
-            background-color: var(--blanco);
-            border-radius: 8px;
-            border-top: 6px solid var(--verde-cancha);
-        }
-
-        .btn-cancha {
-            background-color: var(--verde-cancha) !important;
-            color: var(--blanco) !important;
-        }
-
-        .btn-cancha:hover {
-            background-color: #1B5E20 !important;
-        }
-
-        .juego-contenedor {
-            max-width: 760px;
-            padding: 24px 16px;
-        }
-
-        .juego-tarjeta {
-            --juego-fondo: var(--blanco);
-            --juego-acento: var(--verde-cancha);
-            background-color: var(--juego-fondo);
-            border-radius: 8px;
-            border-top: 6px solid var(--juego-acento);
-            padding: 24px 10px !important;
-        }
-
-        .juego-tarjeta--historia {
-            --juego-fondo: #FFF7DE;
-            --juego-acento: #80600C;
-        }
-
-        .juego-tarjeta--cultura {
-            --juego-fondo: #EAF2FA;
-            --juego-acento: #315B82;
-        }
-
-        .juego-tarjeta--deportes {
-            --juego-fondo: #FBEBDD;
-            --juego-acento: #985019;
-        }
-
-        .juego-tarjeta--arte {
-            --juego-fondo: #F8E6E5;
-            --juego-acento: #8F3F3C;
-        }
-
-        .juego-tarjeta--ciencia {
-            --juego-fondo: #E8F2E7;
-            --juego-acento: #37633B;
-        }
-
-        .juego-categoria {
-            display: inline-block;
-            margin: 0 0 16px;
-            padding: 6px 12px;
-            border-radius: 20px;
-            background-color: rgba(255, 255, 255, 0.65);
-            color: var(--juego-acento);
-            border: 1px solid var(--juego-acento);
-            font-size: 0.9rem;
-            font-weight: 600;
-            text-transform: capitalize;
-        }
-
-        .pregunta-texto {
-            margin: 0 0 24px;
-            color: var(--celeste-oscuro);
-            font-size: 1.5rem;
-            font-weight: 600;
-            line-height: 1.4;
-        }
-
-        .opciones-juego {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-        }
-
-        .btn-opcion {
-            min-height: 56px;
-            padding: 12px 16px;
-            border: 2px solid var(--juego-acento);
-            border-radius: 6px;
-            background-color: var(--blanco);
-            color: var(--juego-acento);
-            cursor: pointer;
-            font: inherit;
-            text-align: left;
-            transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
-        }
-
-        .btn-opcion:hover,
-        .btn-opcion:focus-visible {
-            border-color: var(--juego-acento);
-            background-color: rgba(255, 255, 255, 0.75);
-            color: var(--juego-acento);
-        }
-
-        .resultado-juego {
-            margin-bottom: 20px;
-            padding: 20px 24px;
-            border-radius: 8px;
-            border-left: 6px solid var(--verde-cancha);
-            background-color: var(--blanco);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-        }
-
-        .resultado-juego h2 {
-            margin-top: 0;
-        }
-
-        .resultado-juego--incorrecto {
-            border-left-color: #B71C1C;
-        }
-
-        @media (max-width: 520px) {
-            .opciones-juego {
-                grid-template-columns: 1fr;
-            }
-
-            .pregunta-texto {
-                font-size: 1.25rem;
-            }
-        }
-
-        .footer-evento {
-            background-color: var(--celeste-oscuro);
-            color: var(--blanco);
-        }
-    </style>
+    </script>
 </head>
-<body>
+<body onload="loadMap()">
 
-<div class="w3-bar" style="background-color:#2E7D32">
-    <a href="/" class="w3-bar-item w3-button">🏠 Inicio</a>
-    <?php if (isset($_SESSION['usuario'])): ?>
-        <a href="/login/logout" class="w3-bar-item w3-button w3-right">🚪 Salir</a>
-    <?php endif; ?>
+<div class="barraNav">
+    {{#logueado}}
+        <a href="/lobby/show" class="botonNav">
+            <img src="/public/css/images/logo.png" alt="TriviaNight Logo">
+        </a>
+        <a href="/login/logout" class="botonNav" id="botonSalir">
+            <img src="/public/css/images/exit.png" alt="boton De Salida">
+        </a>
+    {{/logueado}}
+    {{^logueado}}
+        <a href="/" class="botonNav">
+            <img src="/public/css/images/logo.png" alt="TriviaNight Logo">
+        </a>
+    {{/logueado}}
+    
 </div>

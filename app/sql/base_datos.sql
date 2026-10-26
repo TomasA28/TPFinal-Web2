@@ -1,24 +1,17 @@
 CREATE DATABASE IF NOT EXISTS my_web CHARACTER SET utf8mb4;
 USE my_web;
 
+DROP TABLE IF EXISTS usuarios;
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(32) NOT NULL,
+    password VARCHAR(255) NOT NULL,
     mail VARCHAR(50) NOT NULL UNIQUE,
     fechaNacimiento DATE NOT NULL
 );
 
 INSERT INTO usuarios (usuario, password, mail, fechaNacimiento) VALUES
-('admin', MD5('1234'), 'admin@devmail.com', "1998-12-12");
-
-CREATE TABLE partida (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        id_usuario INT NOT NULL,
-        puntaje INT DEFAULT 0,
-        fecha DATETIME,
-        FOREIGN KEY (id_usuario) REFERENCES usuario(id)
-);
+('admin', MD5('1234'), 'admin@devmail.com', '1998-12-12');
 
 DROP TABLE IF EXISTS preguntas;
 CREATE TABLE preguntas (
@@ -61,6 +54,35 @@ INSERT INTO preguntas (descripcion, opcion_a, opcion_b, opcion_c, opcion_d, resp
     'Cultura'
 );
 
+DROP TABLE IF EXISTS partida;
+CREATE TABLE partida (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        id_usuario INT NOT NULL,
+        puntaje INT DEFAULT 0,
+        fecha DATETIME,
+        FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
+);
+
+DROP TABLE IF EXISTS historial_partidas;
+CREATE TABLE partida_jugador (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_partida INT NOT NULL,
+    id_usuario INT NOT NULL,
+
+    CONSTRAINT uq_partida_jugador
+        UNIQUE (id_partida, id_usuario),
+
+    CONSTRAINT fk_partida_jugador_partida
+        FOREIGN KEY (id_partida)
+        REFERENCES partida(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_partida_jugador_usuario
+        FOREIGN KEY (id_usuario)
+        REFERENCES usuarios(id)
+        ON DELETE CASCADE
+);
+
 DROP TABLE IF EXISTS historial_partidas;
 CREATE TABLE historial_partidas (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -71,3 +93,4 @@ CREATE TABLE historial_partidas (
         FOREIGN KEY (usuario_id) 
         REFERENCES usuarios(id) 
         ON DELETE CASCADE
+);

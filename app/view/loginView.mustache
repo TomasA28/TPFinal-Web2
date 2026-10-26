@@ -1,4 +1,6 @@
-<div class="w3-content" style="max-width:600px">
+<link rel="stylesheet" href="/public/css/login.css">
+<div class="loginBox">
+    <a href="/">← Volver al inicio</a class="backButton">
     <div class="w3-panel card-contenido w3-padding-24 w3-margin-top w3-card">
         <h2>Iniciar sesión</h2>
 
@@ -9,12 +11,12 @@
         {{/error}}
 
         <form method="post" action="/login/login">
-            <label for="usuario"><b>Usuario</b></label>
+            <label for="usuario"><b>Nombre de usuario:</b></label>
             <input class="w3-input w3-border w3-margin-bottom"
                    type="text" id="usuario" name="usuario"
                    autocomplete="username" required>
 
-            <label for="password"><b>Contraseña</b></label>
+            <label for="password"><b>Contraseña:</b></label>
             <input class="w3-input w3-border"
                    type="password" id="password" name="password"
                    autocomplete="current-password" required>
@@ -23,6 +25,6 @@
                 Ingresar
             </button>
         </form>
-        <p><a href="/">Volver al inicio</a></p>
+        <p><a href="/registro/show">¿No tenés una cuenta? Registrate</a></p>
     </div>
 </div>

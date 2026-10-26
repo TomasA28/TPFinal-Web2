@@ -26,10 +26,10 @@ class LobbyController
 
         $idUsuario = $_SESSION['usuario_id'];
 
-        $data["usuario"] = $this->model->getUsuario($idUsuario);
+        /*$data["usuario"] = $this->model->getUsuario($idUsuario);
         $data["partidas"] = $this->model->getPartidas($idUsuario);
-        $data["hay_partidas"] = !empty($data["partidas"]);
+        $data["hay_partidas"] = !empty($data["partidas"]);*/
 
-        $this->render->renderiza("lobbyView", $data);
+        $this->render->renderiza("lobbyView"/*, $data*/);
     }
 }

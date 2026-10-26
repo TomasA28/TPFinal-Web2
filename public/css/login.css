@@ -1,0 +1,13 @@
+/*.loginBox {
+    background-image:url(/public/css/images/back.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    margin: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    color: white;
+}*/
