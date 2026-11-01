@@ -1,6 +1,6 @@
-<link rel="stylesheet" href="/public/css/registro.css">
+<link rel="stylesheet" href="public/css/registro.css">
 <div class="w3-content" style="max-width:900px">
-<a href="/">← Volver al inicio</a class="backButton">
+    <a class="backButton" href="./">← Volver al inicio</a>
     <div class="w3-panel card-contenido w3-padding-24 w3-margin-top w3-card">
 
         <h3>Crea tu cuenta</h3>
@@ -17,7 +17,7 @@
             </div>
         {{/exito}}
 
-        <form method="post" action="/registro/crear" enctype="multipart/form-data" class="registroForm">
+        <form method="post" action="registro/crear" enctype="multipart/form-data" class="registroForm">
             <label for="nombre">Nombre:</label>
             <input type="text" id="nombre" name="nombre" required>
 
@@ -34,7 +34,7 @@
                 <option value="3">Prefiero no decirlo</option>
             </select>
 
-            <label for="CiudadYPais">Ciudad y país:</label>
+            <label for="mapa">Ciudad y país:</label>
             <div id="mapa" style="width:300px; height:300px;"></div>
 
             <label for="Mail">Correo electrónico:</label>
@@ -50,11 +50,11 @@
             <input type="text" id="userName" name="userName" required>
 
             <label for="fotoDePerfil">Foto de perfil:</label>
-        <input type="file" id="fotoDePerfil" name="fotoDePerfil" required>
+            <input type="file" id="fotoDePerfil" name="fotoDePerfil" required>
 
             <button type="submit" class="w3-button btn-cancha w3-round w3-margin-top w3-padding-16">Crear cuenta</button>
         </form>
 
-        <a class="link" href="/login/show">¿Ya tenés una cuenta? Inicia Sesión</a>
+        <a class="link" href="login/show">¿Ya tenés una cuenta? Inicia Sesión</a>
     </div>
 </div>
