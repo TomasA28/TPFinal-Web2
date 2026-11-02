@@ -18,9 +18,20 @@ class LoginController
 
     public function show()
     {
-        $data["error"] = Request::get('login_error') !== null
-            ? "Usuario o contraseña incorrectos."
-            : null;
+
+        if (isset($_SESSION['usuario_id'])) {
+            Redirect::to('/lobby/show');
+            return;
+        }
+
+        $error = Request::get('login_error');
+        $data["error"] = null;
+
+        if($error === '1') {
+            $data["error"] = "Usuario o contraseña incorrectos.";
+        } elseif ($error === '2') {
+            $data["error"] = "Debes activar tu cuenta desde el enlace que mandamos a tu correo.";
+        }
 
         $this->render->renderiza("loginView", $data);
     }
@@ -35,24 +46,33 @@ class LoginController
             || !is_string($password) || trim($password) === ''
         ) {
             Redirect::to('/login/show?login_error=1');
+            return;
         }
 
         $model = call_user_func($this->modelFactory);
-        $usuario = $model->autenticar(trim($usuarioIngresado), $password);
+        
+        $resultado = $model->autenticar(
+            trim($usuarioIngresado),
+             $password,
+        );
 
-        if ($usuario === null) {
+        if (!$resultado['ok']) {
+            if (isset($resultado['no_activado']) && $resultado['no_activado']) {
+                Redirect::to('/login/show?login_error=2');
+                return;
+            }
+
             Redirect::to('/login/show?login_error=1');
+            return;
         }
-
+        
+        $usuario = $resultado['usuario'];
+        
         session_regenerate_id(true);
+        
         $_SESSION['usuario_id'] = $usuario['id'];
         $_SESSION['usuario'] = $usuario['usuario'];
         Redirect::to('/lobby/show');
-    }
-
-    public function logout()
-    {
-        session_destroy();
-        Redirect::toIndex();
+        return;
     }
 }

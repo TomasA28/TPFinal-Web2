@@ -13,11 +13,37 @@
                 <p class="lobby-first-game">Todavía no jugaste una partida.<br>¡Esta puede ser la primera!</p>
             {{/hay_partida}}
         </div>
+        <div class="lobby-option">
+            <a href="/juego/nuevaPartida" class="lobby-play-button">
+                <span>Iniciar partida</span>
+                <span class="lobby-play-arrow" aria-hidden="true">→</span>
+            </a>
+            <a href="/ranking/ranking" class="lobby-play-button">
+                <span>Ver Ranking</span>
+                <span class="lobby-play-arrow" aria-hidden="true">→</span>
+            </a>
 
-        <a href="/juego/jugar" class="lobby-play-button">
-            <span>Iniciar partida</span>
-            <span class="lobby-play-arrow" aria-hidden="true">→</span>
-        </a>
+            <a href="/juego/multijudador" class="lobby-play-button">
+                <span>Multijudador</span>
+                <span class="lobby-play-arrow" aria-hidden="true">→</span>
+            </a>
+        </div>
+        <div class="lobby-lista_partidas">
+            <h2>Partidas Jugadas</h2>
+        {{#hay_partida}}
+            <ul class="lobby-partidas">
+                {{#partidas}}
+                    <li>
+                        <span class="lobby-partida-puntaje">Puntaje <strong>{{puntaje}}</strong></span>
+                        <time class="lobby-partida-fecha">{{fecha}}</time>
+                    </li>
+                {{/partidas}}
+            </ul>
+        {{/hay_partida}}
+        {{^hay_partida}}
+            <p class="lobby-first-game">Todavía no jugaste una partida.<br>¡Esta puede ser la primera!</p>
+        {{/hay_partida}}
+        </div>
         <p class="lobby-hint">Elegí una respuesta y acumulá puntos</p>
     </section>
 </main>

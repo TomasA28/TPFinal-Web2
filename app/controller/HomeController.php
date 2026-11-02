@@ -1,6 +1,7 @@
 <?php
 
 namespace app\controller;
+use Redirect;
 
 class HomeController
 {
@@ -13,6 +14,12 @@ class HomeController
 
     public function show()
     {
+
+        if (isset($_SESSION['usuario_id'])) {
+            Redirect::to('/lobby/show');
+            return;
+        }
+
         $data["logueado"] = isset($_SESSION['usuario']);
         $data["usuario"] = $_SESSION['usuario'] ?? null;
 

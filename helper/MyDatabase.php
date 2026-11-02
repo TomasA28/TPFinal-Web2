@@ -30,10 +30,17 @@ class MyDatabase
         return $resultado->fetchAll();
     }
 
-    public function execute(string $sql)
+    public function execute(string $sql, array $params = [])
     {
         Log::info($sql);
-        return $this->conexion->exec($sql);
+
+        if ($params === []) {
+            return $this->conexion->exec($sql);
+        }
+
+        $resultado = $this->conexion->prepare($sql);
+        $resultado->execute($params);
+        return $resultado->rowCount();
     }
 
     public function lastInsertId()
