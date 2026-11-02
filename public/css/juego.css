@@ -47,14 +47,12 @@
     height: 90%;
     border: 7px solid #171832;
     border-radius: 50%;
-    background: conic-gradient(
-        from -36deg,
-        #A9893F 0deg 72deg,
-        #477A9B 72deg 144deg,
-        #A96036 144deg 216deg,
-        #914B70 216deg 288deg,
-        #387A72 288deg 360deg
-    );
+    background: conic-gradient(from -36deg,
+            #A9893F 0deg 72deg,
+            #477A9B 72deg 144deg,
+            #A96036 144deg 216deg,
+            #914B70 216deg 288deg,
+            #387A72 288deg 360deg);
     box-shadow:
         0 0 0 1px var(--borde),
         0 0 28px rgba(33, 192, 194, 0.14),

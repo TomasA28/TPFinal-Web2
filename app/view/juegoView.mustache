@@ -1,7 +1,8 @@
+<link rel="stylesheet" href="/public/css/juego.css">
 <main class="w3-content juego-contenedor">
     {{#es_correcta}}
         <div class="resultado-juego" role="status">
-            <h2>{{mensaje}}</h2>
+            <strong>Respuesta Correcta! </strong>
             <p>Tu puntaje actual es: {{puntaje_actual}}</p>
             <a href="/juego/jugar" class="w3-button btn-cancha w3-round">Siguiente pregunta</a>
         </div>
@@ -9,8 +10,8 @@
 
     {{#es_incorrecta}}
         <div class="resultado-juego resultado-juego--incorrecto" role="status">
-            <h2>{{mensaje}}</h2>
-            <p>Hiciste un total de: {{puntaje_final}} puntos.</p>
+            <strong>Respuesta Incorrecta! </strong>
+            <p>Hiciste un total de: {{puntaje_final}} puntos. </p>
             <a href="/lobby/mostrar" class="w3-button btn-cancha w3-round">Volver al Lobby</a>
         </div>
     {{/es_incorrecta}}

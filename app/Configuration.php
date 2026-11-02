@@ -3,10 +3,16 @@
 namespace app;
 
 use app\controller\HomeController;
+use app\controller\RegistroController;
 use app\controller\LoginController;
 use app\controller\JuegoController;
+use app\model\RegistroModel;
 use app\model\LoginModel;
 use app\model\JuegoModel;
+use app\controller\LobbyController;
+use app\model\LobbyModel;
+use app\controller\RankingController;
+use app\model\RankingModel;
 use MustacheRender;
 use MyDatabase;
 use Router;
@@ -25,6 +31,14 @@ class Configuration
     public function getHomeController()
     {
         return new HomeController(
+            $this->getRender()
+        );
+    }
+
+    public function getRegistroController()
+    {
+        return new RegistroController(
+            $this->getRegistroModel(),
             $this->getRender()
         );
     }
@@ -66,11 +80,47 @@ class Configuration
         return new JuegoModel($this->getDatabase());
     }
 
+    private function getRegistroModel()
+    {
+        return new RegistroModel(
+            $this->getDatabase()
+        );
+    }
+
     private function getLoginModel()
     {
         return new LoginModel(
             $this->getDatabase()
         );
+    }
+
+    public function getLobbyController()
+    {
+        return new LobbyController(
+            $this->getLobbyModel(),
+            $this->getRender()
+        );
+    }
+
+    private function getLobbyModel()
+    {
+        return new LobbyModel(
+            $this->getDatabase()
+        );
+    }
+
+
+    public function getRankingController()
+    {
+        return new RankingController(
+            $this->getRankingModel(),
+            $this->getRender()
+        );
+    }
+
+    private function getRankingModel()
+    {
+        return new RankingModel($this->getDatabase());
     }
 
     public function getRouter()
