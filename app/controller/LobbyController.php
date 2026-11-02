@@ -18,6 +18,7 @@ class LobbyController
 
     public function show()
     {
+
         if (!isset($_SESSION['usuario_id'])) {
             Redirect::toIndex();
             exit;
@@ -34,7 +35,9 @@ class LobbyController
         $partidas = $this->model->getPartidas($idUsuario);
 
         $data = [
+            'logueado' => isset($_SESSION['usuario_id']),
             'usuario' => $usuario,
+            'hay_partida' => $usuario['puntaje'] !== null
             'hay_partida' => $usuario['puntaje'] !== null,
             'partidas' => $partidas,
         ];

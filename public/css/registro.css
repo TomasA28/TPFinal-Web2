@@ -1,7 +1,35 @@
-.registroForm {
+.registroMotherBox{
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.TitleYBotonVolver{
+    display: flex;
+    gap: 2em;
+    align-items: center;
+    margin-bottom: 1em;
+}
+
+.TitleYBotonVolver h3{
+    margin: 0;
+}
+
+.submitYBotonLogin{
     display: flex;
     flex-direction: column;
-    gap: 0.55rem;
+    align-items: center;
+}
+
+.formColumnsBox{
+    justify-content: center;
+    display: flex;
+    gap: 5rem;
+}
+
+.formColumnsBox div{
+    width: 20em;
 }
 
 .registroForm label {
@@ -13,6 +41,7 @@
     width: 100%;
     min-height: 2.85rem;
     padding: 0.65rem 0.8rem;
+    margin-bottom: 0.5em;
 }
 
 .registroForm input[type="file"] {
@@ -21,7 +50,6 @@
 }
 
 .registroForm button {
-    align-self: flex-start;
     min-height: 3rem;
     padding: 0.75rem 1.5rem !important;
 }
@@ -30,6 +58,8 @@
     width: 100% !important;
     max-width: 100%;
     min-height: 18rem;
+    height: 300px;
+    width: 300px;
     margin: 0.3rem 0 0.7rem;
     overflow: hidden;
     border: 1px solid var(--borde);
@@ -37,10 +67,13 @@
     background: var(--superficie);
 }
 
+.link{
+    margin-top: 0.5em;
+}
+
 .registroForm+.link,
 .w3-content>.link {
     display: inline-block;
-    margin-top: 1.25rem;
 }
 
 .w3-content>.w3-panel {

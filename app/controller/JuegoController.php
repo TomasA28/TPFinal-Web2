@@ -60,6 +60,7 @@ class JuegoController
             return;
         }
 
+        $data["logueado"] = isset($_SESSION['usuario']);
         $data = [
             'id' => $pregunta['id'],
             'categoria' => strtolower($pregunta['categoria']),

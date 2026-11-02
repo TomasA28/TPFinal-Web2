@@ -13,8 +13,22 @@ class LoginModel
     public function autenticar($usuario, $password)
     {
         $passwordHash = md5($password);
-        $sql = "SELECT id, usuario FROM usuarios WHERE usuario = '$usuario' AND password = '$passwordHash'";
 
-        return $this->database->queryOne($sql);
+        $sql = "SELECT id, usuario, activo FROM usuarios WHERE usuario = ? AND password = ?";
+
+        $resultado = $this->database->queryOne(
+            $sql, 
+            [$usuario, $passwordHash]
+        );
+
+        if(!$resultado) {
+            return ["ok"=> false, "no_activado" => false];
+        }
+
+        if ($resultado['activo'] == 0) {
+            return ["ok" => false, "no_activado" => true];
+        }
+
+        return ["ok" => true, "usuario" => $resultado];
     }
 }

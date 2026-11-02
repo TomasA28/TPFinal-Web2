@@ -9,14 +9,24 @@ DROP TABLE IF EXISTS preguntas;
 DROP TABLE IF EXISTS usuarios;
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
+    nombre VARCHAR(50) NOT NULL,
+    apellido VARCHAR(50) NOT NULL,
+    fechaNacimiento DATE NOT NULL,
+    sexo TINYINT(1) NOT NULL,
+    lat VARCHAR(50) NOT NULL,
+    lng VARCHAR(50) NOT NULL,
     mail VARCHAR(50) NOT NULL UNIQUE,
-    fechaNacimiento DATE NOT NULL
+    password VARCHAR(255) NOT NULL,
+    usuario VARCHAR(50) NOT NULL UNIQUE,
+    fotoDePerfil VARCHAR(255),
+    token VARCHAR(255) NULL,
+    activo TINYINT(1) NOT NULL
 );
 
-INSERT INTO usuarios (usuario, password, mail, fechaNacimiento) VALUES
-('admin', MD5('1234'), 'admin@devmail.com', '1998-12-12');
+INSERT INTO usuarios (nombre, apellido, fechaNacimiento, sexo, lat, lng,
+ mail, password, usuario, fotoDePerfil, token, activo) VALUES
+('Juan', 'Perez', '1998-12-12', '1', '-34.665336611141214', '-58.37326118991368', 'admin@devmail.com',
+ MD5('1234'), 'SoyElAdmin99', '/public/subidas/fotoDelAdmin.png', NULL, '1');
 
 CREATE TABLE preguntas (
     id INT AUTO_INCREMENT PRIMARY KEY,
