@@ -1,6 +1,11 @@
 CREATE DATABASE IF NOT EXISTS my_web CHARACTER SET utf8mb4;
 USE my_web;
 
+DROP TABLE IF EXISTS respuestas;
+DROP TABLE IF EXISTS historial_partidas;
+DROP TABLE IF EXISTS partida_jugador;
+DROP TABLE IF EXISTS partida;
+DROP TABLE IF EXISTS preguntas;
 DROP TABLE IF EXISTS usuarios;
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -13,7 +18,6 @@ CREATE TABLE usuarios (
 INSERT INTO usuarios (usuario, password, mail, fechaNacimiento) VALUES
 ('admin', MD5('1234'), 'admin@devmail.com', '1998-12-12');
 
-DROP TABLE IF EXISTS preguntas;
 CREATE TABLE preguntas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     descripcion TEXT NOT NULL,
@@ -23,6 +27,20 @@ CREATE TABLE preguntas (
     opcion_d VARCHAR(255) NOT NULL,
     respuesta_correcta CHAR(1) NOT NULL,
     categoria VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE respuestas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    pregunta_id INT NOT NULL,
+    es_correcta BOOLEAN NOT NULL,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_respuestas_usuario
+        FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    CONSTRAINT fk_respuestas_pregunta
+        FOREIGN KEY (pregunta_id) REFERENCES preguntas(id) ON DELETE CASCADE,
+    INDEX idx_respuestas_pregunta (pregunta_id),
+    INDEX idx_respuestas_usuario (usuario_id)
 );
 
 INSERT INTO preguntas (descripcion, opcion_a, opcion_b, opcion_c, opcion_d, respuesta_correcta, categoria) VALUES 
@@ -54,7 +72,6 @@ INSERT INTO preguntas (descripcion, opcion_a, opcion_b, opcion_c, opcion_d, resp
     'Cultura'
 );
 
-DROP TABLE IF EXISTS partida;
 CREATE TABLE partida (
         id INT AUTO_INCREMENT PRIMARY KEY,
         id_usuario INT NOT NULL,
@@ -63,7 +80,6 @@ CREATE TABLE partida (
         FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
 );
 
-DROP TABLE IF EXISTS historial_partidas;
 CREATE TABLE partida_jugador (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_partida INT NOT NULL,
@@ -83,7 +99,6 @@ CREATE TABLE partida_jugador (
         ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS historial_partidas;
 CREATE TABLE historial_partidas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
