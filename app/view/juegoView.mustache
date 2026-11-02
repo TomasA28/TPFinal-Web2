@@ -1,5 +1,11 @@
 <link rel="stylesheet" href="/public/css/juego.css">
 <main class="w3-content juego-contenedor">
+    {{#error_respuesta}}
+        <div class="resultado-juego resultado-juego--incorrecto" role="alert">
+            <p>{{error_respuesta}}</p>
+            <a href="/juego/jugar" class="w3-button btn-cancha w3-round">Volver a la ruleta</a>
+        </div>
+    {{/error_respuesta}}
     {{#es_correcta}}
         <div class="resultado-juego" role="status">
             <strong>Respuesta Correcta! </strong>
@@ -15,6 +21,13 @@
             <a href="/lobby/mostrar" class="w3-button btn-cancha w3-round">Volver al Lobby</a>
         </div>
     {{/es_incorrecta}}
+    {{#sin_pregunta}}
+        <div class="resultado-juego resultado-juego--incorrecto" role="alert">
+            <h2>No hay preguntas disponibles</h2>
+            <p>Todavía no hay preguntas cargadas para la categoría {{categoria_sin_preguntas}}.</p>
+            <a href="/juego/jugar" class="w3-button btn-cancha w3-round">Volver a la ruleta</a>
+        </div>
+    {{/sin_pregunta}}
     {{#pregunta}}
         <section class="juego-tarjeta juego-tarjeta--{{categoria}} w3-card w3-padding-24">
             <p class="juego-categoria">Categoría: {{categoria}}</p>

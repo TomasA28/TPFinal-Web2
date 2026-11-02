@@ -13,6 +13,8 @@ use app\controller\LobbyController;
 use app\model\LobbyModel;
 use app\controller\RankingController;
 use app\model\RankingModel;
+use app\controller\PerfilController;
+use app\model\PerfilModel;
 use MustacheRender;
 use MyDatabase;
 use Router;
@@ -121,6 +123,21 @@ class Configuration
     private function getRankingModel()
     {
         return new RankingModel($this->getDatabase());
+    }
+
+    public function getPerfilController()
+    {
+        return new PerfilController(
+            $this->getPerfilModel(),
+            $this->getRender()
+        );
+    }
+
+    private function getPerfilModel()
+    {
+        return new PerfilModel(
+            $this->getDatabase()
+        );
     }
 
     public function getRouter()
