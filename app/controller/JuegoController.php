@@ -48,7 +48,10 @@ class JuegoController
         }
 
         $categoria = $this->categorias[$categoriaElegida];
-        $pregunta = $this->juegoModel->getPreguntaAleatoria($categoria);
+        $pregunta = $this->juegoModel->getPreguntaAleatoria(
+            $categoria,
+            $_SESSION['usuario_id']
+        );
         if ($pregunta === null) {
             $this->render->renderiza('juegoView', [
                 'sin_pregunta' => true,
@@ -73,7 +76,18 @@ class JuegoController
     {
         $respuestaElegida = Request::post('respuesta');
         $preguntaId = Request::post('pregunta_id');
-        $esCorrecta = $this->juegoModel->procesarRespuesta($respuestaElegida, $preguntaId);
+        $esCorrecta = $this->juegoModel->procesarRespuesta(
+            $respuestaElegida,
+            $preguntaId,
+            $_SESSION['usuario_id']
+        );
+
+        if ($esCorrecta === null) {
+            $this->render->renderiza('juegoView', [
+                'error_respuesta' => 'No se pudo registrar la respuesta. Volvé a elegir una pregunta.',
+            ]);
+            return;
+        }
 
         if (!isset($_SESSION['puntaje_actual'])) {
             $_SESSION['puntaje_actual'] = 0;
