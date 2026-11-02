@@ -1,0 +1,79 @@
+<link rel="stylesheet" href="/public/css/registro.css">
+<link rel="stylesheet" href="/public/css/perfil.css">
+
+<div class="perfilMotherBox">
+
+    <div class="TitleYBotonVolver">
+
+        <a href="/" class="backButton">← Volver al inicio</a>
+
+        <h3>{{usuario.usuario}}</h3>
+
+        <label>Foto de perfil:</label>
+
+        <img
+            src="{{usuario.fotoDePerfil}}"
+            alt="Foto de perfil"
+        >
+
+    </div>
+
+    <div class="formColumnsBox">
+
+        <div>
+            <label>Nombre(s):</label>
+            <p>{{usuario.nombre}}</p>
+
+            <label>Apellido(s):</label>
+            <p>{{usuario.apellido}}</p>
+
+            <label>Fecha de nacimiento:</label>
+            <p>{{usuario.fechaNacimiento}}</p>
+
+            <label>Sexo:</label>
+            <p>{{usuario.sexo}}</p>
+        </div>
+
+        <div>
+            <label>Ciudad y país:</label>
+            <div id="mapa" data-lat="{{usuario.lat}}" data-lng="{{usuario.lng}}"></div>
+        </div>
+
+        <div>
+            <label>Correo electrónico:</label>
+            <p>{{usuario.mail}}</p>
+        </div>
+
+    </div>
+
+    <a href="/perfil/logout" class="backButton">
+        Cerrar sesión
+    </a>
+
+</div>
+<script>
+    function loadMap() {
+
+    const mapaElemento = document.getElementById("mapa");
+
+    const lat = parseFloat(mapaElemento.dataset.lat);
+    const lng = parseFloat(mapaElemento.dataset.lng);
+
+    const posicion = {
+        lat: lat,
+        lng: lng
+    };
+
+    const map = new google.maps.Map(mapaElemento, {
+        center: posicion,
+        zoom: 12,
+        mapTypeControl: false,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+
+    new google.maps.Marker({
+        position: posicion,
+        map: map
+    });
+}
+</script>

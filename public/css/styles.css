@@ -1,6 +1,6 @@
 :root {
     color-scheme: dark;
-    --fondo-principal: #090A1C;
+    --fondo-principal: #7275b8;
     --fondo-profundo: #000000;
     --superficie: #121231;
     --tarjeta: #23244E;
@@ -25,7 +25,7 @@ body {
     min-height: 100vh;
     margin: 0;
     background:
-        radial-gradient(ellipse at 50% 0%, rgba(47, 30, 86, 0.42), transparent 55%),
+        url("/public/css/images/back.jpg") center / cover no-repeat,
         var(--fondo-principal);
     color: var(--texto);
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -84,7 +84,6 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible {
     outline: 2px solid var(--cian);
-    outline-offset: 3px;
 }
 
 input,
@@ -115,7 +114,6 @@ input[type="file"]::file-selector-button {
 
 label {
     color: var(--texto);
-    font-weight: 600;
 }
 
 h1,
@@ -139,7 +137,6 @@ h4 {
 
 .barraNav img {
     display: block;
-    max-height: 2.5rem;
     width: auto;
 }
 
@@ -172,6 +169,18 @@ h4 {
     color: var(--texto);
 }
 
+.homeButton{
+    height: 2.5rem;
+}
+
+.profileButton{
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 100%;
+    border-color: rgba(33, 192, 194, 0.58);
+
+    height: 3rem;
+}
 
 .w3-panel {
     border-radius: 8px;

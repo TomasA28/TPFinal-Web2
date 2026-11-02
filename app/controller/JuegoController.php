@@ -18,6 +18,7 @@ class JuegoController
     {
         $pregunta = $this->juegoModel->getPreguntaAleatoria();
 
+        $data["logueado"] = isset($_SESSION['usuario']);
         $data = [
             'id' => $pregunta['id'],
             'categoria' => strtolower($pregunta['categoria']),
