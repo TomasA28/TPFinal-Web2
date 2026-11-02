@@ -1,0 +1,48 @@
+<link rel="stylesheet" href="/public/css/lobby.css">
+<main class="lobby-page">
+    <section class="lobby-card" aria-labelledby="lobby-title">
+        <h1 id="lobby-title">¡Hola, {{usuario.nombre}}!</h1>
+        <p class="lobby-intro">¿Listo para poner a prueba tus conocimientos?</p>
+
+        <div class="lobby-status">
+            {{#hay_partida}}
+                <p class="lobby-status-label">Tu última partida</p>
+                <p class="lobby-score"><strong>{{usuario.puntaje}}</strong><span>puntos</span></p>
+            {{/hay_partida}}
+            {{^hay_partida}}
+                <p class="lobby-first-game">Todavía no jugaste una partida.<br>¡Esta puede ser la primera!</p>
+            {{/hay_partida}}
+        </div>
+        <div class="lobby-option">
+            <a href="/juego/nuevaPartida" class="lobby-play-button">
+                <span>Iniciar partida</span>
+                <span class="lobby-play-arrow" aria-hidden="true">→</span>
+            </a>
+            <a href="/ranking/ranking" class="lobby-play-button">
+                <span>Ver Ranking</span>
+                <span class="lobby-play-arrow" aria-hidden="true">→</span>
+            </a>
+
+            <a href="/juego/multijudador" class="lobby-play-button">
+                <span>Multijudador</span>
+                <span class="lobby-play-arrow" aria-hidden="true">→</span>
+            </a>
+        </div>
+        <div class="lobby-lista_partidas">
+            <h2> Historial de Partidas <h2>
+        {{#hay_partida}}
+            <ul>
+                {{#partidas}}
+                    <li>
+                        Puntaje: {{puntaje}} - Fecha: {{fecha}}
+                    </li>
+                {{/partidas}}
+            </ul>
+        {{/hay_partida}}
+        {{^hay_partida}}
+            <p class="lobby-first-game">Todavía no jugaste una partida.<br>¡Esta puede ser la primera!</p>
+        {{/hay_partida}}
+        </div>
+        <p class="lobby-hint">Elegí una respuesta y acumulá puntos</p>
+    </section>
+</main>

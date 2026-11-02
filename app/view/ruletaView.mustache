@@ -1,0 +1,71 @@
+<link rel="stylesheet" href="/public/css/juego.css">
+<main class="w3-content juego-contenedor">
+    <section class="ruleta-tarjeta" aria-labelledby="ruleta-titulo">
+        <p class="juego-categoria">Trivia Night</p>
+        <h1 id="ruleta-titulo">Ruleta de categorías</h1>
+        <p class="ruleta-descripcion">Girá la ruleta para elegir el tema de tu próxima pregunta.</p>
+
+        {{#error}}
+            <p class="ruleta-error" role="alert">{{error}}</p>
+        {{/error}}
+
+        <form id="ruleta-form" action="/juego/procesarPregunta" method="POST">
+            <div class="ruleta-escenario">
+                <span class="ruleta-puntero" aria-hidden="true"></span>
+                <div class="ruleta-disco" id="ruleta-disco" aria-hidden="true">
+                    <span class="ruleta-centro">?</span>
+                </div>
+            </div>
+
+            <ul class="ruleta-categorias" aria-label="Categorías posibles">
+                <li class="ruleta-categoria ruleta-categoria--historia">Historia</li>
+                <li class="ruleta-categoria ruleta-categoria--cultura">Cultura</li>
+                <li class="ruleta-categoria ruleta-categoria--deporte">Deporte</li>
+                <li class="ruleta-categoria ruleta-categoria--arte">Arte</li>
+                <li class="ruleta-categoria ruleta-categoria--ciencia">Ciencia</li>
+            </ul>
+
+            <input type="hidden" name="categoria" id="ruleta-categoria-elegida" value="historia">
+            <button type="submit" class="ruleta-boton" id="ruleta-boton">Girar ruleta</button>
+            <p class="ruleta-resultado" id="ruleta-resultado" aria-live="polite"></p>
+        </form>
+    </section>
+</main>
+
+<script>
+    (() => {
+        const form = document.getElementById('ruleta-form');
+        const wheel = document.getElementById('ruleta-disco');
+        const categoryInput = document.getElementById('ruleta-categoria-elegida');
+        const spinButton = document.getElementById('ruleta-boton');
+        const result = document.getElementById('ruleta-resultado');
+        const categories = ['historia', 'cultura', 'deporte', 'arte', 'ciencia'];
+        let spinning = false;
+
+        form.addEventListener('submit', (event) => {
+            if (spinning) {
+                event.preventDefault();
+                return;
+            }
+
+            event.preventDefault();
+            spinning = true;
+            spinButton.disabled = true;
+            spinButton.textContent = 'Girando...';
+            const selectedIndex = Math.floor(Math.random() * categories.length);
+            categoryInput.value = categories[selectedIndex];
+            result.textContent = 'La ruleta está girando...';
+
+            const fullTurns = 5 + Math.floor(Math.random() * 4);
+            const landingAngle = (360 - selectedIndex * 72) % 360;
+            const spinDuration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 4100;
+            wheel.style.transitionDuration = `${spinDuration}ms`;
+            wheel.style.transform = `rotate(${fullTurns * 360 + landingAngle}deg)`;
+
+            window.setTimeout(() => {
+                result.textContent = `Categoría: ${categories[selectedIndex]}`;
+                form.submit();
+            }, spinDuration + 100);
+        });
+    })();
+</script>

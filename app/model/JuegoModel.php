@@ -9,9 +9,16 @@ class JuegoModel
     {
         $this->database = $database;
     }
-    public function getPreguntaAleatoria()
+    public function getPreguntaAleatoria($categoria)
     {
-        return $this->database->queryOne("SELECT * FROM preguntas ORDER BY RAND() LIMIT 1");
+        return $this->database->queryOne(
+            "SELECT * 
+            FROM preguntas
+            WHERE categoria = ?
+            ORDER BY RAND() 
+            LIMIT 1",
+            [$categoria]
+        );
     }
 
     public function procesarRespuesta($respuestaElegida, $preguntaId)

@@ -1,0 +1,302 @@
+.juego-contenedor {
+    width: min(100%, 800px);
+    padding: 2rem 1rem;
+}
+
+.ruleta-tarjeta {
+    --juego-acento: var(--cian);
+    padding: clamp(1.5rem, 5vw, 2.5rem);
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    background: linear-gradient(145deg, var(--tarjeta), var(--superficie));
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.32);
+    text-align: center;
+}
+
+.ruleta-tarjeta h1 {
+    margin: 0.25rem 0 0.6rem;
+    font-size: clamp(1.8rem, 6vw, 2.5rem);
+}
+
+.ruleta-descripcion {
+    margin: 0 auto 1.5rem;
+    color: var(--texto-secundario);
+}
+
+.ruleta-error {
+    margin: 1rem 0;
+    padding: 0.8rem 1rem;
+    border: 1px solid rgba(212, 20, 216, 0.4);
+    border-radius: 8px;
+    background: rgba(47, 30, 86, 0.65);
+    color: var(--texto);
+}
+
+.ruleta-escenario {
+    position: relative;
+    display: grid;
+    width: min(100%, 320px);
+    aspect-ratio: 1;
+    place-items: center;
+    margin: 1.5rem auto;
+}
+
+.ruleta-disco {
+    position: relative;
+    width: 90%;
+    height: 90%;
+    border: 7px solid #171832;
+    border-radius: 50%;
+    background: conic-gradient(
+        from -36deg,
+        #A9893F 0deg 72deg,
+        #477A9B 72deg 144deg,
+        #A96036 144deg 216deg,
+        #914B70 216deg 288deg,
+        #387A72 288deg 360deg
+    );
+    box-shadow:
+        0 0 0 1px var(--borde),
+        0 0 28px rgba(33, 192, 194, 0.14),
+        0 14px 28px rgba(0, 0, 0, 0.4);
+    transform: rotate(0deg);
+    transition: transform 4s cubic-bezier(0.12, 0.72, 0.15, 1);
+}
+
+.ruleta-centro {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    width: 3.5rem;
+    height: 3.5rem;
+    place-items: center;
+    border: 2px solid rgba(33, 192, 194, 0.72);
+    border-radius: 50%;
+    background: var(--fondo-principal);
+    box-shadow: 0 0 16px rgba(33, 192, 194, 0.2);
+    color: var(--texto);
+    font-size: 1.6rem;
+    font-weight: 800;
+    transform: translate(-50%, -50%);
+}
+
+.ruleta-puntero {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-top: 1.25rem solid var(--magenta);
+    border-right: 0.85rem solid transparent;
+    border-left: 0.85rem solid transparent;
+    filter: drop-shadow(0 0 6px rgba(212, 20, 216, 0.35));
+    transform: translateX(-50%);
+}
+
+.ruleta-categorias {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 0 0 1.5rem;
+    padding: 0;
+    list-style: none;
+}
+
+.ruleta-categoria {
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--borde);
+    border-radius: 999px;
+    background: rgba(9, 10, 28, 0.55);
+    color: var(--texto);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.ruleta-categoria--historia {
+    border-color: #A9893F;
+}
+
+.ruleta-categoria--cultura {
+    border-color: #477A9B;
+}
+
+.ruleta-categoria--deporte {
+    border-color: #A96036;
+}
+
+.ruleta-categoria--arte {
+    border-color: #914B70;
+}
+
+.ruleta-categoria--ciencia {
+    border-color: #387A72;
+}
+
+.ruleta-boton {
+    min-width: 13rem;
+    min-height: 3.25rem;
+    padding: 0.8rem 1.5rem;
+    border: 1px solid rgba(33, 192, 194, 0.6);
+    border-radius: 8px;
+    background: linear-gradient(120deg, #167F89, #226B91);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    color: var(--texto);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.ruleta-boton:hover,
+.ruleta-boton:focus-visible {
+    border-color: var(--cian);
+    box-shadow: var(--brillo-cian), 0 8px 24px rgba(0, 0, 0, 0.35);
+    transform: translateY(-2px);
+}
+
+.ruleta-boton:disabled {
+    cursor: wait;
+    opacity: 0.75;
+    transform: none;
+}
+
+.ruleta-resultado {
+    min-height: 1.5rem;
+    margin: 1rem 0 0;
+    color: var(--cian);
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.juego-tarjeta {
+    --juego-fondo: var(--tarjeta);
+    --juego-opcion: #191A3A;
+    --juego-opcion-hover: #304572;
+    --juego-acento: var(--cian);
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    background: linear-gradient(145deg, var(--juego-fondo), var(--superficie));
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.32);
+    padding: 1.5rem !important;
+}
+
+.juego-tarjeta--historia {
+    --juego-fondo: #3B3150;
+    --juego-opcion: #292542;
+    --juego-opcion-hover: #4A3C5D;
+    --juego-acento: #FFBF00;
+}
+
+.juego-tarjeta--cultura {
+    --juego-fondo: #263B5A;
+    --juego-opcion: #1D2C48;
+    --juego-opcion-hover: #30496C;
+    --juego-acento: #7BC8E8;
+}
+
+.juego-tarjeta--deporte,
+.juego-tarjeta--deportes {
+    --juego-fondo: #493747;
+    --juego-opcion: #33283E;
+    --juego-opcion-hover: #5C4050;
+    --juego-acento: #CC7722;
+}
+
+.juego-tarjeta--arte {
+    --juego-fondo: #4A2F49;
+    --juego-opcion: #35243E;
+    --juego-opcion-hover: #61405B;
+    --juego-acento: #D22B2B;
+}
+
+.juego-tarjeta--ciencia {
+    --juego-fondo: #263B48;
+    --juego-opcion: #1D303C;
+    --juego-opcion-hover: #34515B;
+    --juego-acento: #00FF7F;
+}
+
+.juego-categoria {
+    display: inline-block;
+    margin: 0 0 1rem;
+    padding: 0.4rem 0.8rem;
+    border: 1px solid var(--juego-acento);
+    border-radius: 999px;
+    background: rgba(9, 10, 28, 0.55);
+    color: var(--juego-acento);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.pregunta-texto {
+    margin: 0 0 1.5rem;
+    color: var(--texto);
+    font-size: clamp(1.2rem, 3vw, 1.55rem);
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+.opciones-juego {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+}
+
+.btn-opcion {
+    min-height: 3.5rem;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--juego-acento);
+    border-radius: 8px;
+    background: var(--juego-opcion);
+    color: var(--texto);
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+    transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.btn-opcion:hover,
+.btn-opcion:focus-visible {
+    border-color: var(--juego-acento);
+    background: var(--juego-opcion-hover);
+    box-shadow: 0 0 14px rgba(197, 168, 232, 0.14);
+    color: var(--texto);
+    transform: translateY(-1px);
+}
+
+.resultado-juego {
+    margin-bottom: 1.25rem;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    background: linear-gradient(145deg, var(--tarjeta), var(--superficie));
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+}
+
+.resultado-juego h2 {
+    margin-top: 0;
+}
+
+.resultado-juego--incorrecto {
+    border: 1px solid red;
+}
+
+@media (max-width: 520px) {
+    .ruleta-escenario {
+        width: min(100%, 280px);
+    }
+
+    .opciones-juego {
+        grid-template-columns: 1fr;
+    }
+
+    .juego-tarjeta {
+        padding: 1.15rem !important;
+    }
+}
