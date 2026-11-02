@@ -27,16 +27,19 @@ class LobbyController
 
         $idUsuario = (int) $_SESSION['usuario_id'];
         $usuario = $this->model->getUsuario($idUsuario);
-
         if ($usuario === null) {
             Redirect::toIndex();
             exit;
         }
 
+        $partidas = $this->model->getPartidas($idUsuario);
+
         $data = [
             'logueado' => isset($_SESSION['usuario_id']),
             'usuario' => $usuario,
             'hay_partida' => $usuario['puntaje'] !== null
+            'hay_partida' => $usuario['puntaje'] !== null,
+            'partidas' => $partidas,
         ];
 
         $this->render->renderiza("lobbyView", $data);

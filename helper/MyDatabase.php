@@ -34,12 +34,13 @@ class MyDatabase
     {
         Log::info($sql);
 
-        if (empty($params)) {
+        if ($params === []) {
             return $this->conexion->exec($sql);
         }
-        
+
         $resultado = $this->conexion->prepare($sql);
-        return $resultado->execute($params);
+        $resultado->execute($params);
+        return $resultado->rowCount();
     }
 
     public function lastInsertId()
