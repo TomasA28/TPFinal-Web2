@@ -37,9 +37,9 @@ class LobbyController
         $data = [
             'logueado' => isset($_SESSION['usuario_id']),
             'usuario' => $usuario,
-            'hay_partida' => $usuario['puntaje'] !== null
             'hay_partida' => $usuario['puntaje'] !== null,
-            'partidas' => $partidas,
+            'hay_partida' => $usuario['puntaje'] !== null,
+            'partidas' => $partidas
         ];
 
         $this->render->renderiza("lobbyView", $data);
