@@ -1,10 +1,7 @@
 <link rel="stylesheet" href="/public/css/juego.css">
 <main class="w3-content juego-contenedor">
     <section class="ruleta-tarjeta" aria-labelledby="ruleta-titulo">
-        <p class="juego-categoria">Trivia Night</p>
         <h1 id="ruleta-titulo">Ruleta de categorías</h1>
-        <p class="ruleta-descripcion">Girá la ruleta para elegir el tema de tu próxima pregunta.</p>
-
         {{#error}}
             <p class="ruleta-error" role="alert">{{error}}</p>
         {{/error}}
@@ -13,12 +10,12 @@
             <div class="ruleta-escenario">
                 <span class="ruleta-puntero" aria-hidden="true"></span>
                 <div class="ruleta-disco" id="ruleta-disco" aria-hidden="true">
-                    <span class="ruleta-centro">?</span>
+                    <span class="ruleta-centro"><img src="/public/css/images/icon.png"></span>
                 </div>
             </div>
 
             <ul class="ruleta-categorias" aria-label="Categorías posibles">
-                <li class="ruleta-categoria ruleta-categoria--historia">Historia</li>
+                <li id="historia" class="ruleta-categoria ruleta-categoria--historia">Historia</li>
                 <li class="ruleta-categoria ruleta-categoria--cultura">Cultura</li>
                 <li class="ruleta-categoria ruleta-categoria--deporte">Deporte</li>
                 <li class="ruleta-categoria ruleta-categoria--arte">Arte</li>

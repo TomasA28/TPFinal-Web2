@@ -22,36 +22,47 @@ class JuegoModel
             }
         }
 
-        if ($filtroTasa !== null) {
-            $pregunta = $this->database->queryOne(
-                "SELECT p.*, COUNT(r.id) AS respuestas_totales,
-                        AVG(r.es_correcta) * 100 AS tasa_acierto
-                 FROM preguntas p
-                 LEFT JOIN respuestas r ON r.pregunta_id = p.id
-                 WHERE p.categoria = ?
-                 GROUP BY p.id
-                 HAVING COUNT(r.id) >= 10 AND AVG(r.es_correcta) $filtroTasa
-                 ORDER BY RAND()
-                 LIMIT 1",
-                [$categoria]
-            );
-
-            if ($pregunta !== null) {
-                return $pregunta;
-            }
+        $pregunta = $this->buscarPreguntaAleatoria($categoria, $usuarioId, true, $filtroTasa);
+        if ($pregunta !== null) {
+            return $pregunta;
         }
 
-        return $this->database->queryOne(
-            "SELECT p.*, COUNT(r.id) AS respuestas_totales,
-                    AVG(r.es_correcta) * 100 AS tasa_acierto
-             FROM preguntas p
-             LEFT JOIN respuestas r ON r.pregunta_id = p.id
-             WHERE p.categoria = ?
-             GROUP BY p.id
-             ORDER BY RAND()
-             LIMIT 1",
-            [$categoria]
-        );
+        $preguntaNueva = $this->buscarPreguntaAleatoria($categoria, $usuarioId, true);
+        if ($preguntaNueva !== null) {
+            return $preguntaNueva;
+        }
+
+        return $this->buscarPreguntaAleatoria($categoria, $usuarioId, false);
+    }
+
+    private function buscarPreguntaAleatoria($categoria, $usuarioId, $soloNuevas, $filtroTasa = null)
+    {
+        $sql = "SELECT p.*, COUNT(r.id) AS respuestas_totales,
+                       AVG(r.es_correcta) * 100 AS tasa_acierto
+                FROM preguntas p
+                LEFT JOIN respuestas r ON r.pregunta_id = p.id
+                WHERE p.categoria = ?";
+        $params = [$categoria];
+
+        if ($soloNuevas) {
+            $sql .= " AND NOT EXISTS (
+                          SELECT 1
+                          FROM respuestas respondidas
+                          WHERE respondidas.pregunta_id = p.id
+                            AND respondidas.usuario_id = ?
+                      )";
+            $params[] = (int) $usuarioId;
+        }
+
+        $sql .= " GROUP BY p.id";
+
+        if ($filtroTasa !== null) {
+            $sql .= " HAVING COUNT(r.id) >= 10 AND AVG(r.es_correcta) $filtroTasa";
+        }
+
+        $sql .= " ORDER BY RAND() LIMIT 1";
+
+        return $this->database->queryOne($sql, $params);
     }
 
     public function procesarRespuesta($respuestaElegida, $preguntaId, $usuarioId)

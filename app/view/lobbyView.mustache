@@ -29,12 +29,13 @@
             </a>
         </div>
         <div class="lobby-lista_partidas">
-            <h2> Historial de Partidas <h2>
+            <h2>Partidas Jugadas</h2>
         {{#hay_partida}}
-            <ul>
+            <ul class="lobby-partidas">
                 {{#partidas}}
                     <li>
-                        Puntaje: {{puntaje}} - Fecha: {{fecha}}
+                        <span class="lobby-partida-puntaje">Puntaje <strong>{{puntaje}}</strong></span>
+                        <time class="lobby-partida-fecha">{{fecha}}</time>
                     </li>
                 {{/partidas}}
             </ul>
