@@ -14,11 +14,18 @@ class LobbyModel
     public function getUsuario($idUsuario)
     {
         return $this->database->queryOne(
-            "SELECT u.id, u.usuario, COALESCE(SUM(pj.puntaje), 0) AS puntaje
-         FROM usuarios u
-         LEFT JOIN partida_jugador pj ON pj.usuario_id = u.id
-         WHERE u.id = ?
-         GROUP BY u.id, u.usuario",
+            "SELECT u.id, u.usuario,
+                    (
+                        SELECT pj.puntaje
+                        FROM partida_jugador pj
+                        JOIN partida p ON p.id = pj.partida_id
+                        WHERE pj.usuario_id = u.id
+                        ORDER BY p.fecha DESC, pj.id DESC
+                        LIMIT 1
+                    ) AS puntaje
+             FROM usuarios u
+             WHERE u.id = ?
+             LIMIT 1",
             [(int) $idUsuario]
         );
     }
@@ -28,11 +35,12 @@ class LobbyModel
         $idUsuario = (int) $idUsuario;
 
         return $this->database->queryAll(
-            "SELECT * 
-        FROM historial_partidas hp 
-        WHERE hp.usuario_id = $idUsuario
-        ORDER BY hp.fecha DESC, hp.id DESC
-        LIMIT 5"
+            "SELECT p.id, pj.puntaje, p.fecha
+             FROM partida_jugador pj
+             JOIN partida p ON p.id = pj.partida_id
+             WHERE pj.usuario_id = ?
+             ORDER BY p.fecha DESC",
+            [$idUsuario]
         );
     }
 }

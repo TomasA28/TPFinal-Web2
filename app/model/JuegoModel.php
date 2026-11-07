@@ -1,5 +1,5 @@
 <?php
-namespace App\Model;
+namespace app\model;
 
 class JuegoModel
 {
@@ -106,8 +106,19 @@ class JuegoModel
 
     public function guardarPartidaTerminada($usuarioId, $puntajeFinal)
     {
-        $this->database->execute("INSERT INTO historial_partidas (usuario_id, puntaje) 
-        VALUES ('$usuarioId', '$puntajeFinal')");
+        $usuarioId = (int) $usuarioId;
+        $puntajeFinal = (int) $puntajeFinal;
+
+        $this->database->execute(
+            "INSERT INTO partida (fecha) VALUES (NOW())"
+        );
+
+        $partidaId = (int) $this->database->lastInsertId();
+
+        $this->database->execute(
+            "INSERT INTO partida_jugador (partida_id, usuario_id, puntaje) VALUES (?, ?, ?)",
+            [$partidaId, $usuarioId, $puntajeFinal]
+        );
     }
 
 }

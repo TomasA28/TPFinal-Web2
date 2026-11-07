@@ -1,0 +1,228 @@
+:root {
+    color-scheme: dark;
+    --fondo-principal: #7275b8;
+    --fondo-profundo: #000000;
+    --superficie: #121231;
+    --tarjeta: #23244E;
+    --azul: #304572;
+    --violeta: #2F1E56;
+    --cian: #21C0C2;
+    --magenta: #D414D8;
+    --lila: #C5A8E8;
+    --texto: #F0F0FA;
+    --texto-secundario: #B8B8D0;
+    --borde: rgba(197, 168, 232, 0.2);
+    --brillo-cian: 0 0 18px rgba(33, 192, 194, 0.2);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    background:
+        url("/public/css/images/back.jpg") center / cover no-repeat,
+        var(--fondo-principal);
+    color: var(--texto);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+a {
+    color: var(--cian);
+    text-decoration: none;
+    transition: color 180ms ease, text-shadow 180ms ease;
+}
+
+a:hover,
+a:focus-visible {
+    color: #75E2E1;
+    text-shadow: 0 0 10px rgba(33, 192, 194, 0.35);
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button,
+.w3-button,
+.btn-cancha {
+    border: 1px solid rgba(33, 192, 194, 0.48);
+    border-radius: 8px;
+    background: linear-gradient(135deg, #167F89, #226B91);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.24);
+    color: var(--texto) !important;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, filter 180ms ease;
+}
+
+.w3-button.w3-cyan {
+    background-color: #167F89 !important;
+}
+
+button:hover,
+.w3-button:hover,
+.btn-cancha:hover {
+    border-color: var(--cian);
+    background: linear-gradient(135deg, #19979E, #304572) !important;
+    box-shadow: var(--brillo-cian), 0 8px 22px rgba(0, 0, 0, 0.32);
+    color: #FFFFFF !important;
+    transform: translateY(-2px);
+}
+
+button:focus-visible,
+.w3-button:focus-visible,
+.btn-cancha:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--cian);
+}
+
+input,
+select,
+.w3-input,
+.w3-select,
+textarea {
+    border: 1px solid var(--borde);
+    border-radius: 7px;
+    background-color: var(--superficie);
+    color: var(--texto);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--texto-secundario);
+}
+
+input[type="file"]::file-selector-button {
+    margin-right: 12px;
+    padding: 8px 12px;
+    border: 1px solid var(--borde);
+    border-radius: 6px;
+    background: var(--azul);
+    color: var(--texto);
+    cursor: pointer;
+}
+
+label {
+    color: var(--texto);
+}
+
+h1,
+h2,
+h3,
+h4 {
+    color: var(--texto);
+    letter-spacing: 0.02em;
+}
+
+.barraNav {
+    display: flex;
+    min-height: 4.5rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 1.5rem;
+    border-bottom: 1px solid var(--borde);
+    background: rgba(9, 10, 28, 0.94);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.24);
+}
+
+.barraNav img {
+    display: block;
+    width: auto;
+}
+
+.botonNav {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+    transition: transform 180ms ease, filter 180ms ease, box-shadow 180ms ease;
+}
+
+.botonNav:hover {
+    filter: drop-shadow(0 0 8px rgba(33, 192, 194, 0.42));
+    transform: translateY(-1px);
+}
+
+.botonNav#botonSalir:hover {
+    filter: drop-shadow(0 0 8px rgba(212, 20, 216, 0.48));
+}
+
+.card-contenido,
+.w3-card,
+.w3-card-2,
+.w3-card-4 {
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    background: linear-gradient(145deg, rgba(35, 36, 78, 0.96), rgba(18, 18, 49, 0.98));
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.32);
+    color: var(--texto);
+}
+
+.homeButton{
+    height: 2.5rem;
+}
+
+.profileButton{
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 100%;
+    border-color: rgba(33, 192, 194, 0.58);
+
+    height: 3rem;
+}
+
+.w3-panel {
+    border-radius: 8px;
+}
+
+.w3-pale-red,
+.w3-pale-green,
+.w3-pale-yellow,
+.w3-pale-blue {
+    border: 1px solid var(--borde);
+    background: rgba(18, 18, 49, 0.9) !important;
+    color: var(--texto) !important;
+}
+
+.registroForm,
+form {
+    color: var(--texto);
+}
+
+footer {
+    margin-top: auto;
+}
+
+.footerDiv {
+    display: flex;
+    min-height: 4rem;
+    align-items: center;
+    justify-content: center;
+    background: var(--fondo-profundo);
+    color: var(--texto-secundario);
+}
+
+.footerDiv p {
+    margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}

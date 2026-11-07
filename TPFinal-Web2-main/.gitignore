@@ -1,0 +1,15 @@
+#archivos config 
+config/config.ini
+config/*.ini
+
+#logs
+log/
+*.log
+
+#cosas del os/ide
+.DS_Store
+Thumbs.db
+__MACOSX/
+.idea/
+.vscode/
+*.swp

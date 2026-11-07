@@ -1,5 +1,5 @@
 <?php
-namespace App\Controller;
+namespace app\controller;
 
 use Redirect;
 use Request;

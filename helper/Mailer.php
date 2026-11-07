@@ -18,7 +18,7 @@ class Mailer
         $this->mailer->isSMTP();
 
         /*agregado temportal */
-        $this->mailer->SMTPDebug = 2;
+        $this->mailer->SMTPDebug = 0;
         $this->mailer->Debugoutput = function ($str, $level) {
             error_log("SMTP DEBUG [$level]: $str");
 };
