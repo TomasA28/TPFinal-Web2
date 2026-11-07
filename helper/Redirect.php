@@ -2,14 +2,17 @@
 
 class Redirect
 {
-    public static function to($url)
-    {
-        header("Location: $url");
-        exit();
-    }
+    private static $base = '/TPFinal-Web2';
 
     public static function toIndex()
     {
-        self::to('/');
+        header('Location: ' . self::$base . '/');
+        exit;
+    }
+
+    public static function to($ruta)
+    {
+        header('Location: ' . self::$base . $ruta);
+        exit;
     }
 }

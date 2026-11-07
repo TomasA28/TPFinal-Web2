@@ -1,6 +1,6 @@
-<link rel="stylesheet" href="/public/css/login.css">
+<link rel="stylesheet" href="public/css/login.css">
 <div class="loginBox">
-    <a href="/">← Volver al inicio</a class="backButton">
+    <a class="backButton" href="./">← Volver al inicio</a>
     <div class="w3-panel card-contenido w3-padding-24 w3-margin-top w3-card">
         <h2>Iniciar sesión</h2>
 
@@ -10,7 +10,7 @@
             </div>
         {{/error}}
 
-        <form method="post" action="/login/login">
+        <form method="post" action="login/login">
             <label for="usuario"><b>Nombre de usuario:</b></label>
             <input type="text" id="usuario" name="usuario" autocomplete="username" required>
 
@@ -21,6 +21,6 @@
                 Ingresar
             </button>
         </form>
-        <p><a href="/registro/show">¿No tenés una cuenta? Registrate</a></p>
+        <p><a href="registro/show">¿No tenés una cuenta? Registrate</a></p>
     </div>
 </div>

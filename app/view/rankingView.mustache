@@ -1,0 +1,28 @@
+<h1>Ranking</h1>
+
+{{#hay_ranking}}
+    <table>
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Jugador</th>
+            <th>Puntaje</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#ranking}}
+            <tr {{#es_usuario_actual}}class="usuario-actual"{{/es_usuario_actual}}>
+                <td>{{posicion}}</td>
+                <td>{{usuario}}</td>
+                <td>{{puntaje}}</td>
+            </tr>
+        {{/ranking}}
+        </tbody>
+    </table>
+{{/hay_ranking}}
+
+{{^hay_ranking}}
+    <p>Todavía no hay jugadores en el ranking.</p>
+{{/hay_ranking}}
+
+<a href="/TPFinal-Web2/lobby/show">Volver al lobby</a>
