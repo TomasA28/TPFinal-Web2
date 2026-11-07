@@ -9,7 +9,7 @@ class JuegoController
     private $categorias = [
         'historia' => 'Historia',
         'cultura' => 'Cultura',
-        'deporte' => 'Deportes',
+        'deporte' => 'Deporte',
         'arte' => 'Arte',
         'ciencia' => 'Ciencia',
     ];
