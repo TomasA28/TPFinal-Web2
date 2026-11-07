@@ -14,7 +14,7 @@ class LobbyModel
     public function getUsuario($idUsuario)
     {
         return $this->database->queryOne(
-            "SELECT u.id, u.usuario,
+            "SELECT u.id, u.usuario AS nombre,
                     (
                         SELECT pj.puntaje
                         FROM partida_jugador pj
