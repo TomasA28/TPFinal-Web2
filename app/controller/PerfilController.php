@@ -63,3 +63,4 @@ class PerfilController
         session_destroy();
         Redirect::toIndex();
     }
+}
