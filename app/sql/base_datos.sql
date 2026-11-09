@@ -2,6 +2,7 @@ CREATE DATABASE IF NOT EXISTS my_web CHARACTER SET utf8mb4;
 USE my_web;
 
 DROP TABLE IF EXISTS respuestas;
+DROP TABLE IF EXISTS preguntas_activas;
 DROP TABLE IF EXISTS historial_partidas;
 DROP TABLE IF EXISTS partida_jugador;
 DROP TABLE IF EXISTS partida;
@@ -37,6 +38,16 @@ CREATE TABLE preguntas (
     opcion_d VARCHAR(255) NOT NULL,
     respuesta_correcta CHAR(1) NOT NULL,
     categoria VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE preguntas_activas (
+    usuario_id INT PRIMARY KEY,
+    pregunta_id INT NOT NULL,
+    expira_en DATETIME NOT NULL,
+    CONSTRAINT fk_preguntas_activas_usuario
+        FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    CONSTRAINT fk_preguntas_activas_pregunta
+        FOREIGN KEY (pregunta_id) REFERENCES preguntas(id) ON DELETE CASCADE
 );
 
 CREATE TABLE respuestas (
