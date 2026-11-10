@@ -1,0 +1,54 @@
+<div class="w3-content" style="max-width:600px">
+    <div class="panel-partida feedback {{#tiempo_agotado}}es-tiempo{{/tiempo_agotado}}{{^tiempo_agotado}}{{#humano_acierta}}es-ok{{/humano_acierta}}{{^humano_acierta}}es-mal{{/humano_acierta}}{{/tiempo_agotado}}">
+
+        {{#tiempo_agotado}}
+            <h2 class="titulo">⏱️ Se acabó el tiempo</h2>
+            <p>La correcta era la <span class="letra-correcta">{{letra_correcta}}</span></p>
+        {{/tiempo_agotado}}
+
+        {{^tiempo_agotado}}
+            {{#trampita_usada}}
+                <h2 class="titulo">🪄 ¡Trampita!</h2>
+                <p>La correcta era la <span class="letra-correcta">{{letra_correcta}}</span></p>
+            {{/trampita_usada}}
+
+            {{^trampita_usada}}
+                {{#humano_acierta}}<h2 class="titulo">✅ ¡Correcto!</h2>{{/humano_acierta}}
+                {{^humano_acierta}}
+                    <h2 class="titulo">❌ Incorrecto</h2>
+                    <p>Elegiste la <b>{{letra_humano}}</b>. La correcta era la <span class="letra-correcta">{{letra_correcta}}</span></p>
+                {{/humano_acierta}}
+            {{/trampita_usada}}
+        {{/tiempo_agotado}}
+
+        <p id="bot-pensando" class="bot-pensando">
+            🤖 {{bot_nombre}} está pensando
+            <span class="puntos-anim"><span>.</span><span>.</span><span>.</span></span>
+        </p>
+
+        <p id="bot-resultado" class="bot-resultado" style="display:none">
+            🤖 {{bot_nombre}} eligió la <b>{{letra_bot}}</b>:
+            {{#bot_acierta}}<span class="acerto">acertó</span>{{/bot_acierta}}
+            {{^bot_acierta}}<span class="fallo">falló</span>{{/bot_acierta}}
+        </p>
+
+        <h3 id="marcador" class="marcador-grande" style="display:none">
+            Vos {{puntos_humano}} – {{puntos_bot}} 🤖
+        </h3>
+
+        <a id="btn-siguiente" href="{{url_siguiente}}" class="btn-accion" style="display:none">
+            {{#terminada}}Ver resultado{{/terminada}}
+            {{^terminada}}Siguiente pregunta{{/terminada}}
+        </a>
+    </div>
+</div>
+
+<script>
+    // Solo presentación: el resultado ya está guardado en el servidor
+    setTimeout(function () {
+        document.getElementById('bot-pensando').style.display = 'none';
+        document.getElementById('bot-resultado').style.display = 'block';
+        document.getElementById('marcador').style.display = 'block';
+        document.getElementById('btn-siguiente').style.display = 'inline-block';
+    }, 1500);
+</script>

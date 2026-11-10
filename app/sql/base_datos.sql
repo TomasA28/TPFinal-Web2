@@ -263,3 +263,49 @@ CREATE TABLE movimiento_trampitas (
 
                                       FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );
+
+
+ALTER TABLE usuarios
+ADD es_bot TINYINT(1) NOT NULL DEFAULT 0,
+ADD habilidad DECIMAL(3,2) NULL;
+
+
+
+INSERT INTO usuarios (nombre, apellido, fechaNacimiento, sexo, lat, lng,mail, password, usuario, fotoDePerfil, token, activo, es_bot, habilidad)
+VALUES('Botito',   'Bot', '2000-01-01', 0, '0', '0', 'botito@bot.local',   '!', 'Botito',      'bot.png', NULL, 1, 1, 0.50),
+('Einstein', 'Bot', '2000-01-01', 0, '0', '0', 'einstein@bot.local', '!', 'EinsteinBot', 'bot.png', NULL, 1, 1, 0.90);
+
+
+
+ALTER TABLE partida
+ADD tipo ENUM('solo','vs_jugador','vs_bot') NOT NULL DEFAULT 'solo',
+ADD estado ENUM('pendiente','en_curso','finalizada') NOT NULL DEFAULT 'en_curso',
+ADD orden_actual INT NOT NULL DEFAULT 1,
+ADD total_preguntas INT NOT NULL DEFAULT 10,
+ADD ganador_id INT NULL,
+ADD CONSTRAINT fk_partida_ganador FOREIGN KEY (ganador_id) REFERENCES usuarios(id);
+
+
+
+CREATE TABLE partida_pregunta (
+partida_id INT NOT NULL,
+orden INT NOT NULL,
+pregunta_id INT NOT NULL,
+PRIMARY KEY (partida_id, orden),
+CONSTRAINT fk_pp_partida  FOREIGN KEY (partida_id)  REFERENCES partida(id)   ON DELETE CASCADE,
+CONSTRAINT fk_pp_pregunta FOREIGN KEY (pregunta_id) REFERENCES preguntas(id) ON DELETE CASCADE
+);
+
+
+
+ALTER TABLE respuestas
+ADD partida_id INT NULL,
+ADD respuesta_elegida CHAR(1) NULL,
+ADD CONSTRAINT fk_respuestas_partida FOREIGN KEY (partida_id) REFERENCES partida(id) ON DELETE CASCADE;
+
+
+UPDATE preguntas SET categoria = 'Deporte' WHERE categoria = 'Deportes';
+
+
+ALTER TABLE respuestas
+ADD UNIQUE KEY uq_resp_partida (partida_id, pregunta_id, usuario_id);

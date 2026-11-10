@@ -6,113 +6,111 @@ class TrampitasModel
 {
     private $database;
 
+    private const PRECIO_UNITARIO  = 1.00;
+    private const PAQUETES_VALIDOS = [1, 5, 10];
+    private const LIMITE_HISTORIAL = 50;
+
+
+    private const SQL_SALDO =
+        "(COALESCE((SELECT SUM(cantidad) FROM compra_trampitas
+                    WHERE usuario_id = ? AND estado = 'confirmada'), 0)
+        + COALESCE((SELECT SUM(cantidad) FROM movimiento_trampitas
+                    WHERE usuario_id = ?), 0))";
+
     public function __construct($database)
     {
         $this->database = $database;
     }
 
-
-    //Se obtine el saldo
-    //se recorre cada una de las compras trampitas
-    //se obtiene la suma de la cantidad
-    //si el usuario_id coincide y su estado es confirmada se devuelve
     public function getSaldo($usuarioId)
     {
-        $usuarioId = (int) $usuarioId;
-
-        $compras = $this->database->queryOne(
-            "SELECT SUM(cantidad) AS total
-         FROM compra_trampitas
-         WHERE usuario_id = ? AND estado = 'confirmada'",
-            [$usuarioId]
-        );
-
-        //se recorre movimientos trampitas
-        //se obtiene la suma de la cantidad
-        //si el usuario_id coincide con el usuario_id a buscar
-        $movimientos = $this->database->queryOne(
-            "SELECT SUM(cantidad) AS total
-         FROM movimiento_trampitas
-         WHERE usuario_id = ?",
-            [$usuarioId]
-        );
-
-        //se obtiene el total de compras
-        //se obitene total de movimientos
-        $totalComprado = (int) ($compras['total'] ?? 0);
-        $totalMovimientos = (int) ($movimientos['total'] ?? 0);
-
-        //se retorna la suma de ambos
-        return $totalComprado + $totalMovimientos;
+        $id = (int)$usuarioId;
+        $r = $this->database->queryOne("SELECT " . self::SQL_SALDO . " AS saldo", [$id, $id]);
+        return (int)($r['saldo'] ?? 0);
     }
-
-
-
 
     public function getHistorial($usuarioId)
     {
-        $usuarioId = (int) $usuarioId;
+        $id = (int)$usuarioId;
+        $limite = (int)self::LIMITE_HISTORIAL;
 
-        //se muestra la fecha , el tipo de compra y la cantidad
-        //se recorre compra_trampitas
-        //si el usuario id coincide y su estado es confirmada
-        $compras = $this->database->queryAll(
+        $filas = $this->database->queryAll(
             "SELECT fecha, 'Compra' AS tipo, cantidad
-         FROM compra_trampitas
-         WHERE usuario_id = ? AND estado = 'confirmada'",
-            [$usuarioId]
-        );
-
-        //se retorna la fecha, el tipo y la cantidad
-        //se recorre movimientos_trampitas si el usuario_id coincide con el criterio
-        $movimientos = $this->database->queryAll(
-            "SELECT fecha, tipo, cantidad
-         FROM movimiento_trampitas
-         WHERE usuario_id = ?",
-            [$usuarioId]
+             FROM compra_trampitas WHERE usuario_id = ? AND estado = 'confirmada'
+             UNION ALL
+             SELECT fecha, tipo, cantidad
+             FROM movimiento_trampitas WHERE usuario_id = ?
+             ORDER BY fecha DESC
+             LIMIT $limite",
+            [$id, $id]
         );
 
 
-        //combinamos dos arrays en uno solo
-        $historial = array_merge($compras, $movimientos);
-
-        //ordenamos el historial de manera descendente
-        usort($historial, function ($a, $b) {
-            return strtotime($b['fecha']) - strtotime($a['fecha']);
-        });
-
-        return $historial;
+        foreach ($filas as &$f) {
+            $f['fecha_formateada']    = date('d/m/Y H:i', strtotime($f['fecha']));
+            $f['es_ingreso']          = (int)$f['cantidad'] > 0;
+            $f['cantidad_formateada'] = ((int)$f['cantidad'] > 0 ? '+' : '') . (int)$f['cantidad'];
+        }
+        return $filas;
     }
 
 
-    public function comprarUnaTrampita($usuarioId)
+    public function comprar($usuarioId, $cantidad = 1)
     {
-        //se insertan los datos de compra
-        $this->database->execute(
-            "INSERT INTO compra_trampitas
-            (usuario_id, cantidad, precio_unitario, estado)
-         VALUES (?, 1, 1.00, 'confirmada')",
-            [(int) $usuarioId]
-        );
-    }
-
-
-//se insertan los datos para usar una trampita
-    public function usarUnaTrampita($usuarioId)
-    {
-        $usuarioId = (int) $usuarioId;
-
-        if ($this->getSaldo($usuarioId) <= 0) {
-            return false;
+        $cantidad = (int)$cantidad;
+        if (!in_array($cantidad, self::PAQUETES_VALIDOS, true)) {
+            return false;   // el cliente no decide qué se puede comprar
         }
 
         $this->database->execute(
-            "INSERT INTO movimiento_trampitas
-            (usuario_id, tipo, cantidad)
-         VALUES (?, 'Uso', -1)",
-            [$usuarioId]
+            "INSERT INTO compra_trampitas (usuario_id, cantidad, precio_unitario, estado)
+             VALUES (?, ?, ?, 'confirmada')",
+            [(int)$usuarioId, $cantidad, self::PRECIO_UNITARIO]
         );
-
         return true;
+    }
+
+
+    public function usar($usuarioId)
+    {
+        $id = (int)$usuarioId;
+
+        $filas = $this->database->execute(
+            "INSERT INTO movimiento_trampitas (usuario_id, tipo, cantidad)
+             SELECT ?, 'Uso', -1 FROM DUAL
+             WHERE " . self::SQL_SALDO . " >= 1",
+            [$id, $id, $id]
+        );
+        return $filas > 0;
+    }
+
+
+
+    public function getRecaudacionTotal()
+    {
+        $r = $this->database->queryOne(
+            "SELECT COALESCE(SUM(cantidad * precio_unitario), 0) AS total
+             FROM compra_trampitas WHERE estado = 'confirmada'"
+        );
+        return (float)$r['total'];
+    }
+
+
+    public function getBalancePorUsuario()
+    {
+        $filas = $this->database->queryAll(
+            "SELECT u.id, u.usuario,
+                COALESCE((SELECT SUM(c.cantidad) FROM compra_trampitas c
+                          WHERE c.usuario_id = u.id AND c.estado = 'confirmada'), 0) AS compradas,
+                COALESCE((SELECT -SUM(m.cantidad) FROM movimiento_trampitas m
+                          WHERE m.usuario_id = u.id), 0) AS usadas
+             FROM usuarios u
+             WHERE u.es_bot = 0
+             ORDER BY compradas DESC"
+        );
+        foreach ($filas as &$f) {
+            $f['saldo'] = (int)$f['compradas'] - (int)$f['usadas'];
+        }
+        return $filas;
     }
 }
