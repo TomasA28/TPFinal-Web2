@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="/public/css/registro.css">
 <div class="registroMotherBox">
     <div class="TitleYBotonVolver">
-        <a href="/" class="backButton">← Volver al inicio</a>
+        <a href="/" class="backButton"><span aria-hidden="true">←</span> Volver al inicio</a>
         <h3>Crea tu cuenta</h3>
 
         {{#error}}
@@ -37,7 +37,7 @@
                 </select>
             </div>
             <div>
-                <label for="ciudadYPais">Ciudad y país:</label>
+                <label>Ciudad y país:</label>
                 <input type="hidden" id="lat" name="lat" value="-34.6686986">
                 <input type="hidden" id="lng" name="lng" value="-58.5614947">
                 <div id="mapa"></div>
@@ -105,5 +105,7 @@
             document.getElementById("lat").value = latLng.lat();
             document.getElementById("lng").value = latLng.lng();
         }
+
+        runMapInit(loadMap);
 
     </script>

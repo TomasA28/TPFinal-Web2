@@ -1,26 +1,31 @@
 <link rel="stylesheet" href="/public/css/login.css">
-<div class="loginBox">
-    <a class="backButton" href="/">← Volver al inicio</a>
-    <div class="w3-panel card-contenido w3-padding-24 w3-margin-top w3-card">
-        <h2>Iniciar sesión</h2>
+<div class="loginLayout">
+    <div class="loginBackColumn">
+        <a class="backButton" href="/"><span aria-hidden="true">←</span> Volver al inicio</a>
+    </div>
 
-        {{#error}}
-            <div class="w3-panel w3-pale-red w3-border" role="alert">
-                <p>{{error}}</p>
-            </div>
-        {{/error}}
+    <div class="loginBox">
+        <div class="w3-panel card-contenido w3-padding-24 w3-margin-top w3-card">
+            <h2>Iniciar sesión</h2>
 
-        <form method="post" action="/login/login">
-            <label for="usuario"><b>Nombre de usuario:</b></label>
-            <input type="text" id="usuario" name="usuario" autocomplete="username" required>
+            {{#error}}
+                <div class="w3-panel w3-pale-red w3-border" role="alert">
+                    <p>{{error}}</p>
+                </div>
+            {{/error}}
 
-            <label for="password"><b>Contraseña:</b></label>
-            <input type="password" id="password" name="password" autocomplete="current-password" required>
+            <form method="post" action="/login/login">
+                <label for="usuario"><b>Nombre de usuario:</b></label>
+                <input type="text" id="usuario" name="usuario" autocomplete="username" required>
 
-            <button type="submit" class="w3-button btn-cancha w3-round w3-margin-top w3-padding-16">
-                Ingresar
-            </button>
-        </form>
-        <p><a href="/registro/show">¿No tenés una cuenta? Registrate</a></p>
+                <label for="password"><b>Contraseña:</b></label>
+                <input type="password" id="password" name="password" autocomplete="current-password" required>
+
+                <button type="submit" class="w3-button btn-cancha w3-round w3-margin-top w3-padding-16">
+                    Ingresar
+                </button>
+            </form>
+            <p><a href="/registro/show">¿No tenés una cuenta? Registrate</a></p>
+        </div>
     </div>
 </div>

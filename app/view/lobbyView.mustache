@@ -1,49 +1,70 @@
 <link rel="stylesheet" href="/public/css/lobby.css">
 <main class="lobby-page">
-    <section class="lobby-card" aria-labelledby="lobby-title">
-        <h1 id="lobby-title">¡Hola, {{usuario.nombre}}!</h1>
-        <p class="lobby-intro">¿Listo para poner a prueba tus conocimientos?</p>
-
-        <div class="lobby-status">
-            {{#hay_partida}}
-                <p class="lobby-status-label">Tu última partida</p>
-                <p class="lobby-score"><strong>{{usuario.puntaje}}</strong><span>puntos</span></p>
-            {{/hay_partida}}
-            {{^hay_partida}}
-                <p class="lobby-first-game">Todavía no jugaste una partida.<br>¡Esta puede ser la primera!</p>
-            {{/hay_partida}}
-        </div>
-        <div class="lobby-option">
+    <div class="lobby-layout">
+        <nav class="lobby-option" aria-label="Acciones">
             <a href="/juego/nuevaPartida" class="lobby-play-button">
                 <span>Iniciar partida</span>
-                <span class="lobby-play-arrow" aria-hidden="true">→</span>
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M9.5,16.5l7-4.5l-7-4.5v9ZM12,22q-2.07,0-3.9-0.79q-1.82-0.79-3.17-2.14Q3.58,17.73 2.79,15.9T2,12Q2,9.92 2.79,8.1Q3.58,6.27 4.93,4.93Q6.28,3.57 8.1,2.79Q9.93,2 12,2t3.9,0.79t3.17,2.14q1.35,1.35 2.14,3.17Q22,9.92 22,12t-0.79,3.9t-2.14,3.17q-1.35,1.35-3.17,2.14T12,22Zm0-2q3.35,0 5.68-2.32T20,12T17.68,6.32T12,4T6.33,6.32T4,12t2.33,5.68T12,20Zm0-8Z" />
+                </svg>
             </a>
-            <a href="/ranking/show" class="lobby-play-button">
+            <a href="/ranking/show" class="lobby-play-button lobby-play-button--ranking">
                 <span>Ver Ranking</span>
-                <span class="lobby-play-arrow" aria-hidden="true">→</span>
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4,19H8V11H4v8Zm6,0h4V5H10V19Zm6,0h4V13H16v6ZM2,21V9H8V3h8v8h6V21H2Z" />
+                </svg>
             </a>
+            <a href="*" class="lobby-play-button lobby-play-button--sugerir">
+                <span>Sugerir Preguntas</span>
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M5,22q-0.83,0-1.41-0.59T3,20V8.73Q2.55,8.45 2.28,8.01T2,7V4Q2,3.17 2.59,2.59T4,2H20q0.83,0 1.41,0.59T22,4V7q0,0.57-0.27,1.01T21,8.73V20q0,0.82-0.59,1.41T19,22H5ZM5,9V20H19V9H5ZM4,7H20V4H4V7Zm5,7h6V12H9v2Zm3,0.5Z" />
+                </svg>
+            </a>
+        </nav>
 
-            <!--<a href="/juego/multijudador" class="lobby-play-button">
-                <span>Multijudador</span>
-                <span class="lobby-play-arrow" aria-hidden="true">→</span>
-            </a>-->
+        <div class="lobby-center">
+            <header class="lobby-hero">
+                <h1 id="lobby-title">¡Hola, {{usuario.nombre}}!</h1>
+                <p class="lobby-intro">¿Listo para poner a prueba tus conocimientos?</p>
+            </header>
+
+            <div class="lobby-status">
+                {{#hay_partida}}
+                <p class="lobby-status-label">Tu última partida</p>
+                <div class="lobby-status-fila">
+                    <span class="lobby-puntaje-estrella" aria-hidden="true">★</span>
+                    <h2>{{usuario.puntaje}}</h2>
+                    <h3>puntos</h3>
+                </div>
+                {{/hay_partida}}
+                {{^hay_partida}}
+                <p class="lobby-first-game">Todavía no jugaste una partida.<br>¡Esta puede ser la primera!</p>
+                {{/hay_partida}}
+            </div>
         </div>
+
         <div class="lobby-lista_partidas">
             <h2>Partidas Jugadas</h2>
-        {{#hay_partida}}
+            {{#hay_partida}}
             <ul class="lobby-partidas">
                 {{#partidas}}
-                    <li>
-                        <span class="lobby-partida-puntaje">Puntaje <strong>{{puntaje}}</strong></span>
-                        <time class="lobby-partida-fecha">{{fecha}}</time>
-                    </li>
+                <li>
+                    <span class="lobby-partida-puntaje">Puntaje <strong>{{puntaje}}</strong></span>
+                    <time class="lobby-partida-fecha">{{fecha}}</time>
+                </li>
                 {{/partidas}}
             </ul>
-        {{/hay_partida}}
-        {{^hay_partida}}
+            {{/hay_partida}}
+            {{^hay_partida}}
             <p class="lobby-first-game">Todavía no jugaste una partida.<br>¡Esta puede ser la primera!</p>
-        {{/hay_partida}}
+            {{/hay_partida}}
         </div>
-        <p class="lobby-hint">Elegí una respuesta y acumulá puntos</p>
-    </section>
+    </div>
+
+    <p class="lobby-hint">Elegí una respuesta y acumulá puntos</p>
 </main>

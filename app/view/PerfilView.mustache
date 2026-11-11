@@ -1,79 +1,139 @@
-<link rel="stylesheet" href="/public/css/registro.css">
 <link rel="stylesheet" href="/public/css/perfil.css">
 
-<div class="perfilMotherBox">
+<main class="perfil-page">
+    <div class="perfil-layout">
+        <div class="perfil-backColumn">
+            <a href="/" class="perfil-back">
+                <span aria-hidden="true">←</span>
+                Volver al inicio
+            </a>
+        </div>
 
-    <div class="TitleYBotonVolver">
+        <div class="perfil-content">
+            <section class="perfil-hero" aria-labelledby="userName">
 
-        <a href="/" class="backButton">← Volver al inicio</a>
+                <article class="perfil-card perfil-identidad">
+                    <div class="perfil-avatar">
+                        <img src="/public/subidas/{{usuario.fotoDePerfil}}" alt="Foto de perfil de {{usuario.usuario}}" class="foto">
+                    </div>
 
-        <h3>{{usuario.usuario}}</h3>
+                    <div class="SeccionInfo">
+                        <div class="userNameCard">
+                            <h1 id="userName">{{usuario.usuario}}</h1>
+                            <p class="perfil-eyebrow">Jugador</p>
+                        </div>
 
-        <label>Foto de perfil:</label>
+                        <dl class="info">
+                            <div class="info-item">
+                                <dt>Nombre</dt>
+                                <dd>{{usuario.nombre}} {{usuario.apellido}}</dd>
+                            </div>
+                            <div class="info-item">
+                                <dt>Correo</dt>
+                                <dd>{{usuario.mail}}</dd>
+                            </div>
+                            <div class="info-item">
+                                <dt>Cumpleaños</dt>
+                                <dd>{{usuario.fechaNacimiento}}</dd>
+                            </div>
+                            <div class="info-item">
+                                <dt>Sexo</dt>
+                                <dd>{{usuario.sexo}}</dd>
+                            </div>
+                        </dl>
+                    </div>
 
-        <img
-            src="/public/subidas/{{usuario.fotoDePerfil}}"
-            alt="Foto de perfil"
-        >
+                    {{#duenioDePerfil}}
+                    <div class="perfil-actions">
+                        <button type="button" class="perfil-edit">Editar perfil</button>
+                        <a href="/perfil/logout" class="perfil-logout">Cerrar sesión</a>
+                    </div>
+                    {{/duenioDePerfil}}
+                </article>
 
+                <div class="perfil-side">
+
+                    <div class="boxPuntaje" aria-label="Puntaje total">
+                        <span class="puntaje-estrella" aria-hidden="true">★</span>
+                        <div class="puntaje-texto">
+                            <h2>{{puntajeTotal}}</h2>
+                            <h3>puntos</h3>
+                        </div>
+                    </div>
+
+                    <section class="perfil-card qrCard" aria-labelledby="qr-title">
+                        {{#duenioDePerfil}}
+                        <p class="perfil-eyebrow">Compartí tu perfil</p>
+                        <h2 id="qr-title" class="qr-titulo">Tu código QR</h2>
+                        {{/duenioDePerfil}}
+                        {{^duenioDePerfil}}
+                        <p class="perfil-eyebrow">Compartí este perfil</p>
+                        <h2 id="qr-title" class="qr-titulo">Código QR</h2>
+                        {{/duenioDePerfil}}
+
+                        <div class="qrBox">
+                            <!-- Placeholder: reemplazar el src por el QR dinámico de cada perfil. -->
+                            <img src="/public/css/images/qr-683354_640-1382541124.png" alt="Código QR del perfil de {{usuario.usuario}}" class="qrFoto">
+                        </div>
+                        
+                        <p class="qr-hint">Escanealo para abrir este perfil</p>
+                    </section>
+
+                </div>
+            </section>
+
+            <section class="perfil-card perfil-mapa-card" aria-labelledby="mapa-title">
+                <div class="perfil-section-head">
+                    <div>
+                        {{#duenioDePerfil}}
+                        <p class="perfil-eyebrow">Dónde jugás</p>
+                        <h2 id="mapa-title">Tu ubicación</h2>
+                        {{/duenioDePerfil}}
+                        {{^duenioDePerfil}}
+                        <p class="perfil-eyebrow">Dónde juega el usuario</p>
+                        <h2 id="mapa-title">Su ubicación</h2>
+                        {{/duenioDePerfil}}
+                    </div>
+                    {{#duenioDePerfil}}
+                    <p class="perfil-section-note">Así te ubican otros jugadores</p>
+                    {{/duenioDePerfil}}
+                </div>
+
+                <div class="mapa-frame">
+                    <div id="mapa" data-lat="{{usuario.lat}}" data-lng="{{usuario.lng}}"></div>
+                </div>
+            </section>
+        </div>
     </div>
+</main>
 
-    <div class="formColumnsBox">
-
-        <div>
-            <label>Nombre(s):</label>
-            <p>{{usuario.nombre}}</p>
-
-            <label>Apellido(s):</label>
-            <p>{{usuario.apellido}}</p>
-
-            <label>Fecha de nacimiento:</label>
-            <p>{{usuario.fechaNacimiento}}</p>
-
-            <label>Sexo:</label>
-            <p>{{usuario.sexo}}</p>
-        </div>
-
-        <div>
-            <label>Ciudad y país:</label>
-            <div id="mapa" data-lat="{{usuario.lat}}" data-lng="{{usuario.lng}}"></div>
-        </div>
-
-        <div>
-            <label>Correo electrónico:</label>
-            <p>{{usuario.mail}}</p>
-        </div>
-
-    </div>
-
-    <a href="/perfil/logout" class="backButton">
-        Cerrar sesión
-    </a>
-
-</div>
 <script>
     function loadMap() {
+        const mapaElemento = document.getElementById("mapa");
+        if (!mapaElemento) {
+            return;
+        }
 
-    const mapaElemento = document.getElementById("mapa");
+        const lat = parseFloat(mapaElemento.dataset.lat);
+        const lng = parseFloat(mapaElemento.dataset.lng);
 
-    const lat = parseFloat(mapaElemento.dataset.lat);
-    const lng = parseFloat(mapaElemento.dataset.lng);
+        const posicion = {
+            lat: Number.isFinite(lat) ? lat : -34.6686986,
+            lng: Number.isFinite(lng) ? lng : -58.5614947
+        };
 
-    const posicion = {
-        lat: lat,
-        lng: lng
-    };
+        const map = new google.maps.Map(mapaElemento, {
+            center: posicion,
+            zoom: 12,
+            mapTypeControl: false,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
 
-    const map = new google.maps.Map(mapaElemento, {
-        center: posicion,
-        zoom: 12,
-        mapTypeControl: false,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-    });
+        new google.maps.Marker({
+            position: posicion,
+            map: map
+        });
+    }
 
-    new google.maps.Marker({
-        position: posicion,
-        map: map
-    });
-}
+    runMapInit(loadMap);
 </script>

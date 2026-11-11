@@ -31,4 +31,17 @@ class PerfilModel
             "id" => $idUsuario
         ]);
     }
+
+    public function getPuntajeTotal($idUsuario)
+    {
+        $sql = "SELECT COALESCE(SUM(puntaje), 0) 
+                AS puntajeTotal 
+                FROM partida_jugador 
+                WHERE usuario_id = :id";
+
+        return $this->database->queryOne($sql, [
+            "id" => $idUsuario
+        ]);
+    }
+
 }
