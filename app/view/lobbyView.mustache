@@ -1,54 +1,75 @@
 <link rel="stylesheet" href="/public/css/lobby.css">
+
 <main class="lobby-page">
     <section class="lobby-card" aria-labelledby="lobby-title">
         <h1 id="lobby-title">¡Hola, {{usuario.nombre}}!</h1>
-        <p class="lobby-intro">¿Listo para poner a prueba tus conocimientos?</p>
+
+        <p class="lobby-intro">
+            ¿Listo para poner a prueba tus conocimientos?
+        </p>
 
         <div class="lobby-status">
             {{#hay_partida}}
                 <p class="lobby-status-label">Tu última partida</p>
-                <p class="lobby-score"><strong>{{usuario.puntaje}}</strong><span>puntos</span></p>
+                <p class="lobby-score">
+                    <strong>{{usuario.puntaje}}</strong>
+                    <span>puntos</span>
+                </p>
             {{/hay_partida}}
+
             {{^hay_partida}}
-                <p class="lobby-first-game">Todavía no jugaste una partida.<br>¡Esta puede ser la primera!</p>
+                <p class="lobby-first-game">
+                    Todavía no jugaste una partida.<br>
+                    ¡Esta puede ser la primera!
+                </p>
             {{/hay_partida}}
         </div>
+
         <div class="lobby-option">
             <a href="/juego/nuevaPartida" class="lobby-play-button">
                 <span>Iniciar partida</span>
                 <span class="lobby-play-arrow" aria-hidden="true">→</span>
             </a>
-            <a href="/ranking/show" class="lobby-play-button">
-                <span>Ver Ranking</span>
+
+            <a href="/partida/iniciarVsBot" class="lobby-play-button">
+                <span>Jugar contra el bot 🤖</span>
                 <span class="lobby-play-arrow" aria-hidden="true">→</span>
             </a>
 
-            <!--<a href="/juego/multijudador" class="lobby-play-button">
-                <span>Multijudador</span>
+            <a href="/ranking/show" class="lobby-play-button">
+                <span>Ver ranking</span>
                 <span class="lobby-play-arrow" aria-hidden="true">→</span>
-            </a>-->
+            </a>
         </div>
-        <div class="lobby-lista_partidas">
-            <h2>Partidas Jugadas</h2>
-        {{#hay_partida}}
-            <ul class="lobby-partidas">
-                {{#partidas}}
-                    <li>
-                        <span class="lobby-partida-puntaje">Puntaje <strong>{{puntaje}}</strong></span>
-                        <time class="lobby-partida-fecha">{{fecha}}</time>
-                    </li>
-                {{/partidas}}
-            </ul>
-        {{/hay_partida}}
-        {{^hay_partida}}
-            <p class="lobby-first-game">Todavía no jugaste una partida.<br>¡Esta puede ser la primera!</p>
-        {{/hay_partida}}
-        </div>
-        <p class="lobby-hint">Elegí una respuesta y acumulá puntos</p>
+
+        <section class="lobby-lista_partidas" aria-labelledby="partidas-title">
+            <h2 id="partidas-title">Partidas jugadas</h2>
+
+            {{#hay_partida}}
+                <ul class="lobby-partidas">
+                    {{#partidas}}
+                        <li>
+                            <span class="lobby-partida-puntaje">
+                                Puntaje <strong>{{puntaje}}</strong>
+                            </span>
+                            <time class="lobby-partida-fecha">
+                                {{fecha}}
+                            </time>
+                        </li>
+                    {{/partidas}}
+                </ul>
+            {{/hay_partida}}
+
+            {{^hay_partida}}
+                <p class="lobby-first-game">
+                    Todavía no jugaste una partida.<br>
+                    ¡Esta puede ser la primera!
+                </p>
+            {{/hay_partida}}
+        </section>
+
+        <p class="lobby-hint">
+            Elegí una respuesta y acumulá puntos.
+        </p>
     </section>
 </main>
-
-
-<a href="/partida/iniciarVsBot" class="w3-button w3-blue w3-round w3-padding-16">
-    🤖 Jugar contra el bot
-</a>

@@ -9,7 +9,7 @@ class PartidaModel
     private $trampitas;
 
     private const SEGUNDOS_POR_PREGUNTA = 20;
-    private const SEGUNDOS_DE_GRACIA    = 2;     
+    private const SEGUNDOS_DE_GRACIA    = 2;
     private const PREGUNTAS_POR_PARTIDA = 10;
     private const COLOR_DEFAULT         = '#7f8c8d';
     private const COLORES = [

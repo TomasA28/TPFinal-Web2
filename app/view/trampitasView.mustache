@@ -3,42 +3,59 @@
         <h1>Mis trampitas</h1>
 
         <p class="trampitas-saldo">
-            Saldo disponible: <strong>🪄 {{saldo}}</strong>
+            <span>Saldo disponible:</span>
+            <strong>🪄 {{saldo}}</strong>
         </p>
 
         {{#compra_ok}}
             <p class="trampitas-mensaje trampitas-mensaje--exito">
-                Compra simulada realizada. Ya están en tu saldo.
+                Compra simulada realizada. Ya tenés las trampitas en tu saldo.
             </p>
         {{/compra_ok}}
+
         {{#error}}
             <p class="trampitas-mensaje trampitas-mensaje--error">
-                No se pudo completar la compra. Probá de nuevo.
+                No se pudo completar la operación. Probá de nuevo.
             </p>
         {{/error}}
 
-        <h2>Comprar</h2>
-        <form action="/trampitas/comprar" method="POST" class="trampitas-acciones">
-            <button type="submit" name="cantidad" value="1" class="trampitas-boton">
-                1 trampita — USD 1,00
+        <h2>Comprar trampitas</h2>
+
+        <form action="/trampitas/comprar" method="POST"
+              class="trampitas-acciones">
+            <button type="submit" name="cantidad" value="1"
+                    class="trampitas-boton">
+                1 trampita — USD 1
             </button>
-            <button type="submit" name="cantidad" value="5" class="trampitas-boton">
-                5 trampitas — USD 5,00
+
+            <button type="submit" name="cantidad" value="5"
+                    class="trampitas-boton">
+                5 trampitas — USD 5
             </button>
-            <button type="submit" name="cantidad" value="10" class="trampitas-boton">
-                10 trampitas — USD 10,00
+
+            <button type="submit" name="cantidad" value="10"
+                    class="trampitas-boton">
+                10 trampitas — USD 10
             </button>
         </form>
-        <p class="trampitas-aviso"><small>El pago es simulado.</small></p>
+
+        <p class="trampitas-aviso">
+            <small>El pago es simulado.</small>
+        </p>
 
         <section class="trampitas-historial">
-            <h2>Historial de movimientos</h2>
+            <h2>Historial</h2>
 
             <div class="trampitas-tabla-contenedor">
                 <table class="trampitas-tabla">
                     <thead>
-                    <tr><th>Fecha</th><th>Movimiento</th><th>Cantidad</th></tr>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Movimiento</th>
+                        <th>Cantidad</th>
+                    </tr>
                     </thead>
+
                     <tbody>
                     {{#movimientos}}
                         <tr>
@@ -49,14 +66,21 @@
                             </td>
                         </tr>
                     {{/movimientos}}
+
                     {{^movimientos}}
-                        <tr><td colspan="3">Todavía no tenés movimientos de trampitas.</td></tr>
+                        <tr>
+                            <td colspan="3">
+                                Todavía no tenés movimientos.
+                            </td>
+                        </tr>
                     {{/movimientos}}
                     </tbody>
                 </table>
             </div>
         </section>
 
-        <p class="trampitas-volver"><a href="/lobby/show">Volver al lobby</a></p>
+        <p class="trampitas-volver">
+            <a href="/lobby/show">Volver al lobby</a>
+        </p>
     </section>
 </main>

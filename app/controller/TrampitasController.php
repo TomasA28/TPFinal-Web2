@@ -18,33 +18,47 @@ class TrampitasController
     public function show()
     {
         $usuarioId = $this->exigirLogin();
-        if (!$usuarioId) { return; }
 
+        if (!$usuarioId) {
+            return;
+        }
 
         $mensaje = $_SESSION['trampitas_flash'] ?? '';
         unset($_SESSION['trampitas_flash']);
 
         $this->render->renderiza('trampitasView', [
-            'logueado'    => true,
-            'saldo'       => $this->model->getSaldo($usuarioId),
+            'saldo' => $this->model->getSaldo($usuarioId),
             'movimientos' => $this->model->getHistorial($usuarioId),
-            'compra_ok'   => $mensaje === 'compra',
-            'sin_saldo'   => $mensaje === 'sin_saldo',
-            'error'       => $mensaje === 'error',
+            'compra_ok' => $mensaje === 'compra',
+            'error' => $mensaje === 'error'
         ]);
     }
-
 
     public function comprar()
     {
         $usuarioId = $this->exigirLogin();
-        if (!$usuarioId) { return; }
-        if (!$this->esPost()) { Redirect::to('/trampitas/show'); return; }
 
-        $cantidad = (int)($_POST['cantidad'] ?? 1);
-        $ok = $this->model->comprar($usuarioId, $cantidad);
+        if (!$usuarioId) {
+            return;
+        }
 
-        $_SESSION['trampitas_flash'] = $ok ? 'compra' : 'error';
+        if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+            Redirect::to('/trampitas/show');
+            return;
+        }
+
+        $cantidad = isset($_POST['cantidad'])
+            ? (int)$_POST['cantidad']
+            : 0;
+
+        $compraRealizada = $this->model->comprar($usuarioId, $cantidad);
+
+        if ($compraRealizada) {
+            $_SESSION['trampitas_flash'] = 'compra';
+        } else {
+            $_SESSION['trampitas_flash'] = 'error';
+        }
+
         Redirect::to('/trampitas/show');
     }
 
@@ -54,11 +68,7 @@ class TrampitasController
             Redirect::toIndex();
             return null;
         }
-        return (int)$_SESSION['usuario_id'];
-    }
 
-    private function esPost()
-    {
-        return ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
+        return (int)$_SESSION['usuario_id'];
     }
 }

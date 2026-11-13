@@ -243,25 +243,35 @@ CREATE TABLE partida_jugador (
 
 
 
-CREATE TABLE compra_trampitas (
-                                  id INT AUTO_INCREMENT PRIMARY KEY,
-                                  usuario_id INT NOT NULL,
-                                  cantidad INT NOT NULL,
-                                  precio_unitario DECIMAL(10,2) NOT NULL,
-                                  estado VARCHAR(20) NOT NULL DEFAULT 'confirmada',
-                                  fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE compra_trampitas
+(
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id      INT            NOT NULL,
+    cantidad        INT            NOT NULL,
+    precio_unitario DECIMAL(10, 2) NOT NULL DEFAULT 1.00,
+    moneda          CHAR(3)        NOT NULL DEFAULT 'USD',
+    estado          VARCHAR(20)    NOT NULL DEFAULT 'confirmada',
+    medio_pago      VARCHAR(20)    NOT NULL DEFAULT 'simulado',
+    referencia_pago VARCHAR(100) NULL,
+    fecha           TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                                  FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    CONSTRAINT chk_compra_cantidad CHECK (cantidad > 0),
+    CONSTRAINT chk_compra_precio CHECK (precio_unitario >= 0),
+    CONSTRAINT chk_compra_estado
+        CHECK (estado IN ('pendiente', 'confirmada', 'rechazada', 'reembolsada')),
+    CONSTRAINT fk_compra_usuario
+        FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
 );
 
-CREATE TABLE movimiento_trampitas (
-                                      id INT AUTO_INCREMENT PRIMARY KEY,
-                                      usuario_id INT NOT NULL,
-                                      tipo VARCHAR(20) NOT NULL,
-                                      cantidad INT NOT NULL,
-                                      fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE movimiento_trampitas
+(
+    id         INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT         NOT NULL,
+    tipo       VARCHAR(20) NOT NULL,
+    cantidad   INT         NOT NULL,
+    fecha      TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                                      FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
 );
 
 

@@ -15,18 +15,18 @@ class LobbyModel
     {
         return $this->database->queryOne(
             "SELECT u.id, u.usuario AS nombre,
-                    (
-                        SELECT pj.puntaje
-                        FROM partida_jugador pj
-                        JOIN partida p ON p.id = pj.partida_id
-                        WHERE pj.usuario_id = u.id
-                        ORDER BY p.fecha DESC, pj.id DESC
-                        LIMIT 1
-                    ) AS puntaje
-             FROM usuarios u
-             WHERE u.id = ?
-             LIMIT 1",
-            [(int) $idUsuario]
+                (
+                    SELECT pj.puntaje
+                    FROM partida_jugador pj
+                    JOIN partida p ON p.id = pj.partida_id
+                    WHERE pj.usuario_id = u.id
+                    ORDER BY p.fecha DESC, pj.partida_id DESC
+                    LIMIT 1
+                ) AS puntaje
+         FROM usuarios u
+         WHERE u.id = ?
+         LIMIT 1",
+            [(int)$idUsuario]
         );
     }
 

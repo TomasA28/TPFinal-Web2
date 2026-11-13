@@ -1,54 +1,100 @@
+/* Trampitas */
+
 .trampitas-page {
-    max-width: 900px;
-    margin: 2rem auto;
-    padding: 1rem;
+    min-height: 100vh;
+    padding: 40px 16px;
+    background: #f3f5fb;
+    color: #20243a;
+    font-family: Arial, sans-serif;
 }
 
 .trampitas-card {
-    padding: 1.5rem;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.12);
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 32px;
+    background: #ffffff;
+    border: 1px solid #e1e5f0;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(31, 42, 80, 0.08);
 }
 
-.trampitas-saldo {
+.trampitas-card h1 {
+    margin: 0 0 20px;
+    font-size: 2rem;
+}
+
+.trampitas-card h2 {
+    margin: 32px 0 16px;
     font-size: 1.25rem;
 }
 
-.trampitas-acciones {
+.trampitas-saldo {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin: 1.5rem 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 0;
+    padding: 18px 20px;
+    background: #f0edff;
+    border-radius: 12px;
+    font-size: 1.1rem;
+}
+
+.trampitas-saldo strong {
+    color: #5b3cc4;
+    font-size: 1.5rem;
+}
+
+.trampitas-acciones {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
 }
 
 .trampitas-boton {
-    padding: 0.8rem 1rem;
+    min-height: 72px;
+    padding: 14px;
     border: 0;
-    border-radius: 8px;
-    color: #fff;
-    background: #3b5ccc;
+    border-radius: 12px;
+    background: #6246cc;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .trampitas-boton:hover {
-    background: #2948ad;
+    background: #4e35ae;
+    transform: translateY(-2px);
 }
 
-.trampitas-boton--secundario {
-    background: #555;
+.trampitas-boton:focus-visible,
+.trampitas-volver a:focus-visible {
+    outline: 3px solid #f2bd3d;
+    outline-offset: 3px;
 }
 
-.trampitas-boton--secundario:hover {
-    background: #333;
+.trampitas-aviso {
+    margin-top: 10px;
+    color: #626a7f;
+}
+
+.trampitas-mensaje {
+    margin: 16px 0 0;
+    padding: 12px 14px;
+    border-radius: 8px;
 }
 
 .trampitas-mensaje--exito {
-    color: #176b35;
+    background: #e8f7ee;
+    color: #176b38;
 }
 
 .trampitas-mensaje--error {
-    color: #a32222;
+    background: #fff0ee;
+    color: #a83224;
 }
 
 .trampitas-tabla-contenedor {
@@ -58,28 +104,63 @@
 .trampitas-tabla {
     width: 100%;
     border-collapse: collapse;
+    text-align: left;
 }
 
 .trampitas-tabla th,
 .trampitas-tabla td {
-    padding: 0.7rem;
-    border-bottom: 1px solid #ddd;
-    text-align: left;
+    padding: 12px 10px;
+    border-bottom: 1px solid #e7e9f0;
+}
+
+.trampitas-tabla th {
+    color: #555d73;
+    font-size: 0.9rem;
+}
+
+.trampitas-tabla .mov-ingreso {
+    color: #187443;
+    font-weight: 700;
+}
+
+.trampitas-tabla .mov-egreso {
+    color: #a83224;
+    font-weight: 700;
 }
 
 .trampitas-volver {
-    margin-top: 1.5rem;
+    margin: 28px 0 0;
 }
 
-.mov-ingreso { color: #27ae60; font-weight: bold; }
-.mov-egreso  { color: #e74c3c; font-weight: bold; }
+.trampitas-volver a {
+    color: #5035b2;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.trampitas-volver a:hover {
+    text-decoration: underline;
+}
 
 @media (max-width: 600px) {
-    .trampitas-acciones {
-        flex-direction: column;
+    .trampitas-page {
+        padding: 20px 12px;
     }
 
-    .trampitas-boton {
-        width: 100%;
+    .trampitas-card {
+        padding: 22px 16px;
+    }
+
+    .trampitas-card h1 {
+        font-size: 1.6rem;
+    }
+
+    .trampitas-acciones {
+        grid-template-columns: 1fr;
+    }
+
+    .trampitas-saldo {
+        align-items: flex-start;
+        flex-direction: column;
     }
 }

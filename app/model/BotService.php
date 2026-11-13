@@ -2,7 +2,7 @@
 
 namespace app\model;
 
-class ServicioBot
+class BotService
 {
     public function elegirRespuesta($habilidad, $ratioPregunta, $letraCorrecta)
     {
