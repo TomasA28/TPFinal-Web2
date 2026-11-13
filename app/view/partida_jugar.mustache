@@ -1,0 +1,74 @@
+<div class="w3-content" style="max-width:600px">
+    <div class="panel-partida" style="--cat: {{pregunta.color}}">
+
+        <div class="marcador">
+            <div><b>{{usuario}}</b> <span class="puntos">{{puntos_humano}}</span></div>
+            <div>🤖 {{bot_nombre}} <span class="puntos">{{puntos_bot}}</span></div>
+        </div>
+
+        <div class="fila-categoria">
+            <span class="chip-categoria">{{pregunta.categoria}}</span>
+            <small>Pregunta {{orden}} / {{total}}</small>
+        </div>
+
+        <div class="reloj"><div id="barra-tiempo" class="reloj-barra"></div></div>
+        <p class="reloj-texto">⏱️ <span id="segundos">{{segundos}}</span> s</p>
+
+        <h3 class="enunciado">{{pregunta.enunciado}}</h3>
+
+        <form id="form-respuesta" method="post" action="/partida/responder">
+            <input type="hidden" name="partida_id" value="{{partida_id}}">
+            <input type="hidden" name="orden" value="{{orden}}">
+            <input type="hidden" id="respuesta-timeout" name="respuesta" value="" disabled>
+
+            {{#pregunta.opciones}}
+                <button type="submit" name="respuesta" value="{{letra}}" class="opcion">
+                    <span class="letra">{{letra}}</span>
+                    <span>{{texto}}</span>
+                </button>
+            {{/pregunta.opciones}}
+
+            <button type="submit" name="usar_trampita" value="1"
+                    class="opcion opcion-trampita" {{^trampitas}}disabled{{/trampitas}}>
+                <span class="letra">🪄</span>
+                <span>Usar trampita (te quedan {{trampitas}})</span>
+            </button>
+        </form>
+
+        <p class="reloj-texto"><a href="/trampitas/show">Comprar más trampitas</a></p>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var restante = {{segundos}};
+        var total = {{segundos_totales}};
+        var spanSeg = document.getElementById('segundos');
+        var barra = document.getElementById('barra-tiempo');
+        var form = document.getElementById('form-respuesta');
+
+        function pintar() {
+            spanSeg.textContent = Math.max(restante, 0);
+            barra.style.width = Math.max(0, Math.min(100, (restante / total) * 100)) + '%';
+            barra.classList.toggle('urgente', restante <= 5);
+        }
+        pintar();
+
+        var timer = setInterval(function () {
+            restante--;
+            pintar();
+            if (restante <= 0) {
+                clearInterval(timer);
+                // Envío automático sin letra: el servidor lo cuenta como tiempo agotado
+                document.getElementById('respuesta-timeout').disabled = false;
+                form.submit();
+            }
+        }, 1000);
+
+        // Evita doble click (el servidor igual rechaza duplicados)
+        form.addEventListener('submit', function () {
+            clearInterval(timer);
+            form.querySelectorAll('button').forEach(function (b) { b.style.pointerEvents = 'none'; });
+        });
+    })();
+</script>

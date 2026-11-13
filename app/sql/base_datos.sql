@@ -254,23 +254,79 @@ CREATE TABLE partida_jugador (
 
 
 
-CREATE TABLE compra_trampitas (
-                                  id INT AUTO_INCREMENT PRIMARY KEY,
-                                  usuario_id INT NOT NULL,
-                                  cantidad INT NOT NULL,
-                                  precio_unitario DECIMAL(10,2) NOT NULL,
-                                  estado VARCHAR(20) NOT NULL DEFAULT 'confirmada',
-                                  fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE compra_trampitas
+(
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id      INT            NOT NULL,
+    cantidad        INT            NOT NULL,
+    precio_unitario DECIMAL(10, 2) NOT NULL DEFAULT 1.00,
+    moneda          CHAR(3)        NOT NULL DEFAULT 'USD',
+    estado          VARCHAR(20)    NOT NULL DEFAULT 'confirmada',
+    medio_pago      VARCHAR(20)    NOT NULL DEFAULT 'simulado',
+    referencia_pago VARCHAR(100) NULL,
+    fecha           TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                                  FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    CONSTRAINT chk_compra_cantidad CHECK (cantidad > 0),
+    CONSTRAINT chk_compra_precio CHECK (precio_unitario >= 0),
+    CONSTRAINT chk_compra_estado
+        CHECK (estado IN ('pendiente', 'confirmada', 'rechazada', 'reembolsada')),
+    CONSTRAINT fk_compra_usuario
+        FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
 );
 
-CREATE TABLE movimiento_trampitas (
-                                      id INT AUTO_INCREMENT PRIMARY KEY,
-                                      usuario_id INT NOT NULL,
-                                      tipo VARCHAR(20) NOT NULL,
-                                      cantidad INT NOT NULL,
-                                      fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE movimiento_trampitas
+(
+    id         INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT         NOT NULL,
+    tipo       VARCHAR(20) NOT NULL,
+    cantidad   INT         NOT NULL,
+    fecha      TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                                      FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
 );
+
+
+ALTER TABLE usuarios
+ADD es_bot TINYINT(1) NOT NULL DEFAULT 0,
+ADD habilidad DECIMAL(3,2) NULL;
+
+
+
+INSERT INTO usuarios (nombre, apellido, fechaNacimiento, sexo, lat, lng,mail, password, usuario, fotoDePerfil, token, activo, es_bot, habilidad)
+VALUES('Botito',   'Bot', '2000-01-01', 0, '0', '0', 'botito@bot.local',   '!', 'Botito',      'bot.png', NULL, 1, 1, 0.50),
+('Einstein', 'Bot', '2000-01-01', 0, '0', '0', 'einstein@bot.local', '!', 'EinsteinBot', 'bot.png', NULL, 1, 1, 0.90);
+
+
+
+ALTER TABLE partida
+ADD tipo ENUM('solo','vs_jugador','vs_bot') NOT NULL DEFAULT 'solo',
+ADD estado ENUM('pendiente','en_curso','finalizada') NOT NULL DEFAULT 'en_curso',
+ADD orden_actual INT NOT NULL DEFAULT 1,
+ADD total_preguntas INT NOT NULL DEFAULT 10,
+ADD ganador_id INT NULL,
+ADD CONSTRAINT fk_partida_ganador FOREIGN KEY (ganador_id) REFERENCES usuarios(id);
+
+
+
+CREATE TABLE partida_pregunta (
+partida_id INT NOT NULL,
+orden INT NOT NULL,
+pregunta_id INT NOT NULL,
+PRIMARY KEY (partida_id, orden),
+CONSTRAINT fk_pp_partida  FOREIGN KEY (partida_id)  REFERENCES partida(id)   ON DELETE CASCADE,
+CONSTRAINT fk_pp_pregunta FOREIGN KEY (pregunta_id) REFERENCES preguntas(id) ON DELETE CASCADE
+);
+
+
+
+ALTER TABLE respuestas
+ADD partida_id INT NULL,
+ADD respuesta_elegida CHAR(1) NULL,
+ADD CONSTRAINT fk_respuestas_partida FOREIGN KEY (partida_id) REFERENCES partida(id) ON DELETE CASCADE;
+
+
+UPDATE preguntas SET categoria = 'Deporte' WHERE categoria = 'Deportes';
+
+
+ALTER TABLE respuestas
+ADD UNIQUE KEY uq_resp_partida (partida_id, pregunta_id, usuario_id);

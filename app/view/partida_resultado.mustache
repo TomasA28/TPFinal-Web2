@@ -1,0 +1,15 @@
+<div class="w3-content" style="max-width:600px">
+    <div class="panel-partida final {{#empate}}empato{{/empate}}{{^empate}}{{#gano_humano}}gano{{/gano_humano}}{{^gano_humano}}perdio{{/gano_humano}}{{/empate}}">
+
+        {{#empate}}<span class="trofeo">🤝</span><h2 class="titulo-final">¡Empate!</h2>{{/empate}}
+        {{^empate}}
+            {{#gano_humano}}<span class="trofeo">🏆</span><h2 class="titulo-final">¡Ganaste!</h2>{{/gano_humano}}
+            {{^gano_humano}}<span class="trofeo">😢</span><h2 class="titulo-final">Ganó {{bot_nombre}}</h2>{{/gano_humano}}
+        {{/empate}}
+
+        <h3 class="marcador-grande">Vos {{puntos_humano}} – {{puntos_bot}} 🤖 {{bot_nombre}}</h3>
+
+        <a href="/partida/iniciarVsBot" class="btn-accion">🔁 Revancha</a>
+        <a href="/lobby/show" class="btn-accion secundario">Volver al lobby</a>
+    </div>
+</div>

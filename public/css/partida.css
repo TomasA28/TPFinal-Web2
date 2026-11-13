@@ -1,0 +1,244 @@
+/* ===== Variables ===== */
+:root {
+    --ok: #2ecc71;
+    --mal: #e74c3c;
+    --tiempo: #f39c12;
+    --fondo-opcion: #ffffff;
+    --borde-opcion: #dfe4ea;
+    --texto: #2d3436;
+    --radio: 14px;
+}
+
+/* ===== Panel principal ===== */
+.panel-partida {
+    background: #fff;
+    border-radius: var(--radio);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .10);
+    padding: 20px;
+    margin: 16px 8px;
+    color: var(--texto);
+    border-top: 8px solid var(--cat, #7f8c8d);   /* color de la categoría */
+    animation: entrada .35s ease-out both;
+}
+
+/* ===== Marcador ===== */
+.marcador {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    margin-bottom: 12px;
+}
+.marcador .puntos {
+    display: inline-block;
+    min-width: 28px;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: #f1f2f6;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* ===== Categoría + progreso ===== */
+.fila-categoria {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.chip-categoria {
+    background: var(--cat, #7f8c8d);
+    color: #fff;
+    padding: 4px 14px;
+    border-radius: 999px;
+    font-size: .85rem;
+    font-weight: bold;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+}
+
+/* ===== Reloj ===== */
+.reloj {
+    background: #ecf0f1;
+    border-radius: 999px;
+    height: 10px;
+    margin-top: 14px;
+    overflow: hidden;
+}
+.reloj-barra {
+    height: 100%;
+    width: 100%;
+    background: var(--cat, #7f8c8d);
+    border-radius: 999px;
+    transition: width 1s linear, background-color .4s;
+}
+.reloj-barra.urgente {
+    background: var(--mal);
+    animation: latido .6s ease-in-out infinite;
+}
+.reloj-texto {
+    text-align: right;
+    font-size: .85rem;
+    margin: 4px 0 0;
+    color: #636e72;
+}
+
+/* ===== Pregunta ===== */
+.enunciado {
+    font-size: 1.25rem;
+    line-height: 1.4;
+    margin: 18px 0 20px;
+}
+
+/* ===== Opciones ===== */
+.opcion {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    min-height: 58px;                 /* zona táctil cómoda en celular */
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    background: var(--fondo-opcion);
+    border: 2px solid var(--borde-opcion);
+    border-radius: var(--radio);
+    font-size: 1.05rem;
+    text-align: left;
+    color: var(--texto);
+    cursor: pointer;
+    transition: transform .15s, border-color .15s, box-shadow .15s, background-color .15s;
+    -webkit-tap-highlight-color: transparent;
+}
+.opcion .letra {
+    flex: 0 0 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--cat, #7f8c8d);
+    color: #fff;
+    font-weight: bold;
+    transition: transform .15s;
+}
+.opcion:hover,
+.opcion:focus-visible {
+    border-color: var(--cat, #7f8c8d);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .12);
+    transform: translateY(-2px);
+    outline: none;
+}
+.opcion:active {
+    transform: scale(.97);
+}
+.opcion:active .letra {
+    transform: scale(1.15);
+}
+
+/* ===== Feedback ===== */
+.feedback {
+    text-align: center;
+}
+.feedback.es-ok     { border-top-color: var(--ok); }
+.feedback.es-mal    { border-top-color: var(--mal);    animation: entrada .35s ease-out both, sacudir .5s .15s; }
+.feedback.es-tiempo { border-top-color: var(--tiempo); }
+
+.feedback .titulo { font-size: 1.8rem; margin: 8px 0; animation: pop .45s ease-out both; }
+.feedback.es-ok .titulo     { color: var(--ok); }
+.feedback.es-mal .titulo    { color: var(--mal); }
+.feedback.es-tiempo .titulo { color: var(--tiempo); }
+
+.letra-correcta {
+    display: inline-block;
+    width: 34px;
+    height: 34px;
+    line-height: 34px;
+    border-radius: 50%;
+    background: var(--ok);
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Bot pensando */
+.bot-pensando {
+    margin: 20px 0;
+    font-size: 1.05rem;
+}
+.bot-pensando .puntos-anim span {
+    display: inline-block;
+    animation: salto 1s infinite;
+}
+.bot-pensando .puntos-anim span:nth-child(2) { animation-delay: .15s; }
+.bot-pensando .puntos-anim span:nth-child(3) { animation-delay: .3s; }
+
+.bot-resultado {
+    margin: 20px 0 10px;
+    animation: pop .4s ease-out both;
+}
+.bot-resultado .acerto { color: var(--ok);  font-weight: bold; }
+.bot-resultado .fallo  { color: var(--mal); font-weight: bold; }
+
+.marcador-grande {
+    font-size: 1.5rem;
+    margin: 12px 0 20px;
+    animation: pop .4s ease-out both;
+}
+
+/* ===== Resultado final ===== */
+.final { text-align: center; }
+.final.gano    { border-top-color: var(--ok); }
+.final.perdio  { border-top-color: var(--mal); }
+.final.empato  { border-top-color: var(--tiempo); }
+.final .titulo-final {
+    font-size: 2rem;
+    margin: 8px 0;
+    animation: pop .6s ease-out both;
+}
+.final .trofeo {
+    font-size: 4rem;
+    display: block;
+    animation: rebote 1.2s ease-out both;
+}
+
+/* ===== Botones de acción ===== */
+.btn-accion {
+    display: inline-block;
+    padding: 14px 24px;
+    margin: 6px 4px;
+    border: none;
+    border-radius: 999px;
+    background: #3498db;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+}
+.btn-accion:hover  { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0, 0, 0, .18); }
+.btn-accion:active { transform: scale(.96); }
+.btn-accion.secundario { background: #fff; color: var(--texto); border: 2px solid var(--borde-opcion); }
+
+/* ===== Animaciones ===== */
+@keyframes entrada { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes pop     { 0% { transform: scale(.6); opacity: 0; } 70% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+@keyframes sacudir { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+@keyframes salto   { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
+@keyframes latido  { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+@keyframes rebote  { 0% { transform: translateY(-40px) scale(.5); opacity: 0; } 60% { transform: translateY(8px) scale(1.1); opacity: 1; } 100% { transform: none; } }
+
+/* Accesibilidad: quien pide menos movimiento no recibe animaciones */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ===== Pantallas grandes ===== */
+@media (min-width: 600px) {
+    .panel-partida { padding: 28px; margin: 24px auto; }
+    .enunciado { font-size: 1.4rem; }
+}
+
+
+.opcion-trampita { border-style: dashed; }
+.opcion-trampita:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+.reloj-texto a { color: inherit; text-decoration: underline; }
