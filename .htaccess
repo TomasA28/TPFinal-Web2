@@ -49,6 +49,7 @@ Options -Indexes
 
     # Solo reescribir si la URL NO es un directorio real en disco.
     RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !^/index\.php$
 
     # ── REGLA 1: /controller/method ──────────────────────
     # ^([^/]+)/([^/]+)$  →  captura dos segmentos separados por /

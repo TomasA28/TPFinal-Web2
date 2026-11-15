@@ -16,12 +16,9 @@ class LobbyModel
         return $this->database->queryOne(
             "SELECT u.id, u.usuario AS nombre,
                     (
-                        SELECT pj.puntaje
+                        SELECT COALESCE(SUM(pj.puntaje), 0)
                         FROM partida_jugador pj
-                        JOIN partida p ON p.id = pj.partida_id
                         WHERE pj.usuario_id = u.id
-                        ORDER BY p.fecha DESC, pj.id DESC
-                        LIMIT 1
                     ) AS puntaje
              FROM usuarios u
              WHERE u.id = ?
