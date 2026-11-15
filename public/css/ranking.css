@@ -1,0 +1,89 @@
+.ranking-page {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+.ranking-card {
+    padding: 1.5rem;
+    color: #f0f0fa;
+    background: #23244e;
+    border: 1px solid rgba(197, 168, 232, 0.2);
+    border-radius: 12px;
+    box-shadow: 0 0 18px rgba(33, 192, 194, 0.12);
+}
+
+.ranking-card h1 {
+    margin-top: 0;
+    color: #c5a8e8;
+}
+
+.ranking-intro {
+    color: #b8b8d0;
+}
+
+.ranking-table-wrapper {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+}
+
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ranking-table th,
+.ranking-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid rgba(197, 168, 232, 0.2);
+    text-align: left;
+}
+
+.ranking-table th {
+    color: #21c0c2;
+    background: #121231;
+}
+
+.ranking-table tbody tr:hover {
+    background: rgba(197, 168, 232, 0.08);
+}
+
+.ranking-table .usuario-actual {
+    color: #fff;
+    background: rgba(48, 69, 114, 0.75);
+    font-weight: bold;
+}
+
+.ranking-vacio {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #121231;
+    border-radius: 8px;
+}
+
+.ranking-volver {
+    display: inline-block;
+    margin-top: 0.5rem;
+    color: #21c0c2;
+    text-decoration: none;
+}
+
+.ranking-volver:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+    .ranking-page {
+        margin: 1rem auto;
+        padding: 0.75rem;
+    }
+
+    .ranking-card {
+        padding: 1rem;
+    }
+
+    .ranking-table th,
+    .ranking-table td {
+        padding: 0.7rem 0.55rem;
+    }
+}

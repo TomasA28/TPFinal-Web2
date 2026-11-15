@@ -1,0 +1,82 @@
+<link rel="stylesheet" href="/public/css/trampitas.css">
+
+<main class="trampitas-page">
+    <section class="trampitas-card">
+        <h1>Mis trampitas</h1>
+
+        <p class="trampitas-saldo">
+            Saldo disponible:
+            <strong>{{saldo}}</strong>
+        </p>
+
+        {{#compra_ok}}
+            <p class="trampitas-mensaje trampitas-mensaje--exito">
+                Compra simulada realizada. Se agregó una trampita a tu saldo.
+            </p>
+        {{/compra_ok}}
+
+        {{#uso_ok}}
+            <p class="trampitas-mensaje trampitas-mensaje--exito">
+                Se consumió una trampita de prueba.
+            </p>
+        {{/uso_ok}}
+
+        {{#sin_saldo}}
+            <p class="trampitas-mensaje trampitas-mensaje--error">
+                No tenés trampitas disponibles. Podés simular una compra.
+            </p>
+        {{/sin_saldo}}
+
+        <div class="trampitas-acciones">
+            <form action="/trampitas/comprar" method="POST">
+                <button type="submit" class="trampitas-boton">
+                    Comprar 1 trampita — USD 1,00 (simulado)
+                </button>
+            </form>
+
+            <form action="/trampitas/usar" method="POST">
+                <button type="submit" class="trampitas-boton trampitas-boton--secundario">
+                    Simular uso de una trampita
+                </button>
+            </form>
+        </div>
+
+        <section class="trampitas-historial">
+            <h2>Historial de movimientos</h2>
+
+            <div class="trampitas-tabla-contenedor">
+                <table class="trampitas-tabla">
+                    <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Movimiento</th>
+                        <th>Cantidad</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {{#movimientos}}
+                        <tr>
+                            <td>{{fecha}}</td>
+                            <td>{{tipo}}</td>
+                            <td>{{cantidad}}</td>
+                        </tr>
+                    {{/movimientos}}
+
+                    {{^movimientos}}
+                        <tr>
+                            <td colspan="3">
+                                Todavía no tenés movimientos de trampitas.
+                            </td>
+                        </tr>
+                    {{/movimientos}}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <p class="trampitas-volver">
+            <a href="/lobby/show">Volver al lobby</a>
+        </p>
+    </section>
+</main>
