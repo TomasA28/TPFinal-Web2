@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,58 +8,47 @@
     <link rel="icon" type="image/x-icon" href="/public/css/images/icon.ico">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="/public/css/styles.css">
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiq3xISXSZYgkd9GDAOdajy4NK2d3L7dY"></script>
     <script>
-        function loadMap() {
-            var contenedor = document.getElementById("mapa");
-            if (!contenedor) {
-                return;
+        window.mapsApiReady = false;
+
+        function onMapsApiReady() {
+            window.mapsApiReady = true;
+            document.dispatchEvent(new Event("maps-api-ready"));
+        }
+
+        // Ejecuta la inicialización del mapa de la vista actual cuando la API esté lista.
+        function runMapInit(callback) {
+            if (window.mapsApiReady) {
+                callback();
+            } else {
+                document.addEventListener("maps-api-ready", callback, { once: true });
             }
-
-            var mapOptions = {
-                center: new google.maps.LatLng(-34.6686986, -58.5614947),
-                zoom: 12,
-                mapTypeControl: false,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-            };
-
-            var map = new google.maps.Map(contenedor, mapOptions);
-
-            var marker = new google.maps.Marker({
-                position: new google.maps.LatLng(-34.6686986, -58.5614947),
-                map: map,
-                animation: google.maps.Animation.BOUNCE,
-                draggable: true
-            });
-
-            var info = new google.maps.InfoWindow({
-                content: "Florencio Varela 1903, San Justo, Buenos Aires, Argentina"
-            });
-
-            google.maps.event.addListener(marker, "click", function (event) {
-                var latitude = event.latLng.lat();
-                var longitude = event.latLng.lng();
-                alert(latitude + ', ' + longitude);
-            });
         }
     </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBchKh_N1E7t_yCvK6Cu3pUogZS-EATvTs&loading=async&callback=onMapsApiReady"></script>
 </head>
-<body onload="loadMap()">
 
-<div class="barraNav">
-    {{#logueado}}
+<body>
+
+    <div class="barraNav">
+        {{#logueado}}
         <a href="/lobby/show" class="botonNav">
             <img src="/public/css/images/logo.png" alt="TriviaNight Logo" class="homeButton">
         </a>
 
         <a href="/perfil/show" class="botonNav" id="botonPerfil">
+            {{#fotoDePerfil}}
+            <img src="/public/subidas/{{fotoDePerfil}}" alt="Foto de perfil" class="profileButton">
+            {{/fotoDePerfil}}
+            {{^fotoDePerfil}}
             <img src="/public/css/images/userIcon.jpg" alt="Botón de perfil" class="profileButton">
+            {{/fotoDePerfil}}
         </a>
-    {{/logueado}}
+        {{/logueado}}
 
-    {{^logueado}}
+        {{^logueado}}
         <a href="/" class="botonNav">
             <img src="/public/css/images/logo.png" alt="TriviaNight Logo" class="homeButton">
         </a>
-    {{/logueado}}
-</div>
+        {{/logueado}}
+    </div>

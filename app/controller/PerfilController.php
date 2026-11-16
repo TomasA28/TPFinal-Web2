@@ -2,6 +2,7 @@
 
 namespace app\controller;
 use Redirect;
+use Request;
 
 class PerfilController
 {
@@ -16,13 +17,16 @@ class PerfilController
 
     public function show()
     {
-
         if (!isset($_SESSION['usuario_id'])) {
             Redirect::toIndex();
             return;
         }
 
-        $idUsuario = (int) $_SESSION['usuario_id'];
+        // El Router no pasa argumentos: el id llega por query string
+        // (/perfil/show?id=N). Si viene inválido o ausente, se muestra el propio.
+        $idParam = Request::get('id');
+        $idValido = $idParam !== null ? filter_var($idParam, FILTER_VALIDATE_INT) : false;
+        $idUsuario = $idValido !== false ? (int) $idValido : (int) $_SESSION['usuario_id'];
 
         $usuario = $this->model->getUsuario($idUsuario);
 
@@ -39,7 +43,11 @@ class PerfilController
 
         $usuario["sexo"] = $sexos[$usuario["sexo"]] ?? 3;
 
+        $puntajeTotal = $this->model->getPuntajeTotal($idUsuario);
+
         $data["logueado"] = true;
+        $data["duenioDePerfil"] = ((int)$idUsuario === (int)$_SESSION['usuario_id']);
+        $data["puntajeTotal"] = $puntajeTotal["puntajeTotal"] ?? 0;
         $data["usuario"] = $usuario;
 
         $this->render->renderiza("perfilView", $data);

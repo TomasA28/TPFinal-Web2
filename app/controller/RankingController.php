@@ -28,6 +28,7 @@ class RankingController
         foreach ($ranking as $i => $fila) {
             $ranking[$i]['posicion'] = $i + 1;
             $ranking[$i]['es_usuario_actual'] = ($fila['id'] == $idActual);
+            $ranking[$i]['perfilDelUsuario'] = '/perfil/show?id=' . (int)$fila['id'];
         }
 
         $data["ranking"] = $ranking;

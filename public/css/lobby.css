@@ -1,199 +1,307 @@
-.lobby-page {
-    display: flex;
-    width: min(100% - 2rem, 900px);
-    min-height: calc(100vh - 8.5rem);
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    padding: 3rem 0;
+@import url("https://fonts.googleapis.com/css2?family=Titan+One&display=swap");
+
+/* La página del lobby no scrollea: el viewport se reparte entre navbar,
+   contenido (flex: 1) y footer. Si la lista crece, scrollea internamente. */
+body:has(.lobby-page) {
+    height: 100vh;
+    overflow: hidden;
 }
 
-.lobby-card {
-    position: relative;
-    width: min(100%, 620px);
-    overflow: hidden;
-    padding: clamp(2rem, 7vw, 4rem);
-    border: 1px solid var(--borde);
-    border-radius: 18px;
-    background:
-        radial-gradient(ellipse at 100% 0%, rgba(47, 30, 86, 0.52), transparent 48%),
-        linear-gradient(145deg, rgba(35, 36, 78, 0.98), rgba(18, 18, 49, 0.98));
-    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.4);
-    text-align: center;
+.lobby-page {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    width: min(100% - 2.5rem, 1400px);
+    min-height: 0;
+    margin: 0 auto;
+    padding: 1rem 0;
+    gap: 1rem;
+}
+
+.lobby-layout {
+    display: grid;
+    flex: 1;
+    grid-template-columns: auto 1fr auto;
+    align-items: start;
+    align-content: start;
+    min-height: 0;
+    gap: clamp(1.5rem, 4vw, 4rem);
+    padding: clamp(0.5rem, 1.5vw, 1rem) clamp(0rem, 3vw, 2rem);
+}
+
+.lobby-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    justify-self: center;
 }
 
 .lobby-option {
     display: flex;
-    flex-direction: row;
-    justify-content: space-around;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 0.9rem;
+    width: min(100%, 12.5rem);
+    justify-self: start;
 }
 
 .lobby-option a {
-    margin: 0 3px;
-    max-width: 15em;
-    max-height: 2em;
+    margin: 0;
+    max-width: none;
+    max-height: none;
 }
 
-.lobby-eyebrow {
-    margin: 0 0 1rem;
+.lobby-option .lobby-play-button {
+    justify-content: space-between;
+    text-align: left;
+    height: 4.25rem;
+}
+
+.lobby-hero{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.lobby-hero h1 {
+    display: inline-block;
+    margin: 0;
+    padding: 0.15em 0.6em;
+    border-radius: 10px;
+    background: rgba(9, 10, 28, 0.55);
+    font-family: "Titan One", "Outfit", sans-serif;
+    font-weight: 400;
+    font-size: clamp(1.9rem, 7vw, 2.9rem);
+    line-height: 1.15;
+    letter-spacing: 0.02em;
+    overflow-wrap: anywhere;
+}
+
+.lobby-intro {
+    display: inline-block;
+    margin: 0.6rem 0 0;
+    padding: 0.2rem 0.75rem;
+    border-radius: 8px;
+    background: rgba(9, 10, 28, 0.45);
     color: var(--texto-secundario);
-    font-size: 0.78rem;
+    font-size: 0.95rem;
+}
+
+/* Caja dorada idéntica al box de puntaje del perfil */
+.lobby-status {
+    display: flex;
+    min-height: 100px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    margin: 0;
+    padding: clamp(0.75rem, 2vw, 1.1rem) clamp(1.5rem, 3.2vw, 2.25rem);
+    border: 1px solid rgba(245, 197, 66, 0.6);
+    border-radius: 20px;
+    background:
+        radial-gradient(circle at 82% 12%, rgba(255, 255, 255, 0.4), transparent 46%),
+        linear-gradient(135deg, #f9dd8b 0%, #eab633 55%, #d99a13 100%);
+    box-shadow: 0 16px 38px rgba(217, 154, 19, 0.26),
+        inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    color: #241a00;
+}
+
+.lobby-status-label {
+    margin: 0;
+    color: #5c4000;
+    font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.16em;
     text-transform: uppercase;
 }
 
-.lobby-eyebrow span {
-    padding: 0 0.35rem;
-    color: var(--magenta);
-}
-
-.lobby-card h1 {
-    margin: 0;
-    font-size: clamp(2rem, 7vw, 3.2rem);
-    line-height: 1.15;
-    overflow-wrap: anywhere;
-}
-
-.lobby-intro {
-    margin: 0.9rem 0 2rem;
-    color: var(--texto-secundario);
-    font-size: 1.05rem;
-}
-
-.lobby-status {
-    display: flex;
-    min-height: 130px;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1.75rem;
-    padding: 1.25rem;
-    border: 1px solid rgba(197, 168, 232, 0.16);
-    border-radius: 12px;
-    background: rgba(9, 10, 28, 0.52);
-}
-
-.lobby-status-label {
-    margin: 0 0 0.4rem;
-    color: var(--texto-secundario);
-    font-size: 0.9rem;
-}
-
-.lobby-score {
+.lobby-status-fila {
     display: flex;
     align-items: baseline;
-    gap: 0.55rem;
-    margin: 0;
-    color: var(--cian);
-    text-shadow: 0 0 18px rgba(33, 192, 194, 0.2);
+    gap: clamp(0.4rem, 1.2vw, 0.7rem);
 }
 
-.lobby-score strong {
-    font-size: clamp(2.5rem, 10vw, 4rem);
+.lobby-puntaje-estrella {
+    align-self: center;
+    color: #6a4a00;
+    font-size: clamp(1.5rem, 3.6vw, 2rem);
     line-height: 1;
+    filter: drop-shadow(0 2px 0 rgba(255, 255, 255, 0.35));
 }
 
-.lobby-score span {
-    color: var(--texto-secundario);
-    font-size: 0.95rem;
+.lobby-status h2 {
+    margin: 0;
+    color: #241a00;
+    font-size: clamp(2.4rem, 6.4vw, 3.25rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+}
+
+.lobby-status h3 {
+    margin: 0;
+    color: #5c4000;
+    font-size: 0.75rem;
+    font-weight: 700;
+    align-self: center;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
 }
 
 .lobby-first-game {
     margin: 0;
     color: var(--texto);
-    font-size: 1.05rem;
-    line-height: 1.7;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.lobby-status .lobby-first-game {
+    color: #241a00;
 }
 
 .lobby-play-button {
     display: flex;
-    min-height: 58px;
+    min-height: 50px;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
-    padding: 0.9rem 1.5rem;
-    border: 1px solid rgba(33, 192, 194, 0.58);
-    border-radius: 9px;
-    background: linear-gradient(120deg, #167F89, #226B91);
-    box-shadow: 0 8px 24px rgba(9, 10, 28, 0.35);
+    gap: 0.65rem;
+    padding: 0.7rem 1.1rem;
+    border: 1px solid rgba(33, 192, 194, 0.6);
+    border-radius: var(--radio-boton);
+    background: linear-gradient(135deg, #1A8F99 0%, #167F89 42%, #226B91 100%);
+    box-shadow: var(--sombra-boton);
     color: var(--texto);
-    font-size: 1rem;
+    font-size: 0.88rem;
     font-weight: 700;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.05em;
+    text-shadow: none;
     text-transform: uppercase;
     transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.lobby-play-button svg {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
 }
 
 .lobby-play-button:hover,
 .lobby-play-button:focus-visible {
     border-color: var(--cian);
-    box-shadow: var(--brillo-cian), 0 12px 28px rgba(0, 0, 0, 0.34);
+    box-shadow: var(--sombra-boton-hover);
     color: #FFFFFF;
+    text-shadow: none;
     transform: translateY(-2px);
 }
 
-.lobby-play-arrow {
-    color: var(--cian);
-    font-size: 1.4rem;
-    line-height: 1;
-    transition: transform 180ms ease;
+.lobby-play-button--ranking {
+    border-color: rgba(232, 84, 222, 0.6);
+    background: linear-gradient(135deg, #D42BC0 0%, #B31EA7 45%, #7E1B74 100%);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32), 0 0 18px rgba(212, 20, 216, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
-.lobby-play-button:hover .lobby-play-arrow {
-    transform: translateX(4px);
+.lobby-play-button--sugerir{
+    border-color: rgba(232, 151, 84, 0.6);
+    background: linear-gradient(135deg, #d4852b 0%, #b3721e 45%, #7e501b 100%);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32), 0 0 18px rgba(216, 147, 20, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.lobby-play-button--sugerir:hover,
+.lobby-play-button--sugerir:focus-visible {
+    border-color: orange;
+    box-shadow: 0 0 22px rgba(216, 115, 20, 0.3), 0 16px 34px rgba(0, 0, 0, 0.38),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.lobby-play-button--ranking:hover,
+.lobby-play-button--ranking:focus-visible {
+    border-color: var(--magenta);
+    box-shadow: 0 0 22px rgba(212, 20, 216, 0.3), 0 16px 34px rgba(0, 0, 0, 0.38),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .lobby-hint {
-    margin: 1rem 0 0;
+    margin: 0;
     color: var(--texto-secundario);
-    font-size: 0.85rem;
+    font-size: 0.78rem;
+    text-align: center;
 }
 
 .lobby-lista_partidas {
-    margin-top: 2rem;
+    display: flex;
+    align-self: start;
+    justify-self: end;
+    width: min(100%, 27.5rem);
+    max-height: 100%;
+    flex-direction: column;
+    margin: 0;
     padding: 1.25rem;
-    border: 1px solid rgba(197, 168, 232, 0.16);
-    border-radius: 12px;
-    background: rgba(9, 10, 28, 0.42);
+    overflow: hidden;
+    border: 1px solid rgba(197, 168, 232, 0.18);
+    border-radius: 20px;
+    background: linear-gradient(150deg, rgba(37, 39, 82, 0.78), rgba(15, 17, 42, 0.92));
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.38),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(14px);
     text-align: left;
 }
 
 .lobby-lista_partidas h2 {
-    margin: 0 0 1rem;
-    padding-bottom: 0.75rem;
+    margin: 0 0 0.75rem;
+    padding-bottom: 0.6rem;
     border-bottom: 1px solid var(--borde);
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
 }
 
 .lobby-partidas {
     display: grid;
-    gap: 0.65rem;
+    gap: 0.5rem;
     margin: 0;
-    padding: 0;
+    padding: 0.1rem 0.15rem 0.1rem 0;
+    overflow-y: auto;
+    min-height: 0;
+    max-height: clamp(12rem, 44vh, 24rem);
     list-style: none;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(197, 168, 232, 0.3) transparent;
+}
+
+.lobby-partidas::-webkit-scrollbar {
+    width: 8px;
+}
+
+.lobby-partidas::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background: rgba(197, 168, 232, 0.3);
 }
 
 .lobby-partidas li {
     list-style: none;
     display: flex;
-    min-height: 3.25rem;
+    min-height: 2.7rem;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
-    padding: 0.7rem 0.9rem;
+    gap: 0.75rem;
+    padding: 0.55rem 0.75rem;
     border: 1px solid rgba(197, 168, 232, 0.12);
-    border-radius: 8px;
+    border-radius: 9px;
     background: rgba(35, 36, 78, 0.58);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16);
     color: var(--texto-secundario);
-    transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
+    transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
 }
 
 .lobby-partidas li:hover {
     border-color: rgba(33, 192, 194, 0.42);
     background: rgba(48, 69, 114, 0.38);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.22), 0 0 14px rgba(33, 192, 194, 0.12);
     transform: translateX(2px);
 }
 
@@ -203,35 +311,68 @@
 }
 
 .lobby-partida-puntaje strong {
-    margin-left: 0.25rem;
+    margin-left: 0.2rem;
     color: var(--cian);
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
 .lobby-partida-fecha {
     color: var(--texto-secundario);
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     text-align: right;
+}
+
+@media (max-width: 900px) {
+    body:has(.lobby-page) {
+        height: auto;
+        overflow: auto;
+    }
+
+    .lobby-page {
+        flex: none;
+        min-height: calc(100vh - 7rem);
+    }
+
+    .lobby-layout {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        gap: 1.5rem;
+    }
+
+    .lobby-option {
+        justify-self: center;
+        width: min(100%, 22rem);
+    }
+
+    .lobby-lista_partidas {
+        justify-self: center;
+        width: 100%;
+    }
 }
 
 @media (max-width: 520px) {
     .lobby-page {
-        min-height: calc(100vh - 8rem);
-        padding: 1.5rem 0;
+        min-height: calc(100vh - 7rem);
+        padding: 0.5rem 0;
     }
 
-    .lobby-card {
-        padding: 2rem 1.25rem;
+    .lobby-option {
+        width: 100%;
+    }
+
+    .lobby-option .lobby-play-button {
+        justify-content: center;
+        text-align: center;
     }
 
     .lobby-lista_partidas {
-        padding: 1rem;
+        padding: 0.85rem;
     }
 
     .lobby-partidas li {
         align-items: flex-start;
         flex-direction: column;
-        gap: 0.25rem;
+        gap: 0.2rem;
     }
 
     .lobby-partida-fecha {
