@@ -2,6 +2,7 @@ CREATE DATABASE IF NOT EXISTS my_web CHARACTER SET utf8mb4;
 USE my_web;
 
 DROP TABLE IF EXISTS respuestas;
+DROP TABLE IF EXISTS preguntas_activas;
 DROP TABLE IF EXISTS historial_partidas;
 DROP TABLE IF EXISTS partida_jugador;
 DROP TABLE IF EXISTS partida;
@@ -37,6 +38,16 @@ CREATE TABLE preguntas (
     opcion_d VARCHAR(255) NOT NULL,
     respuesta_correcta CHAR(1) NOT NULL,
     categoria VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE preguntas_activas (
+    usuario_id INT PRIMARY KEY,
+    pregunta_id INT NOT NULL,
+    expira_en DATETIME NOT NULL,
+    CONSTRAINT fk_preguntas_activas_usuario
+        FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    CONSTRAINT fk_preguntas_activas_pregunta
+        FOREIGN KEY (pregunta_id) REFERENCES preguntas(id) ON DELETE CASCADE
 );
 
 CREATE TABLE respuestas (
@@ -239,4 +250,27 @@ CREATE TABLE partida_jugador (
     CONSTRAINT uq_partida_jugador UNIQUE (partida_id, usuario_id),
     CONSTRAINT fk_pj_partida FOREIGN KEY (partida_id) REFERENCES partida(id) ON DELETE CASCADE,
     CONSTRAINT fk_pj_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+);
+
+
+
+CREATE TABLE compra_trampitas (
+                                  id INT AUTO_INCREMENT PRIMARY KEY,
+                                  usuario_id INT NOT NULL,
+                                  cantidad INT NOT NULL,
+                                  precio_unitario DECIMAL(10,2) NOT NULL,
+                                  estado VARCHAR(20) NOT NULL DEFAULT 'confirmada',
+                                  fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+                                  FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+CREATE TABLE movimiento_trampitas (
+                                      id INT AUTO_INCREMENT PRIMARY KEY,
+                                      usuario_id INT NOT NULL,
+                                      tipo VARCHAR(20) NOT NULL,
+                                      cantidad INT NOT NULL,
+                                      fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+                                      FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );

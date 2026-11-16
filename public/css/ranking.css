@@ -113,6 +113,10 @@
     font-size: 0.92rem;
 }
 
+.ranking-intro {
+    color: var(--texto-secundario);
+}
+
 @media (max-width: 520px) {
     .ranking-table th,
     .ranking-table td {

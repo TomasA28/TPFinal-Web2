@@ -9,7 +9,7 @@ class JuegoController
     private $categorias = [
         'historia' => 'Historia',
         'cultura' => 'Cultura',
-        'deporte' => 'Deportes',
+        'deporte' => 'Deporte',
         'arte' => 'Arte',
         'ciencia' => 'Ciencia',
     ];
@@ -33,12 +33,32 @@ class JuegoController
 
     public function nuevaPartida()
     {
+        $this->juegoModel->limpiarPreguntaActiva($_SESSION['usuario_id']);
+        unset($_SESSION['pregunta_activa_id'], $_SESSION['pregunta_activa_expira_en']);
         $_SESSION['puntaje_actual'] = 0;
         $this->jugar();
     }
 
     public function procesarPregunta()
     {
+        if (isset($_SESSION['pregunta_activa_id'])) {
+            $pregunta = $this->juegoModel->getPreguntaActiva(
+                $_SESSION['usuario_id'],
+                $_SESSION['pregunta_activa_id']
+            );
+
+            if ($pregunta !== null) {
+                if (!isset($_SESSION['pregunta_activa_expira_en'])) {
+                    $_SESSION['pregunta_activa_expira_en'] = (int) $pregunta['expira_en'];
+                }
+
+                $this->renderizarPregunta($pregunta, $_SESSION['pregunta_activa_expira_en']);
+                return;
+            }
+
+            unset($_SESSION['pregunta_activa_id'], $_SESSION['pregunta_activa_expira_en']);
+        }
+
         $categoriaElegida = Request::post('categoria');
         if (!\is_string($categoriaElegida) || !isset($this->categorias[$categoriaElegida])) {
             $this->render->renderiza('ruletaView', [
@@ -60,23 +80,30 @@ class JuegoController
             return;
         }
 
-        $data["logueado"] = isset($_SESSION['usuario']);
-        $data = [
-            'id' => $pregunta['id'],
-            'categoria' => strtolower($pregunta['categoria']),
-            'pregunta' => $pregunta['descripcion'],
-            'opcionA' => $pregunta['opcion_a'],
-            'opcionB' => $pregunta['opcion_b'],
-            'opcionC' => $pregunta['opcion_c'],
-            'opcionD' => $pregunta['opcion_d'],
-        ];
-
-        $this->render->renderiza('juegoView', $data);
+        $preguntaActiva = $this->juegoModel->guardarPreguntaActiva(
+            $_SESSION['usuario_id'],
+            $pregunta['id']
+        );
+        $_SESSION['pregunta_activa_id'] = (int) $preguntaActiva['id'];
+        $_SESSION['pregunta_activa_expira_en'] = (int) $preguntaActiva['expira_en'];
+        $this->renderizarPregunta($preguntaActiva, $_SESSION['pregunta_activa_expira_en']);
     }
+
     public function procesarRespuesta()
     {
         $respuestaElegida = Request::post('respuesta');
         $preguntaId = Request::post('pregunta_id');
+
+        if (
+            !isset($_SESSION['pregunta_activa_id'])
+            || (int) $_SESSION['pregunta_activa_id'] !== (int) $preguntaId
+        ) {
+            $this->render->renderiza('juegoView', [
+                'error_respuesta' => 'La pregunta enviada ya no está activa. Volvé a elegir una pregunta.',
+            ]);
+            return;
+        }
+
         $esCorrecta = $this->juegoModel->procesarRespuesta(
             $respuestaElegida,
             $preguntaId,
@@ -89,6 +116,8 @@ class JuegoController
             ]);
             return;
         }
+
+        unset($_SESSION['pregunta_activa_id'], $_SESSION['pregunta_activa_expira_en']);
 
         if (!isset($_SESSION['puntaje_actual'])) {
             $_SESSION['puntaje_actual'] = 0;
@@ -117,5 +146,19 @@ class JuegoController
         }
 
         $this->render->renderiza('juegoView', $data);
+    }
+
+    private function renderizarPregunta($pregunta, $expiraEn)
+    {
+        $this->render->renderiza('juegoView', [
+            'id' => $pregunta['id'],
+            'categoria' => strtolower($pregunta['categoria']),
+            'pregunta' => $pregunta['descripcion'],
+            'opcionA' => $pregunta['opcion_a'],
+            'opcionB' => $pregunta['opcion_b'],
+            'opcionC' => $pregunta['opcion_c'],
+            'opcionD' => $pregunta['opcion_d'],
+            'expira_en_ms' => (int) $expiraEn * 1000,
+        ]);
     }
 }
