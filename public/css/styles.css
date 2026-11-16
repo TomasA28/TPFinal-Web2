@@ -1,3 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap");
+
+html {
+    font-size: 15px;
+}
+
 :root {
     color-scheme: dark;
     --fondo-principal: #7275b8;
@@ -13,6 +19,11 @@
     --texto-secundario: #B8B8D0;
     --borde: rgba(197, 168, 232, 0.2);
     --brillo-cian: 0 0 18px rgba(33, 192, 194, 0.2);
+    --radio-tarjeta: 20px;
+    --radio-boton: 12px;
+    --sombra-tarjeta: 0 22px 55px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    --sombra-boton: 0 12px 28px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    --sombra-boton-hover: 0 0 22px rgba(33, 192, 194, 0.3), 0 16px 34px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 * {
@@ -28,7 +39,9 @@ body {
         url("/public/css/images/back.jpg") center / cover no-repeat,
         var(--fondo-principal);
     color: var(--texto);
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Outfit", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
 
 a {
@@ -43,6 +56,44 @@ a:focus-visible {
     text-shadow: 0 0 10px rgba(33, 192, 194, 0.35);
 }
 
+.backButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 0.95rem;
+    border: 1px solid var(--borde);
+    border-radius: 999px;
+    background: rgba(18, 18, 49, 0.58);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    color: var(--texto);
+    font-size: 0.84rem;
+    font-weight: 600;
+    text-decoration: none;
+    text-shadow: none;
+    transition: color 180ms ease, border-color 180ms ease, background-color 180ms ease,
+        box-shadow 180ms ease, transform 180ms ease;
+}
+
+.backButton span {
+    font-size: 0.95rem;
+    line-height: 1;
+    transition: transform 180ms ease;
+}
+
+.backButton:hover span {
+    transform: translateX(-3px);
+}
+
+.backButton:hover,
+.backButton:focus-visible {
+    border-color: var(--cian);
+    background: rgba(33, 192, 194, 0.12);
+    box-shadow: 0 0 20px rgba(33, 192, 194, 0.24), 0 12px 28px rgba(0, 0, 0, 0.3);
+    color: #FFFFFF;
+    text-shadow: none;
+    transform: translateY(-1px);
+}
+
 button,
 input,
 select,
@@ -53,13 +104,14 @@ textarea {
 button,
 .w3-button,
 .btn-cancha {
-    border: 1px solid rgba(33, 192, 194, 0.48);
-    border-radius: 8px;
-    background: linear-gradient(135deg, #167F89, #226B91);
-    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.24);
+    border: 1px solid rgba(33, 192, 194, 0.55);
+    border-radius: var(--radio-boton);
+    background: linear-gradient(135deg, #1A8F99 0%, #167F89 42%, #226B91 100%);
+    box-shadow: var(--sombra-boton);
     color: var(--texto) !important;
     cursor: pointer;
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: 0.02em;
     transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, filter 180ms ease;
 }
 
@@ -71,8 +123,8 @@ button:hover,
 .w3-button:hover,
 .btn-cancha:hover {
     border-color: var(--cian);
-    background: linear-gradient(135deg, #19979E, #304572) !important;
-    box-shadow: var(--brillo-cian), 0 8px 22px rgba(0, 0, 0, 0.32);
+    background: linear-gradient(135deg, #20AAB1 0%, #19979E 45%, #304572 100%) !important;
+    box-shadow: var(--sombra-boton-hover);
     color: #FFFFFF !important;
     transform: translateY(-2px);
 }
@@ -92,9 +144,19 @@ select,
 .w3-select,
 textarea {
     border: 1px solid var(--borde);
-    border-radius: 7px;
+    border-radius: 10px;
     background-color: var(--superficie);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35);
     color: var(--texto);
+    transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: rgba(33, 192, 194, 0.72);
+    background-color: rgba(18, 18, 49, 0.92);
+    box-shadow: 0 0 0 3px rgba(33, 192, 194, 0.14), inset 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
 input::placeholder,
@@ -126,13 +188,13 @@ h4 {
 
 .barraNav {
     display: flex;
-    min-height: 4.5rem;
+    min-height: 3.75rem;
     align-items: center;
     justify-content: space-between;
-    padding: 0.65rem 1.5rem;
+    padding: 0.5rem 1.25rem;
     border-bottom: 1px solid var(--borde);
     background: rgba(9, 10, 28, 0.94);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.24);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.34), inset 0 -1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .barraNav img {
@@ -163,27 +225,37 @@ h4 {
 .w3-card-2,
 .w3-card-4 {
     border: 1px solid var(--borde);
-    border-radius: 12px;
-    background: linear-gradient(145deg, rgba(35, 36, 78, 0.96), rgba(18, 18, 49, 0.98));
-    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.32);
+    border-radius: var(--radio-tarjeta);
+    background: linear-gradient(150deg, rgba(37, 39, 82, 0.82), rgba(15, 17, 42, 0.92));
+    box-shadow: var(--sombra-tarjeta);
     color: var(--texto);
+    backdrop-filter: blur(8px);
 }
 
 .homeButton{
-    height: 2.5rem;
+    height: 2.15rem;
 }
 
-.profileButton{
-    border-style: solid;
-    border-width: 2px;
-    border-radius: 100%;
-    border-color: rgba(33, 192, 194, 0.58);
-
+.botonNav#botonPerfil {
+    width: 3rem;
     height: 3rem;
+    padding: 3px;
+    border-radius: 50%;
+    background: conic-gradient(from 210deg, var(--cian), var(--magenta), var(--lila), var(--cian));
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35), 0 0 20px rgba(33, 192, 194, 0.2);
+}
+
+.barraNav .profileButton{
+    width: 100%;
+    height: 100%;
+    border: 2px solid #0b0d20;
+    border-radius: 50%;
+    background: linear-gradient(150deg, #1B1E44, #0B0D20);
+    object-fit: cover;
 }
 
 .w3-panel {
-    border-radius: 8px;
+    border-radius: 12px;
 }
 
 .w3-pale-red,
@@ -206,11 +278,12 @@ footer {
 
 .footerDiv {
     display: flex;
-    min-height: 4rem;
+    min-height: 3.25rem;
     align-items: center;
     justify-content: center;
     background: var(--fondo-profundo);
     color: var(--texto-secundario);
+    font-size: 0.85rem;
 }
 
 .footerDiv p {

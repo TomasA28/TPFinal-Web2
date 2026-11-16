@@ -35,6 +35,39 @@ class JuegoModel
         return $this->buscarPreguntaAleatoria($categoria, $usuarioId, false);
     }
 
+    public function guardarPreguntaActiva($usuarioId, $preguntaId)
+    {
+        $this->database->execute(
+            "INSERT INTO preguntas_activas (usuario_id, pregunta_id, expira_en)
+             VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 30 SECOND))
+             ON DUPLICATE KEY UPDATE
+                pregunta_id = VALUES(pregunta_id),
+                expira_en = VALUES(expira_en)",
+            [(int) $usuarioId, (int) $preguntaId]
+        );
+
+        return $this->getPreguntaActiva($usuarioId, $preguntaId);
+    }
+
+    public function getPreguntaActiva($usuarioId, $preguntaId)
+    {
+        return $this->database->queryOne(
+            "SELECT p.*, UNIX_TIMESTAMP(pa.expira_en) AS expira_en
+             FROM preguntas_activas pa
+             INNER JOIN preguntas p ON p.id = pa.pregunta_id
+             WHERE pa.usuario_id = ? AND pa.pregunta_id = ?",
+            [(int) $usuarioId, (int) $preguntaId]
+        );
+    }
+
+    public function limpiarPreguntaActiva($usuarioId)
+    {
+        $this->database->execute(
+            "DELETE FROM preguntas_activas WHERE usuario_id = ?",
+            [(int) $usuarioId]
+        );
+    }
+
     private function buscarPreguntaAleatoria($categoria, $usuarioId, $soloNuevas, $filtroTasa = null)
     {
         $sql = "SELECT p.*, COUNT(r.id) AS respuestas_totales,
@@ -67,26 +100,32 @@ class JuegoModel
 
     public function procesarRespuesta($respuestaElegida, $preguntaId, $usuarioId)
     {
-        if (!\in_array($respuestaElegida, ['A', 'B', 'C', 'D'], true)) {
-            return null;
-        }
-
         $preguntaId = (int) $preguntaId;
         $usuarioId = (int) $usuarioId;
-        $respuestaCorrecta = $this->database->queryOne(
-            "SELECT respuesta_correcta FROM preguntas WHERE id = ?",
-            [$preguntaId]
+        $preguntaActiva = $this->database->queryOne(
+            "SELECT p.respuesta_correcta, (pa.expira_en <= NOW()) AS expirada
+             FROM preguntas_activas pa
+             INNER JOIN preguntas p ON p.id = pa.pregunta_id
+             WHERE pa.usuario_id = ? AND pa.pregunta_id = ?",
+            [$usuarioId, $preguntaId]
         );
 
-        if ($respuestaCorrecta === null) {
+        if ($preguntaActiva === null) {
             return null;
         }
 
-        $esCorrecta = $respuestaCorrecta['respuesta_correcta'] === $respuestaElegida;
+        $expirada = (bool) $preguntaActiva['expirada'];
+        if (!$expirada && !\in_array($respuestaElegida, ['A', 'B', 'C', 'D'], true)) {
+            return null;
+        }
+
+        $esCorrecta = !$expirada
+            && $preguntaActiva['respuesta_correcta'] === $respuestaElegida;
         $this->database->execute(
             "INSERT INTO respuestas (usuario_id, pregunta_id, es_correcta) VALUES (?, ?, ?)",
             [$usuarioId, $preguntaId, $esCorrecta ? 1 : 0]
         );
+        $this->limpiarPreguntaActiva($usuarioId);
 
         return $esCorrecta;
     }

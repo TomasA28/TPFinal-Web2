@@ -32,8 +32,11 @@
         <section class="juego-tarjeta juego-tarjeta--{{categoria}} w3-card w3-padding-24">
             <p class="juego-categoria">Categoría: {{categoria}}</p>
             <p class="pregunta-texto">{{pregunta}}</p>
+            <p class="temporizador-pregunta" role="timer" aria-live="polite">
+                Tiempo restante: <span id="tiempo-restante">30</span> segundos
+            </p>
 
-            <form action="/juego/procesarRespuesta" method="POST" class="opciones-juego">
+            <form id="form-respuesta" action="/juego/procesarRespuesta" method="POST" class="opciones-juego">
                 <input type="hidden" name="pregunta_id" value="{{id}}">
 
                 <button type="submit" name="respuesta" value="A" class="btn-opcion">{{opcionA}}</button>
@@ -44,3 +47,32 @@
         </section>
     {{/pregunta}}
 </main>
+
+{{#expira_en_ms}}
+<script>
+    (() => {
+        const form = document.getElementById('form-respuesta');
+        const timer = document.getElementById('tiempo-restante');
+        const expiresAt = {{expira_en_ms}};
+        let submittedOnTimeout = false;
+        let intervalId = null;
+
+        const updateTimer = () => {
+            const secondsRemaining = Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000));
+            timer.textContent = secondsRemaining;
+
+            if (secondsRemaining === 0 && !submittedOnTimeout) {
+                submittedOnTimeout = true;
+                window.clearInterval(intervalId);
+                window.alert('¡Se acabó el tiempo!');
+                form.requestSubmit(form.querySelector('button[name="respuesta"]'));
+            }
+        };
+
+        updateTimer();
+        if (!submittedOnTimeout) {
+            intervalId = window.setInterval(updateTimer, 250);
+        }
+    })();
+</script>
+{{/expira_en_ms}}

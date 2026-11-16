@@ -22,7 +22,12 @@ class LobbyModel
                         WHERE pj.usuario_id = u.id
                         ORDER BY p.fecha DESC, pj.id DESC
                         LIMIT 1
-                    ) AS puntaje
+                    ) AS puntaje,
+                    (
+                        SELECT COALESCE(SUM(pj2.puntaje), 0)
+                        FROM partida_jugador pj2
+                        WHERE pj2.usuario_id = u.id
+                    ) AS puntajeTotal
              FROM usuarios u
              WHERE u.id = ?
              LIMIT 1",

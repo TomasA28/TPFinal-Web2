@@ -1,0 +1,138 @@
+<link rel="stylesheet" href="/public/css/perfil.css">
+
+<main class="perfil-page">
+    <div class="perfil-layout">
+        <div class="perfil-backColumn">
+            <a href="/" class="perfil-back">
+                <span aria-hidden="true">←</span>
+                Volver al inicio
+            </a>
+        </div>
+
+        <div class="perfil-content">
+            <section class="perfil-hero" aria-labelledby="userName">
+
+                <article class="perfil-card perfil-identidad">
+                    <div class="perfil-avatar">
+                        <img src="/public/subidas/{{usuario.fotoDePerfil}}" alt="Foto de perfil de {{usuario.usuario}}" class="foto">
+                    </div>
+
+                    <div class="SeccionInfo">
+                        <div class="userNameCard">
+                            <h1 id="userName">{{usuario.usuario}}</h1>
+                            <p class="perfil-eyebrow">Jugador</p>
+                        </div>
+
+                        <dl class="info">
+                            <div class="info-item">
+                                <dt>Nombre</dt>
+                                <dd>{{usuario.nombre}} {{usuario.apellido}}</dd>
+                            </div>
+                            <div class="info-item">
+                                <dt>Correo</dt>
+                                <dd>{{usuario.mail}}</dd>
+                            </div>
+                            <div class="info-item">
+                                <dt>Cumpleaños</dt>
+                                <dd>{{usuario.fechaNacimiento}}</dd>
+                            </div>
+                            <div class="info-item">
+                                <dt>Sexo</dt>
+                                <dd>{{usuario.sexo}}</dd>
+                            </div>
+                        </dl>
+                    </div>
+
+                    {{#duenioDePerfil}}
+                    <div class="perfil-actions">
+                        <button type="button" class="perfil-edit">Editar perfil</button>
+                        <a href="/perfil/logout" class="perfil-logout">Cerrar sesión</a>
+                    </div>
+                    {{/duenioDePerfil}}
+                </article>
+
+                <div class="perfil-side">
+
+                    <div class="boxPuntaje" aria-label="Puntaje total">
+                        <span class="puntaje-estrella" aria-hidden="true">★</span>
+                        <div class="puntaje-texto">
+                            <h2>{{puntajeTotal}}</h2>
+                            <h3>puntos</h3>
+                        </div>
+                    </div>
+
+                    <section class="perfil-card qrCard" aria-labelledby="qr-title">
+                        {{#duenioDePerfil}}
+                        <p class="perfil-eyebrow">Compartí tu perfil</p>
+                        <h2 id="qr-title" class="qr-titulo">Tu código QR</h2>
+                        {{/duenioDePerfil}}
+                        {{^duenioDePerfil}}
+                        <p class="perfil-eyebrow">Compartí este perfil</p>
+                        <h2 id="qr-title" class="qr-titulo">Código QR</h2>
+                        {{/duenioDePerfil}}
+
+                        <div class="qrBox">
+                            <img src="/perfil/qr?id={{usuario.id}}" alt="Código QR del perfil de {{usuario.usuario}}" class="qrFoto">
+                        </div>
+                        
+                        <p class="qr-hint">Escanealo para abrir este perfil</p>
+                    </section>
+
+                </div>
+            </section>
+
+            <section class="perfil-card perfil-mapa-card" aria-labelledby="mapa-title">
+                <div class="perfil-section-head">
+                    <div>
+                        {{#duenioDePerfil}}
+                        <p class="perfil-eyebrow">Dónde jugás</p>
+                        <h2 id="mapa-title">Tu ubicación</h2>
+                        {{/duenioDePerfil}}
+                        {{^duenioDePerfil}}
+                        <p class="perfil-eyebrow">Dónde juega el usuario</p>
+                        <h2 id="mapa-title">Su ubicación</h2>
+                        {{/duenioDePerfil}}
+                    </div>
+                    {{#duenioDePerfil}}
+                    <p class="perfil-section-note">Así te ubican otros jugadores</p>
+                    {{/duenioDePerfil}}
+                </div>
+
+                <div class="mapa-frame">
+                    <div id="mapa" data-lat="{{usuario.lat}}" data-lng="{{usuario.lng}}"></div>
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
+
+<script>
+    function loadMap() {
+        const mapaElemento = document.getElementById("mapa");
+        if (!mapaElemento) {
+            return;
+        }
+
+        const lat = parseFloat(mapaElemento.dataset.lat);
+        const lng = parseFloat(mapaElemento.dataset.lng);
+
+        const posicion = {
+            lat: Number.isFinite(lat) ? lat : -34.6686986,
+            lng: Number.isFinite(lng) ? lng : -58.5614947
+        };
+
+        const map = new google.maps.Map(mapaElemento, {
+            center: posicion,
+            zoom: 12,
+            mapTypeControl: false,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+
+        new google.maps.Marker({
+            position: posicion,
+            map: map
+        });
+    }
+
+    runMapInit(loadMap);
+</script>
