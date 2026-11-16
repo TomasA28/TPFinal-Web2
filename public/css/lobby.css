@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Titan+One&display=swap");
 
-/* La página del lobby no scrollea: el viewport se reparte entre navbar,
+/* La pÃ¡gina del lobby no scrollea: el viewport se reparte entre navbar,
    contenido (flex: 1) y footer. Si la lista crece, scrollea internamente. */
 body:has(.lobby-page) {
     height: 100vh;
@@ -89,7 +89,7 @@ body:has(.lobby-page) {
     font-size: 0.95rem;
 }
 
-/* Caja dorada idéntica al box de puntaje del perfil */
+/* Caja dorada idÃ©ntica al box de puntaje del perfil */
 .lobby-status {
     display: flex;
     min-height: 100px;
@@ -378,4 +378,16 @@ body:has(.lobby-page) {
     .lobby-partida-fecha {
         text-align: left;
     }
+}
+/* Todas las letras del lobby en blanco puro */
+.lobby-page,
+.lobby-page * {
+    color: #FFFFFF !important;
+}
+
+/* Excepción: las letras de la caja dorada de puntaje total van en negro */
+.lobby-status,
+.lobby-status * {
+    color: #000000 !important;
+    text-shadow: none;
 }

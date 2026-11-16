@@ -1,6 +1,7 @@
 <?php
 
 namespace app\controller;
+
 use Redirect;
 
 class TrampitasController
@@ -16,54 +17,58 @@ class TrampitasController
 
     public function show()
     {
-        if (!isset($_SESSION['usuario_id'])) {
-            Redirect::toIndex();
+        $usuarioId = $this->exigirLogin();
+
+        if (!$usuarioId) {
             return;
         }
 
-        $usuarioId = (int) $_SESSION['usuario_id'];
-        $resultado = $_GET['resultado'] ?? '';
+        $mensaje = $_SESSION['trampitas_flash'] ?? '';
+        unset($_SESSION['trampitas_flash']);
 
-        $data = [
-            'logueado' => true,
+        $this->render->renderiza('trampitasView', [
             'saldo' => $this->model->getSaldo($usuarioId),
             'movimientos' => $this->model->getHistorial($usuarioId),
-            'compra_ok' => $resultado === 'compra',
-            'uso_ok' => $resultado === 'uso',
-            'sin_saldo' => $resultado === 'sin_saldo'
-        ];
-
-        $this->render->renderiza('trampitasView', $data);
+            'compra_ok' => $mensaje === 'compra',
+            'error' => $mensaje === 'error'
+        ]);
     }
 
     public function comprar()
     {
-        if (!isset($_SESSION['usuario_id'])) {
-            Redirect::toIndex();
+        $usuarioId = $this->exigirLogin();
+
+        if (!$usuarioId) {
             return;
         }
 
-        $usuarioId = (int) $_SESSION['usuario_id'];
-        $this->model->comprarUnaTrampita($usuarioId);
+        if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+            Redirect::to('/trampitas/show');
+            return;
+        }
 
-        Redirect::to('/trampitas/show?resultado=compra');
+        $cantidad = isset($_POST['cantidad'])
+            ? (int)$_POST['cantidad']
+            : 0;
+
+        $compraRealizada = $this->model->comprar($usuarioId, $cantidad);
+
+        if ($compraRealizada) {
+            $_SESSION['trampitas_flash'] = 'compra';
+        } else {
+            $_SESSION['trampitas_flash'] = 'error';
+        }
+
+        Redirect::to('/trampitas/show');
     }
 
-    public function usar()
+    private function exigirLogin()
     {
         if (!isset($_SESSION['usuario_id'])) {
             Redirect::toIndex();
-            return;
+            return null;
         }
 
-        $usuarioId = (int) $_SESSION['usuario_id'];
-        $seUso = $this->model->usarUnaTrampita($usuarioId);
-
-        if ($seUso) {
-            Redirect::to('/trampitas/show?resultado=uso');
-            return;
-        }
-
-        Redirect::to('/trampitas/show?resultado=sin_saldo');
+        return (int)$_SESSION['usuario_id'];
     }
 }

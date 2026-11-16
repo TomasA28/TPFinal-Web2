@@ -1,48 +1,50 @@
-<link rel="stylesheet" href="/public/css/trampitas.css">
-
 <main class="trampitas-page">
     <section class="trampitas-card">
         <h1>Mis trampitas</h1>
 
         <p class="trampitas-saldo">
-            Saldo disponible:
-            <strong>{{saldo}}</strong>
+            <span>Saldo disponible:</span>
+            <strong>🪄 {{saldo}}</strong>
         </p>
 
         {{#compra_ok}}
             <p class="trampitas-mensaje trampitas-mensaje--exito">
-                Compra simulada realizada. Se agregó una trampita a tu saldo.
+                Compra simulada realizada. Ya tenés las trampitas en tu saldo.
             </p>
         {{/compra_ok}}
 
-        {{#uso_ok}}
-            <p class="trampitas-mensaje trampitas-mensaje--exito">
-                Se consumió una trampita de prueba.
-            </p>
-        {{/uso_ok}}
-
-        {{#sin_saldo}}
+        {{#error}}
             <p class="trampitas-mensaje trampitas-mensaje--error">
-                No tenés trampitas disponibles. Podés simular una compra.
+                No se pudo completar la operación. Probá de nuevo.
             </p>
-        {{/sin_saldo}}
+        {{/error}}
 
-        <div class="trampitas-acciones">
-            <form action="/trampitas/comprar" method="POST">
-                <button type="submit" class="trampitas-boton">
-                    Comprar 1 trampita — USD 1,00 (simulado)
-                </button>
-            </form>
+        <h2>Comprar trampitas</h2>
 
-            <form action="/trampitas/usar" method="POST">
-                <button type="submit" class="trampitas-boton trampitas-boton--secundario">
-                    Simular uso de una trampita
-                </button>
-            </form>
-        </div>
+        <form action="/trampitas/comprar" method="POST"
+              class="trampitas-acciones">
+            <button type="submit" name="cantidad" value="1"
+                    class="trampitas-boton">
+                1 trampita — USD 1
+            </button>
+
+            <button type="submit" name="cantidad" value="5"
+                    class="trampitas-boton">
+                5 trampitas — USD 5
+            </button>
+
+            <button type="submit" name="cantidad" value="10"
+                    class="trampitas-boton">
+                10 trampitas — USD 10
+            </button>
+        </form>
+
+        <p class="trampitas-aviso">
+            <small>El pago es simulado.</small>
+        </p>
 
         <section class="trampitas-historial">
-            <h2>Historial de movimientos</h2>
+            <h2>Historial</h2>
 
             <div class="trampitas-tabla-contenedor">
                 <table class="trampitas-tabla">
@@ -57,16 +59,18 @@
                     <tbody>
                     {{#movimientos}}
                         <tr>
-                            <td>{{fecha}}</td>
+                            <td>{{fecha_formateada}}</td>
                             <td>{{tipo}}</td>
-                            <td>{{cantidad}}</td>
+                            <td class="{{#es_ingreso}}mov-ingreso{{/es_ingreso}}{{^es_ingreso}}mov-egreso{{/es_ingreso}}">
+                                {{cantidad_formateada}}
+                            </td>
                         </tr>
                     {{/movimientos}}
 
                     {{^movimientos}}
                         <tr>
                             <td colspan="3">
-                                Todavía no tenés movimientos de trampitas.
+                                Todavía no tenés movimientos.
                             </td>
                         </tr>
                     {{/movimientos}}
