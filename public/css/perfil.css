@@ -348,7 +348,7 @@ body:has(.perfil-page) {
 
 .puntaje-texto {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 0.4rem;
 }
 
