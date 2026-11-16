@@ -2,6 +2,7 @@
 
 namespace app;
 
+use app\model\HeaderModel;
 use app\controller\HomeController;
 use app\controller\RegistroController;
 use app\controller\LoginController;
@@ -28,6 +29,11 @@ class Configuration
 
     public function __construct()
     {
+    }
+
+    private function getHeaderModel()
+    {
+        return new HeaderModel($this->getDatabase());
     }
 
     public function getHomeController()
@@ -75,7 +81,7 @@ class Configuration
     }
     private function getRender()
     {
-        return new MustacheRender();
+        return new MustacheRender($this->getHeaderModel());
     }
     private function getJuegoModel()
     {
