@@ -20,6 +20,8 @@ use app\controller\PartidaController;
 use app\model\PartidaModel;
 use app\controller\TrampitasController;
 use app\model\TrampitasModel;
+use app\controller\ReporteController;
+use app\model\ReporteModel;
 
 
 use MustacheRender;
@@ -183,6 +185,22 @@ class Configuration
             $this->getDatabase()
         );
     }
+
+    public function getReporteController()
+    {
+        return new ReporteController(
+            $this->getReporteModel(),
+            $this->getRender()
+        );
+    }
+
+    private function getReporteModel()
+    {
+        return new ReporteModel(
+            $this->getDatabase()
+        );
+    }
+
 
     public function getRouter()
     {

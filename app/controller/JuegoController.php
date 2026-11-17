@@ -151,6 +151,7 @@ class JuegoController
                 'resultado_sufijo' => '',
                 'resultado_url' => $urlRedireccion,
                 'resultado_accion' => 'Siguiente pregunta',
+                'pregunta_id' => (int) $preguntaId,
             ];
         } else {
 
@@ -172,6 +173,7 @@ class JuegoController
                 'resultado_sufijo' => ' puntos.',
                 'resultado_url' => $urlRedireccion,
                 'resultado_accion' => 'Volver al lobby',
+                'pregunta_id' => (int) $preguntaId,
             ];
 
             unset($_SESSION['puntaje_actual']);

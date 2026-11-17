@@ -29,7 +29,6 @@
                 <button type="submit" name="respuesta" value="C" class="btn-opcion">{{opcionC}}</button>
                 <button type="submit" name="respuesta" value="D" class="btn-opcion">{{opcionD}}</button>
             </form>
-            <p id="form-respuesta-error" class="ruleta-error" role="alert" hidden></p>
         </section>
     {{/pregunta}}
 
@@ -40,8 +39,9 @@
             <p id="resultado-modal-mensaje">{{resultado_mensaje}} <strong id="resultado-modal-puntaje">{{puntaje_resultado}}</strong><span id="resultado-modal-sufijo">{{resultado_sufijo}}</span></p>
             <div class="resultado-modal__acciones">
                 <a id="resultado-modal-accion" href="{{resultado_url}}" class="w3-button btn-cancha w3-round">{{resultado_accion}}</a>
-                <button id="resultado-modal-reportar" type="button" class="resultado-modal__accion--secundaria">Reportar pregunta</button>
+                <a id="resultado-modal-reportar" href="/reporte/show?pregunta_id={{pregunta_id}}" class="resultado-modal__accion--secundaria">Reportar pregunta</a>
             </div>
+            <p id="resultado-modal-error" class="resultado-modal__error" role="alert" hidden></p>
         </div>
     </dialog>
 </main>
@@ -51,7 +51,12 @@
         const modal = document.getElementById('resultado-modal');
         const reportButton = document.getElementById('resultado-modal-reportar');
         const form = document.getElementById('form-respuesta');
-        const formError = document.getElementById('form-respuesta-error');
+        const errorMessage = document.getElementById('resultado-modal-error');
+
+        const preguntaId = form?.querySelector('input[name="pregunta_id"]')?.value;
+        if (preguntaId) {
+            reportButton.href = `/reporte/show?pregunta_id=${encodeURIComponent(preguntaId)}`;
+        }
 
         modal.addEventListener('cancel', (event) => event.preventDefault());
         modal.addEventListener('click', (event) => {
@@ -59,8 +64,6 @@
                 event.preventDefault();
             }
         });
-        reportButton.addEventListener('click', () => window.alert('Función en desarrollo'));
-
         if (modal.open) {
             modal.close();
             modal.showModal();
@@ -93,7 +96,7 @@
 
             submitting = true;
             form.dataset.responseSubmitted = 'true';
-            formError.hidden = true;
+            errorMessage.hidden = true;
             answerButtons.forEach((button) => {
                 button.disabled = true;
             });
@@ -134,8 +137,8 @@
                 action.textContent = isCorrect ? 'Siguiente pregunta' : 'Volver al lobby';
                 modal.showModal();
             } catch (error) {
-                formError.textContent = error.message;
-                formError.hidden = false;
+                errorMessage.textContent = error.message;
+                errorMessage.hidden = false;
                 form.dataset.responseSubmitted = '';
                 submitting = false;
                 answerButtons.forEach((button) => {

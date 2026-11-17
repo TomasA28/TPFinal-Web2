@@ -1,0 +1,58 @@
+<link rel="stylesheet" href="/public/css/juego.css">
+<main class="w3-content juego-contenedor">
+    <section class="reporte-pregunta tarjeta card-contenido">
+        <h1>Reportar pregunta</h1>
+
+        {{#reporte_exitoso}}
+            <div class="reporte-pregunta__resultado reporte-pregunta__resultado--exito" role="status">
+                <h2>Reporte exitoso</h2>
+                <p>Gracias por colaborar con Trivia Night! Su reporte está siendo revisado.</p>
+            </div>
+            <a href="/lobby/show" class="w3-button btn-cancha w3-round">Volver al lobby</a>
+        {{/reporte_exitoso}}
+
+        {{#reporte_fallido}}
+            <p class="reporte-pregunta__resultado reporte-pregunta__resultado--error" role="alert">
+                Error al enviar reporte.
+            </p>
+        {{/reporte_fallido}}
+
+        {{#error_reporte}}
+            <p class="reporte-pregunta__resultado reporte-pregunta__resultado--error" role="alert">
+                {{error_reporte}}
+            </p>
+        {{/error_reporte}}
+
+        {{#mostrar_formulario}}
+            <form action="/reporte/reportarPregunta" method="POST" class="reporte-pregunta__formulario">
+                <input type="hidden" name="pregunta_id" value="{{pregunta_id}}">
+                <input type="hidden" name="usuario_id" value="{{usuario_id}}">
+
+                <fieldset>
+                    <legend>Motivo del reporte</legend>
+                    <label>
+                        <input type="radio" name="motivo" value="Respuesta incorrecta" required
+                            {{#motivo_respuesta_incorrecta}}checked{{/motivo_respuesta_incorrecta}}>
+                        Respuesta incorrecta
+                    </label>
+                    <label>
+                        <input type="radio" name="motivo" value="Ortografía/gramática" required
+                            {{#motivo_ortografia}}checked{{/motivo_ortografia}}>
+                        Ortografía/gramática
+                    </label>
+                    <label>
+                        <input type="radio" name="motivo" value="Categoría errónea" required
+                            {{#motivo_categoria}}checked{{/motivo_categoria}}>
+                        Categoría errónea
+                    </label>
+                </fieldset>
+
+                <label for="reporte-comentario">Comentario (opcional)</label>
+                <textarea id="reporte-comentario" name="comentario" maxlength="300"
+                    placeholder="Agrega un comentario">{{comentario}}</textarea>
+
+                <button type="submit" class="w3-button btn-cancha w3-round">Enviar reporte</button>
+            </form>
+        {{/mostrar_formulario}}
+    </section>
+</main>

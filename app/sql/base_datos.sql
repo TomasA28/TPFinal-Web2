@@ -1,6 +1,7 @@
 CREATE DATABASE IF NOT EXISTS my_web CHARACTER SET utf8mb4;
 USE my_web;
 
+DROP TABLE IF EXISTS reportes;
 DROP TABLE IF EXISTS respuestas;
 DROP TABLE IF EXISTS preguntas_activas;
 DROP TABLE IF EXISTS historial_partidas;
@@ -62,6 +63,21 @@ CREATE TABLE respuestas (
         FOREIGN KEY (pregunta_id) REFERENCES preguntas(id) ON DELETE CASCADE,
     INDEX idx_respuestas_pregunta (pregunta_id),
     INDEX idx_respuestas_usuario (usuario_id)
+);
+
+CREATE TABLE reportes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    pregunta_id INT NOT NULL,
+    motivo VARCHAR(50) NOT NULL,
+    comentario VARCHAR(300) NULL,
+    fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_reportes_usuario
+        FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    CONSTRAINT fk_reportes_pregunta
+        FOREIGN KEY (pregunta_id) REFERENCES preguntas(id) ON DELETE CASCADE,
+    INDEX idx_reportes_pregunta (pregunta_id),
+    INDEX idx_reportes_usuario (usuario_id)
 );
 
 INSERT INTO preguntas (descripcion, opcion_a, opcion_b, opcion_c, opcion_d, respuesta_correcta, categoria) VALUES 
