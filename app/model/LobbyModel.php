@@ -19,6 +19,11 @@ class LobbyModel
                         SELECT COALESCE(SUM(pj.puntaje), 0)
                         FROM partida_jugador pj
                         WHERE pj.usuario_id = u.id
+                    ) AS puntaje,
+                    (
+                        SELECT COALESCE(SUM(pj2.puntaje), 0)
+                        FROM partida_jugador pj2
+                        WHERE pj2.usuario_id = u.id
                     ) AS puntajeTotal
              FROM usuarios u
              WHERE u.id = ?

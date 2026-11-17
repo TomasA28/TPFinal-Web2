@@ -91,6 +91,8 @@ class JuegoController
 
     public function procesarRespuesta()
     {
+        $esAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH'])
+            && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
         $respuestaElegida = Request::post('respuesta');
         $preguntaId = Request::post('pregunta_id');
 
@@ -98,8 +100,14 @@ class JuegoController
             !isset($_SESSION['pregunta_activa_id'])
             || (int) $_SESSION['pregunta_activa_id'] !== (int) $preguntaId
         ) {
+            $mensajeError = 'La pregunta enviada ya no está activa. Volvé a elegir una pregunta.';
+            if ($esAjax) {
+                $this->responderAjax(['error' => $mensajeError], 409);
+                return;
+            }
+
             $this->render->renderiza('juegoView', [
-                'error_respuesta' => 'La pregunta enviada ya no está activa. Volvé a elegir una pregunta.',
+                'error_respuesta' => $mensajeError,
             ]);
             return;
         }
@@ -111,8 +119,14 @@ class JuegoController
         );
 
         if ($esCorrecta === null) {
+            $mensajeError = 'No se pudo registrar la respuesta. Volvé a elegir una pregunta.';
+            if ($esAjax) {
+                $this->responderAjax(['error' => $mensajeError], 422);
+                return;
+            }
+
             $this->render->renderiza('juegoView', [
-                'error_respuesta' => 'No se pudo registrar la respuesta. Volvé a elegir una pregunta.',
+                'error_respuesta' => $mensajeError,
             ]);
             return;
         }
@@ -125,9 +139,18 @@ class JuegoController
 
         if ($esCorrecta) {
             $_SESSION['puntaje_actual']++;
+            $puntaje = $_SESSION['puntaje_actual'];
+            $urlRedireccion = '/juego/jugar';
             $data = [
-                'es_correcta' => true,
-                'puntaje_actual' => $_SESSION['puntaje_actual']
+                'resultado_modal' => true,
+                'resultado_clase' => 'resultado-modal--correcta',
+                'resultado_icono' => '✓',
+                'resultado_titulo' => 'Respuesta Correcta!',
+                'resultado_mensaje' => 'Tu puntaje actual es:',
+                'puntaje_resultado' => $puntaje,
+                'resultado_sufijo' => '',
+                'resultado_url' => $urlRedireccion,
+                'resultado_accion' => 'Siguiente pregunta',
             ];
         } else {
 
@@ -137,15 +160,41 @@ class JuegoController
 
             $this->juegoModel->guardarPartidaTerminada($usuarioId, $puntajeFinal);
 
+            $puntaje = $puntajeFinal;
+            $urlRedireccion = '/lobby/show';
             $data = [
-                'es_incorrecta' => true,
-                'puntaje_final' => $puntajeFinal
+                'resultado_modal' => true,
+                'resultado_clase' => 'resultado-modal--incorrecta',
+                'resultado_icono' => '×',
+                'resultado_titulo' => 'Respuesta Incorrecta!',
+                'resultado_mensaje' => 'Hiciste un total de:',
+                'puntaje_resultado' => $puntajeFinal,
+                'resultado_sufijo' => ' puntos.',
+                'resultado_url' => $urlRedireccion,
+                'resultado_accion' => 'Volver al lobby',
             ];
 
             unset($_SESSION['puntaje_actual']);
         }
 
+        if ($esAjax) {
+            $respuesta = [
+                'es_correcta' => (bool) $esCorrecta,
+                'url_redireccion' => $urlRedireccion,
+            ];
+            $respuesta[$esCorrecta ? 'puntaje_actual' : 'puntaje_final'] = $puntaje;
+            $this->responderAjax($respuesta);
+            return;
+        }
+
         $this->render->renderiza('juegoView', $data);
+    }
+
+    private function responderAjax($datos, $codigoEstado = 200)
+    {
+        http_response_code($codigoEstado);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($datos);
     }
 
     private function renderizarPregunta($pregunta, $expiraEn)

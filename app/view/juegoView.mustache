@@ -6,21 +6,6 @@
             <a href="/juego/jugar" class="w3-button btn-cancha w3-round">Volver a la ruleta</a>
         </div>
     {{/error_respuesta}}
-    {{#es_correcta}}
-        <div class="resultado-juego" role="status">
-            <strong>Respuesta Correcta! </strong>
-            <p>Tu puntaje actual es: {{puntaje_actual}}</p>
-            <a href="/juego/jugar" class="w3-button btn-cancha w3-round">Siguiente pregunta</a>
-        </div>
-    {{/es_correcta}}
-
-    {{#es_incorrecta}}
-        <div class="resultado-juego resultado-juego--incorrecto" role="status">
-            <strong>Respuesta Incorrecta! </strong>
-            <p>Hiciste un total de: {{puntaje_final}} puntos. </p>
-            <a href="/lobby/show" class="w3-button btn-cancha w3-round">Volver al Lobby</a>
-        </div>
-    {{/es_incorrecta}}
     {{#sin_pregunta}}
         <div class="resultado-juego resultado-juego--incorrecto" role="alert">
             <h2>No hay preguntas disponibles</h2>
@@ -44,9 +29,122 @@
                 <button type="submit" name="respuesta" value="C" class="btn-opcion">{{opcionC}}</button>
                 <button type="submit" name="respuesta" value="D" class="btn-opcion">{{opcionD}}</button>
             </form>
+            <p id="form-respuesta-error" class="ruleta-error" role="alert" hidden></p>
         </section>
     {{/pregunta}}
+
+    <dialog id="resultado-modal" class="resultado-modal {{resultado_clase}}" aria-modal="true" aria-labelledby="resultado-modal-titulo" {{#resultado_modal}}open{{/resultado_modal}}>
+        <div class="resultado-modal__contenido">
+            <span id="resultado-modal-icono" class="resultado-modal__icono" aria-hidden="true">{{resultado_icono}}</span>
+            <h2 id="resultado-modal-titulo">{{resultado_titulo}}</h2>
+            <p id="resultado-modal-mensaje">{{resultado_mensaje}} <strong id="resultado-modal-puntaje">{{puntaje_resultado}}</strong><span id="resultado-modal-sufijo">{{resultado_sufijo}}</span></p>
+            <div class="resultado-modal__acciones">
+                <a id="resultado-modal-accion" href="{{resultado_url}}" class="w3-button btn-cancha w3-round">{{resultado_accion}}</a>
+                <button id="resultado-modal-reportar" type="button" class="resultado-modal__accion--secundaria">Reportar pregunta</button>
+            </div>
+        </div>
+    </dialog>
 </main>
+
+<script>
+    (() => {
+        const modal = document.getElementById('resultado-modal');
+        const reportButton = document.getElementById('resultado-modal-reportar');
+        const form = document.getElementById('form-respuesta');
+        const formError = document.getElementById('form-respuesta-error');
+
+        modal.addEventListener('cancel', (event) => event.preventDefault());
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                event.preventDefault();
+            }
+        });
+        reportButton.addEventListener('click', () => window.alert('Función en desarrollo'));
+
+        if (modal.open) {
+            modal.close();
+            modal.showModal();
+        }
+
+        if (!form) {
+            return;
+        }
+
+        const answerButtons = form.querySelectorAll('button[name="respuesta"]');
+        const title = document.getElementById('resultado-modal-titulo');
+        const icon = document.getElementById('resultado-modal-icono');
+        const message = document.getElementById('resultado-modal-mensaje');
+        const score = document.getElementById('resultado-modal-puntaje');
+        const suffix = document.getElementById('resultado-modal-sufijo');
+        const action = document.getElementById('resultado-modal-accion');
+        let submitting = false;
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (submitting) {
+                return;
+            }
+
+            const submitter = event.submitter;
+            if (!submitter || submitter.name !== 'respuesta') {
+                form.submit();
+                return;
+            }
+
+            submitting = true;
+            form.dataset.responseSubmitted = 'true';
+            formError.hidden = true;
+            answerButtons.forEach((button) => {
+                button.disabled = true;
+            });
+
+            const formData = new FormData(form);
+            formData.append(submitter.name, submitter.value);
+
+            try {
+                const response = await fetch(form.action, {
+                    method: form.method,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (!response.ok || typeof result.es_correcta !== 'boolean') {
+                    throw new Error(result.error || 'No se pudo procesar la respuesta.');
+                }
+
+                const isCorrect = result.es_correcta;
+                const resultScore = isCorrect ? result.puntaje_actual : result.puntaje_final;
+                if (typeof resultScore !== 'number' || typeof result.url_redireccion !== 'string') {
+                    throw new Error('El servidor devolvió un resultado inválido.');
+                }
+
+                modal.classList.toggle('resultado-modal--correcta', isCorrect);
+                modal.classList.toggle('resultado-modal--incorrecta', !isCorrect);
+                icon.textContent = isCorrect ? '✓' : '×';
+                title.textContent = isCorrect ? 'Respuesta Correcta!' : 'Respuesta Incorrecta!';
+                message.firstChild.textContent = isCorrect
+                    ? 'Tu puntaje actual es: '
+                    : 'Hiciste un total de: ';
+                score.textContent = resultScore;
+                suffix.textContent = isCorrect ? '' : ' puntos.';
+                action.href = result.url_redireccion;
+                action.textContent = isCorrect ? 'Siguiente pregunta' : 'Volver al lobby';
+                modal.showModal();
+            } catch (error) {
+                formError.textContent = error.message;
+                formError.hidden = false;
+                form.dataset.responseSubmitted = '';
+                submitting = false;
+                answerButtons.forEach((button) => {
+                    button.disabled = false;
+                });
+            }
+        });
+    })();
+</script>
 
 {{#expira_en_ms}}
 <script>
@@ -58,6 +156,11 @@
         let intervalId = null;
 
         const updateTimer = () => {
+            if (form.dataset.responseSubmitted === 'true') {
+                window.clearInterval(intervalId);
+                return;
+            }
+
             const secondsRemaining = Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000));
             timer.textContent = secondsRemaining;
 
