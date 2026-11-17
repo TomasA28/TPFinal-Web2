@@ -1,37 +1,38 @@
-<link rel="stylesheet" href="/TPFinal-Web2/public/css/ranking.css">
+<link rel="stylesheet" href="/public/css/ranking.css">
 
 <main class="ranking-page">
-    <section class="ranking-card">
+    <div class="ranking-header">
+        <a href="/lobby/show" class="backButton"><span aria-hidden="true">←</span> Volver al lobby</a>
         <h1>Ranking</h1>
-        <p class="ranking-intro">Puntaje total acumulado de los jugadores</p>
+    </div>
 
-        {{#hay_ranking}}
-            <div class="ranking-table-wrapper">
-                <table class="ranking-table">
-                    <thead>
-                    <tr>
-                        <th scope="col">Posición</th>
-                        <th scope="col">Jugador</th>
-                        <th scope="col">Puntaje</th>
+    <p class="ranking-intro">Puntaje total acumulado de los jugadores</p>
+
+    {{#hay_ranking}}
+        <div class="ranking-tableBox">
+            <table class="ranking-table">
+                <thead>
+                <tr>
+                    <th scope="col">Posición</th>
+                    <th>Jugador</th>
+                    <th>Puntaje</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#ranking}}
+                    <tr {{#es_usuario_actual}}class="usuario-actual"{{/es_usuario_actual}}
+                    {{^es_usuario_actual}}class="otroUsuario"{{/es_usuario_actual}}>
+                        <td>{{posicion}}</td>
+                        <td><a href="{{perfilDelUsuario}}">{{usuario}}</a></td>
+                        <td>{{puntaje}}</td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    {{#ranking}}
-                        <tr {{#es_usuario_actual}}class="usuario-actual"{{/es_usuario_actual}}>
-                            <td>{{posicion}}</td>
-                            <td>{{usuario}}</td>
-                            <td>{{puntaje}}</td>
-                        </tr>
-                    {{/ranking}}
-                    </tbody>
-                </table>
-            </div>
-        {{/hay_ranking}}
+                {{/ranking}}
+                </tbody>
+            </table>
+        </div>
+    {{/hay_ranking}}
 
-        {{^hay_ranking}}
-            <p class="ranking-vacio">Todavía no hay jugadores en el ranking.</p>
-        {{/hay_ranking}}
-
-        <a class="ranking-volver" href="/TPFinal-Web2/lobby/show">Volver al lobby</a>
-    </section>
+    {{^hay_ranking}}
+        <p class="ranking-empty">Todavía no hay jugadores en el ranking.</p>
+    {{/hay_ranking}}
 </main>

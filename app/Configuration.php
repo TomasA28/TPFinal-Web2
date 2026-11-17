@@ -2,6 +2,7 @@
 
 namespace app;
 
+use app\model\HeaderModel;
 use app\controller\HomeController;
 use app\controller\RegistroController;
 use app\controller\LoginController;
@@ -15,6 +16,12 @@ use app\controller\RankingController;
 use app\model\RankingModel;
 use app\controller\PerfilController;
 use app\model\PerfilModel;
+use app\controller\PartidaController;
+use app\model\PartidaModel;
+use app\controller\TrampitasController;
+use app\model\TrampitasModel;
+
+
 use MustacheRender;
 use MyDatabase;
 use Router;
@@ -28,6 +35,11 @@ class Configuration
 
     public function __construct()
     {
+    }
+
+    private function getHeaderModel()
+    {
+        return new HeaderModel($this->getDatabase());
     }
 
     public function getHomeController()
@@ -75,7 +87,7 @@ class Configuration
     }
     private function getRender()
     {
-        return new MustacheRender();
+        return new MustacheRender($this->getHeaderModel());
     }
     private function getJuegoModel()
     {
@@ -136,6 +148,38 @@ class Configuration
     private function getPerfilModel()
     {
         return new PerfilModel(
+            $this->getDatabase()
+        );
+    }
+
+
+    public function getPartidaController()
+    {
+        return new PartidaController(
+            $this->getPartidaModel(),
+            $this->getRender()
+        );
+    }
+
+    private function getPartidaModel()
+    {
+        return new PartidaModel(
+            $this->getDatabase()
+        );
+    }
+
+
+    public function getTrampitasController()
+    {
+        return new TrampitasController(
+            $this->getTrampitasModel(),
+            $this->getRender()
+        );
+    }
+
+    private function getTrampitasModel()
+    {
+        return new TrampitasModel(
             $this->getDatabase()
         );
     }

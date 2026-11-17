@@ -2,6 +2,7 @@
 
 namespace app\controller;
 use Redirect;
+use Request;
 
 class PerfilController
 {
@@ -16,17 +17,27 @@ class PerfilController
 
     public function show()
     {
+        // Los perfiles son públicos: se pueden ver sin sesión
+        // (necesario para que el QR funcione desde otro dispositivo).
 
-        if (!isset($_SESSION['usuario_id'])) {
-            Redirect::toIndex();
-            return;
+        $idParam = Request::get('id');
+        $idValido = $idParam !== null ? filter_var($idParam, FILTER_VALIDATE_INT) : false;
+
+        // Si no viene id válido, solo tiene sentido mostrar el propio,
+        // y para eso hace falta estar logueado.
+        if ($idValido === false) {
+            if (!isset($_SESSION['usuario_id'])) {
+                Redirect::toIndex();
+                return;
+            }
+            $idUsuario = (int) $_SESSION['usuario_id'];
+        } else {
+            $idUsuario = (int) $idValido;
         }
-
-        $idUsuario = (int) $_SESSION['usuario_id'];
 
         $usuario = $this->model->getUsuario($idUsuario);
 
-        if($usuario === null){
+        if ($usuario === null) {
             Redirect::toIndex();
             return;
         }
@@ -39,10 +50,36 @@ class PerfilController
 
         $usuario["sexo"] = $sexos[$usuario["sexo"]] ?? 3;
 
-        $data["logueado"] = true;
+        $puntajeTotal = $this->model->getPuntajeTotal($idUsuario);
+
+        $logueado = isset($_SESSION['usuario_id']);
+        $data["logueado"] = $logueado;
+        $data["duenioDePerfil"] = $logueado && ((int) $idUsuario === (int) $_SESSION['usuario_id']);
+        $data["puntajeTotal"] = $puntajeTotal["puntajeTotal"] ?? 0;
         $data["usuario"] = $usuario;
 
         $this->render->renderiza("perfilView", $data);
+    }
+    
+    public function qr()
+    {
+        $idBuscado = Request::get('id');
+        $idValido = $idBuscado !== null ? filter_var($idBuscado, FILTER_VALIDATE_INT) : false;
+        $idUsuario = $idValido !== false ? (int) $idValido : (int) ($_SESSION['usuario_id'] ?? 0);
+
+        if($idUsuario <= 0 || $this->model->getUsuario($idUsuario) === null) {
+            http_response_code(404);
+            return;
+        }
+
+        $esquema = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $urlPerfil = $esquema . '://' . $_SERVER['HTTP_HOST'] . '/perfil/show?id=' . $idUsuario;
+
+        require_once("vendor/phpqrcode/qrlib.php");
+
+        header('Content-Type: image/png');
+        \QRcode::png($urlPerfil, false, QR_ECLEVEL_M, 8, 2);
+
     }
 
     public function logout()
