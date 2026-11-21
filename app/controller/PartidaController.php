@@ -76,20 +76,19 @@ class PartidaController
         $usuarioId = $this->exigirLogin();
         if (!$usuarioId) { return; }
 
-        $partidaId = (int)Request::get('partida_id');
-
-
         if (!$this->esPost()) {
-            Redirect::to('/partida/jugar?id=' . $partidaId);
+            Redirect::to('/lobby/show');
             return;
         }
+
+        $partidaId = (int)($_POST['partida_id'] ?? 0);
 
         $res = $this->model->responder(
             $partidaId,
             $usuarioId,
-            Request::get('orden'),
-            Request::get('respuesta'),
-            Request::get('usar_trampita') === '1'
+            (int)($_POST['orden'] ?? 0),
+            $_POST['respuesta'] ?? '',
+            ($_POST['usar_trampita'] ?? '') === '1'
         );
 
         if ($res === null) {
