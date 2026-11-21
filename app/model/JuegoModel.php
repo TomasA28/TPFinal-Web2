@@ -5,6 +5,7 @@ class JuegoModel
 {
     private $database;
 
+
     public function __construct($database)
     {
         $this->database = $database;
@@ -160,4 +161,41 @@ class JuegoModel
         );
     }
 
+
+    public function procesarRespuestaConTrampita($preguntaId, $usuarioId)
+    {
+        $preguntaId = (int) $preguntaId;
+        $usuarioId  = (int) $usuarioId;
+
+        $activa = $this->database->queryOne(
+            "SELECT p.respuesta_correcta, (pa.expira_en <= NOW()) AS expirada
+         FROM preguntas_activas pa
+         INNER JOIN preguntas p ON p.id = pa.pregunta_id
+         WHERE pa.usuario_id = ? AND pa.pregunta_id = ?",
+            [$usuarioId, $preguntaId]
+        );
+
+        if ($activa === null || (bool) $activa['expirada']) {
+            return null;
+        }
+
+        $this->database->execute(
+            "INSERT INTO respuestas (usuario_id, pregunta_id, es_correcta, respuesta_elegida)
+         VALUES (?, ?, 1, ?)",
+            [$usuarioId, $preguntaId, $activa['respuesta_correcta']]
+        );
+        $this->limpiarPreguntaActiva($usuarioId);
+
+        return true;
+    }
+
+
+    public function getJuegoController()
+    {
+        return new JuegoController(
+            $this->getJuegoModel(),
+            $this->getRender(),
+            $this->getTrampitasModel()
+        );
+    }
 }

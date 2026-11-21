@@ -12,6 +12,7 @@ class HeaderModel
     }
 
     public function getFotoDePerfil($idUsuario)
+
     {
         $sql = "SELECT fotoDePerfil FROM usuarios WHERE id = :id";
         $fila = $this->database->queryOne($sql, ["id" => $idUsuario]);

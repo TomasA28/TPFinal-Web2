@@ -330,3 +330,36 @@ UPDATE preguntas SET categoria = 'Deporte' WHERE categoria = 'Deportes';
 
 ALTER TABLE respuestas
 ADD UNIQUE KEY uq_resp_partida (partida_id, pregunta_id, usuario_id);
+
+
+ALTER TABLE usuarios ADD rol ENUM('jugador','editor','admin') NOT NULL DEFAULT 'jugador';
+UPDATE usuarios SET rol = 'admin' WHERE usuario = 'admin';
+
+ALTER TABLE movimiento_trampitas
+    ADD partida_id INT NULL,
+  ADD pregunta_id INT NULL,
+  ADD INDEX idx_mov_usuario (usuario_id),
+  ADD INDEX idx_mov_fecha (fecha);
+
+ALTER TABLE compra_trampitas ADD INDEX idx_compra_fecha (fecha);
+
+INSERT INTO movimiento_trampitas (usuario_id, tipo, cantidad) VALUES (1, 'compra', 3)
+
+
+ALTER TABLE usuarios
+    ADD rol ENUM('jugador','editor','admin') NOT NULL DEFAULT 'jugador';
+UPDATE usuarios SET rol = 'admin' WHERE usuario = 'admin';
+
+
+
+ALTER TABLE movimiento_trampitas
+    ADD partida_id INT NULL,
+  ADD pregunta_id INT NULL,
+  ADD INDEX idx_mov_usuario (usuario_id),
+  ADD INDEX idx_mov_fecha (fecha);
+
+
+ALTER TABLE compra_trampitas ADD INDEX idx_compra_fecha (fecha);
+
+
+ALTER TABLE respuestas ADD con_trampita TINYINT(1) NOT NULL DEFAULT 0;
