@@ -23,7 +23,8 @@ class PerfilModel
                     lng,
                     mail,
                     usuario,
-                    fotoDePerfil
+                    fotoDePerfil,
+                    rol
                 FROM usuarios
                 WHERE id = :id";
 

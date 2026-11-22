@@ -72,6 +72,7 @@ class LoginController
         
         $_SESSION['usuario_id'] = $usuario['id'];
         $_SESSION['usuario'] = $usuario['usuario'];
+        $_SESSION['rol'] = $usuario['rol'] ?? 'jugador';
         Redirect::to('/lobby/show');
         return;
     }
