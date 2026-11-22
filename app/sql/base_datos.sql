@@ -20,14 +20,15 @@ CREATE TABLE usuarios (
     password VARCHAR(255) NOT NULL,
     usuario VARCHAR(50) NOT NULL UNIQUE,
     fotoDePerfil VARCHAR(255),
+    rol ENUM('jugador','editor','administrador') NOT NULL DEFAULT 'jugador',
     token VARCHAR(255) NULL,
     activo TINYINT(1) NOT NULL
 );
 
 INSERT INTO usuarios (nombre, apellido, fechaNacimiento, sexo, lat, lng,
- mail, password, usuario, fotoDePerfil, token, activo) VALUES
+ mail, password, usuario, fotoDePerfil, rol, token, activo) VALUES
 ('Juan', 'Perez', '1998-12-12', '1', '-34.665336611141214', '-58.37326118991368', 'admin@devmail.com',
- MD5('1234'), 'admin', 'fotoDelAdmin.png', NULL, '1');
+ MD5('1234'), 'admin', 'fotoDelAdmin.png', 'administrador', NULL, '1');
 
 CREATE TABLE preguntas (
     id INT AUTO_INCREMENT PRIMARY KEY,
