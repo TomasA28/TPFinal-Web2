@@ -14,7 +14,7 @@ class LoginModel
     {
         $passwordHash = md5($password);
 
-        $sql = "SELECT id, usuario, activo FROM usuarios WHERE usuario = ? AND password = ?";
+        $sql = "SELECT id, usuario, rol, activo FROM usuarios WHERE usuario = ? AND password = ?";
 
         $resultado = $this->database->queryOne(
             $sql, 

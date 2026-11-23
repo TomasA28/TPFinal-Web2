@@ -21,14 +21,15 @@ CREATE TABLE usuarios (
     password VARCHAR(255) NOT NULL,
     usuario VARCHAR(50) NOT NULL UNIQUE,
     fotoDePerfil VARCHAR(255),
+    rol ENUM('jugador','editor','administrador') NOT NULL DEFAULT 'jugador',
     token VARCHAR(255) NULL,
     activo TINYINT(1) NOT NULL
 );
 
 INSERT INTO usuarios (nombre, apellido, fechaNacimiento, sexo, lat, lng,
- mail, password, usuario, fotoDePerfil, token, activo) VALUES
+ mail, password, usuario, fotoDePerfil, rol, token, activo) VALUES
 ('Juan', 'Perez', '1998-12-12', '1', '-34.665336611141214', '-58.37326118991368', 'admin@devmail.com',
- MD5('1234'), 'admin', 'fotoDelAdmin.png', NULL, '1');
+ MD5('1234'), 'admin', 'fotoDelAdmin.png', 'administrador', NULL, '1');
 
 CREATE TABLE preguntas (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -346,3 +347,64 @@ UPDATE preguntas SET categoria = 'Deporte' WHERE categoria = 'Deportes';
 
 ALTER TABLE respuestas
 ADD UNIQUE KEY uq_resp_partida (partida_id, pregunta_id, usuario_id);
+
+
+ALTER TABLE usuarios ADD rol ENUM('jugador','editor','admin') NOT NULL DEFAULT 'jugador';
+UPDATE usuarios SET rol = 'admin' WHERE usuario = 'admin';
+
+ALTER TABLE movimiento_trampitas
+    ADD partida_id INT NULL,
+  ADD pregunta_id INT NULL,
+  ADD INDEX idx_mov_usuario (usuario_id),
+  ADD INDEX idx_mov_fecha (fecha);
+
+ALTER TABLE compra_trampitas ADD INDEX idx_compra_fecha (fecha);
+
+INSERT INTO movimiento_trampitas (usuario_id, tipo, cantidad) VALUES (1, 'compra', 3)
+
+
+ALTER TABLE usuarios
+    ADD rol ENUM('jugador','editor','admin') NOT NULL DEFAULT 'jugador';
+UPDATE usuarios SET rol = 'admin' WHERE usuario = 'admin';
+
+
+
+ALTER TABLE movimiento_trampitas
+    ADD partida_id INT NULL,
+  ADD pregunta_id INT NULL,
+  ADD INDEX idx_mov_usuario (usuario_id),
+  ADD INDEX idx_mov_fecha (fecha);
+
+
+ALTER TABLE compra_trampitas ADD INDEX idx_compra_fecha (fecha);
+
+
+ALTER TABLE respuestas ADD con_trampita TINYINT(1) NOT NULL DEFAULT 0;
+
+
+
+ALTER TABLE usuarios
+    MODIFY rol ENUM('jugador','editor','administrador') NOT NULL DEFAULT 'jugador';
+UPDATE usuarios SET rol = 'administrador' WHERE usuario = 'admin';
+
+
+ALTER TABLE usuarios
+    ADD fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ADD pais VARCHAR(80) NULL;
+
+ALTER TABLE preguntas
+    ADD fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ADD creada_por INT NULL;
+
+
+ALTER TABLE respuestas
+    ADD con_trampita TINYINT(1) NOT NULL DEFAULT 0;
+
+
+ALTER TABLE movimiento_trampitas
+    ADD partida_id INT NULL,
+    ADD pregunta_id INT NULL,
+    ADD INDEX idx_mov_usuario (usuario_id),
+    ADD INDEX idx_mov_fecha (fecha);
+
+ALTER TABLE compra_trampitas ADD INDEX idx_compra_fecha (fecha);

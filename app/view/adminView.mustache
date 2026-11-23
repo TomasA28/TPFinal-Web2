@@ -1,0 +1,110 @@
+<style>
+    .admin-page { max-width: 1000px; margin: 0 auto; padding: 16px; }
+    .admin-filtros { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .admin-filtros a, .admin-filtros button {
+        padding: 8px 14px; border: 1px solid #888; border-radius: 6px;
+        text-decoration: none; color: inherit; background: transparent; cursor: pointer;
+    }
+    .admin-filtros .activo { background: #2980b9; color: #fff; border-color: #2980b9; }
+    .admin-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .admin-kpi { border: 1px solid #ccc; border-radius: 8px; padding: 12px; text-align: center; }
+    .admin-kpi strong { display: block; font-size: 1.8rem; }
+    .admin-graficos { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .admin-tabla-wrap { overflow-x: auto; }
+    .admin-tabla { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+    .admin-tabla th, .admin-tabla td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+    @media print {
+        .no-print, canvas, nav, header, footer { display: none !important; }
+        .admin-page { max-width: 100%; }
+    }
+</style>
+
+<main class="admin-page">
+    <h1>Panel de administración</h1>
+    <p>Período: <b>{{periodo}}</b> · <a href="/admin/trampitas?periodo={{periodo}}" class="no-print">Ver trampitas</a></p>
+
+    <div class="admin-filtros no-print">
+        {{#periodos}}
+            <a href="{{url}}" class="{{#activo}}activo{{/activo}}">{{nombre}}</a>
+        {{/periodos}}
+        <button type="button" onclick="window.print()">🖨️ Imprimir</button>
+    </div>
+
+    <section class="admin-kpis">
+        <div class="admin-kpi"><strong>{{resumen.jugadores}}</strong>Jugadores</div>
+        <div class="admin-kpi"><strong>{{resumen.partidas}}</strong>Partidas jugadas</div>
+        <div class="admin-kpi"><strong>{{resumen.preguntas}}</strong>Preguntas en el juego</div>
+        <div class="admin-kpi"><strong>{{resumen.preguntas_creadas}}</strong>Preguntas creadas</div>
+        <div class="admin-kpi"><strong>{{resumen.usuarios_nuevos}}</strong>Usuarios nuevos</div>
+    </section>
+
+    <section class="admin-graficos no-print">
+        <div><h3>Usuarios por país</h3><canvas id="gPais"></canvas></div>
+        <div><h3>Usuarios por sexo</h3><canvas id="gSexo"></canvas></div>
+        <div><h3>Usuarios por grupo de edad</h3><canvas id="gEdad"></canvas></div>
+    </section>
+
+    <h2>Usuarios por país</h2>
+    <div class="admin-tabla-wrap">
+        <table class="admin-tabla">
+            <thead><tr><th>País</th><th>Usuarios</th></tr></thead>
+            <tbody>
+            {{#porPais}}<tr><td>{{etiqueta}}</td><td>{{total}}</td></tr>{{/porPais}}
+            {{^porPais}}<tr><td colspan="2">Sin datos en el período.</td></tr>{{/porPais}}
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Usuarios por sexo</h2>
+    <div class="admin-tabla-wrap">
+        <table class="admin-tabla">
+            <thead><tr><th>Sexo</th><th>Usuarios</th></tr></thead>
+            <tbody>
+            {{#porSexo}}<tr><td>{{etiqueta}}</td><td>{{total}}</td></tr>{{/porSexo}}
+            {{^porSexo}}<tr><td colspan="2">Sin datos en el período.</td></tr>{{/porSexo}}
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Usuarios por grupo de edad</h2>
+    <div class="admin-tabla-wrap">
+        <table class="admin-tabla">
+            <thead><tr><th>Grupo</th><th>Usuarios</th></tr></thead>
+            <tbody>
+            {{#porEdad}}<tr><td>{{etiqueta}}</td><td>{{total}}</td></tr>{{/porEdad}}
+            {{^porEdad}}<tr><td colspan="2">Sin datos en el período.</td></tr>{{/porEdad}}
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Porcentaje de aciertos por usuario</h2>
+    <div class="admin-tabla-wrap">
+        <table class="admin-tabla">
+            <thead><tr><th>Usuario</th><th>Respondidas</th><th>Correctas</th><th>% acierto</th></tr></thead>
+            <tbody>
+            {{#acierto}}
+                <tr><td>{{usuario}}</td><td>{{respondidas}}</td><td>{{correctas}}</td><td>{{porcentaje}}%</td></tr>
+            {{/acierto}}
+            {{^acierto}}<tr><td colspan="4">Sin respuestas en el período.</td></tr>{{/acierto}}
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    (function () {
+        function grafico(id, tipo, etiquetas, valores) {
+            var el = document.getElementById(id);
+            if (!el || !etiquetas.length) { return; }
+            new Chart(el, {
+                type: tipo,
+                data: { labels: etiquetas, datasets: [{ label: 'Usuarios', data: valores }] },
+                options: { plugins: { legend: { display: tipo !== 'bar' } } }
+            });
+        }
+        grafico('gPais', 'bar', {{{paisLabels}}}, {{{paisValores}}});
+        grafico('gSexo', 'pie', {{{sexoLabels}}}, {{{sexoValores}}});
+        grafico('gEdad', 'pie', {{{edadLabels}}}, {{{edadValores}}});
+    })();
+</script>

@@ -17,10 +17,14 @@ class JuegoController
     private $juegoModel;
     private $render;
 
-    public function __construct($juegoModel, $render)
+    private $trampitasModel;
+
+
+    public function __construct($juegoModel, $render, $trampitasModel)
     {
         $this->juegoModel = $juegoModel;
         $this->render = $render;
+        $this->trampitasModel = $trampitasModel;
     }
     public function jugar()
     {
@@ -210,6 +214,46 @@ class JuegoController
             'opcionC' => $pregunta['opcion_c'],
             'opcionD' => $pregunta['opcion_d'],
             'expira_en_ms' => (int) $expiraEn * 1000,
+        ]);
+    }
+
+
+    public function usarTrampita()
+    {
+        $uid = (int) $_SESSION['usuario_id'];
+        $preguntaId = (int) Request::post('pregunta_id');
+
+        if (!isset($_SESSION['pregunta_activa_id'])
+            || (int) $_SESSION['pregunta_activa_id'] !== $preguntaId) {
+            $this->render->renderiza('juegoView', [
+                'error_respuesta' => 'La pregunta ya no está activa.',
+            ]);
+            return;
+        }
+
+        // Primero verificamos que la pregunta siga vigente, después gastamos
+        if (!$this->trampitasModel->consumir($uid, null, $preguntaId)) {
+            $this->render->renderiza('juegoView', [
+                'error_respuesta' => 'No tenés trampitas disponibles.',
+            ]);
+            return;
+        }
+
+        if ($this->juegoModel->procesarRespuestaConTrampita($preguntaId, $uid) === null) {
+            $this->trampitasModel->devolver($uid);   // ver nota abajo
+            $this->render->renderiza('juegoView', [
+                'error_respuesta' => 'La pregunta expiró. No se descontó la trampita.',
+            ]);
+            return;
+        }
+
+        unset($_SESSION['pregunta_activa_id'], $_SESSION['pregunta_activa_expira_en']);
+        $_SESSION['puntaje_actual'] = ($_SESSION['puntaje_actual'] ?? 0) + 1;
+
+        $this->render->renderiza('juegoView', [
+            'es_correcta'    => true,
+            'puntaje_actual' => $_SESSION['puntaje_actual'],
+            'uso_trampita'   => true,
         ]);
     }
 }
