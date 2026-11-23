@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS preguntas_activas;
 DROP TABLE IF EXISTS historial_partidas;
 DROP TABLE IF EXISTS partida_jugador;
 DROP TABLE IF EXISTS partida;
+DROP TABLE IF EXISTS preguntas_sugeridas;
 DROP TABLE IF EXISTS preguntas;
 DROP TABLE IF EXISTS usuarios;
 CREATE TABLE usuarios (
@@ -31,6 +32,17 @@ INSERT INTO usuarios (nombre, apellido, fechaNacimiento, sexo, lat, lng,
  MD5('1234'), 'admin', 'fotoDelAdmin.png', 'administrador', NULL, '1');
 
 CREATE TABLE preguntas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    descripcion TEXT NOT NULL,
+    opcion_a VARCHAR(255) NOT NULL,
+    opcion_b VARCHAR(255) NOT NULL,
+    opcion_c VARCHAR(255) NOT NULL,
+    opcion_d VARCHAR(255) NOT NULL,
+    respuesta_correcta CHAR(1) NOT NULL,
+    categoria VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE preguntas_sugeridas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     descripcion TEXT NOT NULL,
     opcion_a VARCHAR(255) NOT NULL,

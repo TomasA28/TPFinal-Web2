@@ -1,0 +1,74 @@
+<link rel="stylesheet" href="/public/css/sugerencias.css">
+<main class="contenedor-sugerencia">
+    <h1 class="titulo-sugerencia">Sugerir pregunta</h1>
+
+    <p class="subtitulo-sugerencia">Cargá una pregunta para que el equipo la revise antes de sumarla al juego.</p>
+
+    <div id="alerta-error" class="alerta-sugerencia alerta-error" role="alert" {{^error}}hidden{{/error}}>
+        <p>{{error}}</p>
+    </div>
+
+    <div id="alerta-exito" class="alerta-sugerencia alerta-exito" role="status" {{^exito}}hidden{{/exito}}>
+        <p>{{exito}}</p>
+    </div>
+
+    <form id="form-sugerencia" method="post" action="/sugerencias/enviarSugerencia">
+
+        <div class="grupo-formulario">
+            <label for="descripcion">Enunciado de la pregunta:</label>
+            <textarea id="descripcion" name="descripcion" required></textarea>
+        </div>
+
+        <div class="grupo-formulario">
+            <label for="opcion_a">Opción A:</label>
+            <input type="text" id="opcion_a" name="opcion_a" required>
+        </div>
+
+        <div class="grupo-formulario">
+            <label for="opcion_b">Opción B:</label>
+            <input type="text" id="opcion_b" name="opcion_b" required>
+        </div>
+
+        <div class="grupo-formulario">
+            <label for="opcion_c">Opción C:</label>
+            <input type="text" id="opcion_c" name="opcion_c" required>
+        </div>
+
+        <div class="grupo-formulario">
+            <label for="opcion_d">Opción D:</label>
+            <input type="text" id="opcion_d" name="opcion_d" required>
+        </div>
+
+        <div class="grupo-formulario">
+            <label for="respuesta_correcta">Opción Correcta:</label>
+            <select id="respuesta_correcta" name="respuesta_correcta" required>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+            </select>
+        </div>
+
+        <div class="grupo-formulario">
+            <label for="categoria">Categoría:</label>
+            <select id="categoria" name="categoria" required>
+                <option value="Historia">Historia</option>
+                <option value="Cultura">Cultura</option>
+                <option value="Deporte">Deporte</option>
+                <option value="Arte">Arte</option>
+                <option value="Ciencia">Ciencia</option>
+            </select>
+        </div>
+
+        <div class="acciones-sugerencia">
+            <button type="submit" class="btn-sugerencia btn-principal">
+                Enviar sugerencia
+            </button>
+
+            <a href="/lobby/show" class="btn-sugerencia btn-secundario">
+                Volver al Lobby
+            </a>
+        </div>
+
+    </form>
+</main>

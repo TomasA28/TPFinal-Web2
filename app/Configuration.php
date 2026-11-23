@@ -20,6 +20,8 @@ use app\controller\PartidaController;
 use app\model\PartidaModel;
 use app\controller\TrampitasController;
 use app\model\TrampitasModel;
+use app\controller\SugerenciasController;
+use app\model\SugerenciasModel;
 
 
 use MustacheRender;
@@ -180,6 +182,21 @@ class Configuration
     private function getTrampitasModel()
     {
         return new TrampitasModel(
+            $this->getDatabase()
+        );
+    }
+
+    public function getSugerenciasController()
+    {
+        return new SugerenciasController(
+            $this->getSugerenciasModel(),
+            $this->getRender()
+        );
+    }
+
+    private function getSugerenciasModel()
+    {
+        return new SugerenciasModel(
             $this->getDatabase()
         );
     }
