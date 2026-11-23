@@ -14,6 +14,11 @@ class MyDatabase
         );
     }
 
+    public function query(string $sql, array $params = [])
+    {
+        return $this->queryAll($sql, $params);
+    }
+
     public function queryOne(string $sql, array $params = [])
     {
         Log::info($sql);
@@ -54,4 +59,8 @@ class MyDatabase
     {
         return $this->conexion->lastInsertId();
     }
+
+    public function begin()    { $this->conexion->beginTransaction(); }
+    public function commit()   { $this->conexion->commit(); }
+    public function rollback() { if ($this->conexion->inTransaction()) $this->conexion->rollBack(); }
 }

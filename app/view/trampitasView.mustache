@@ -21,20 +21,18 @@
 
         <h2>Comprar trampitas</h2>
 
-        <form action="/trampitas/comprar" method="POST"
-              class="trampitas-acciones">
-            <button type="submit" name="cantidad" value="1"
-                    class="trampitas-boton">
+        <form action="/trampitas/comprar" method="POST" class="trampitas-acciones">
+            <input type="hidden" name="csrf" value="{{csrf}}">
+
+            <button type="submit" name="cantidad" value="1" class="trampitas-boton">
                 1 trampita — USD 1
             </button>
 
-            <button type="submit" name="cantidad" value="5"
-                    class="trampitas-boton">
+            <button type="submit" name="cantidad" value="5" class="trampitas-boton">
                 5 trampitas — USD 5
             </button>
 
-            <button type="submit" name="cantidad" value="10"
-                    class="trampitas-boton">
+            <button type="submit" name="cantidad" value="10" class="trampitas-boton">
                 10 trampitas — USD 10
             </button>
         </form>
