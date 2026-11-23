@@ -42,16 +42,24 @@ class TrampitasModel
     public function comprar($usuarioId, $cantidad = 1)
     {
         $cantidad = (int)$cantidad;
-        if (!in_array($cantidad, self::PAQUETES_VALIDOS, true)) {
-            return false;   // el cliente no decide qué se puede comprar
-        }
+        if (!in_array($cantidad, self::PAQUETES_VALIDOS, true)) { return false; }
 
-        $this->database->execute(
-            "INSERT INTO compra_trampitas (usuario_id, cantidad, precio_unitario, estado)
-             VALUES (?, ?, ?, 'confirmada')",
-            [(int)$usuarioId, $cantidad, self::PRECIO_UNITARIO]
-        );
-        return true;
+        $this->database->begin();
+        try {
+            $this->database->execute(
+                "INSERT INTO compra_trampitas (usuario_id, cantidad, precio_unitario, moneda, estado, medio_pago)
+             VALUES (?, ?, ?, 'USD', 'confirmada', 'simulado')",
+                [(int)$usuarioId, $cantidad, self::PRECIO_UNITARIO]);
+            $this->database->execute(
+                "INSERT INTO movimiento_trampitas (usuario_id, tipo, cantidad) VALUES (?, 'compra', ?)",
+                [(int)$usuarioId, $cantidad]);
+            $this->database->commit();
+            return true;
+        } catch (\Throwable $e) {
+            error_log('comprar: ' . $e->getMessage());
+            $this->database->rollback();
+            return false;
+        }
     }
 
 

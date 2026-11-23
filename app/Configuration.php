@@ -20,11 +20,13 @@ use app\controller\PartidaController;
 use app\model\PartidaModel;
 use app\controller\TrampitasController;
 use app\model\TrampitasModel;
-
+use app\controller\AdminController;
+use app\model\AdminModel;
 
 use MustacheRender;
 use MyDatabase;
 use Router;
+
 
 require_once("helper/Autoloader.php");
 
@@ -182,6 +184,21 @@ class Configuration
         return new TrampitasModel(
             $this->getDatabase()
         );
+    }
+
+
+
+    public function getAdminController()
+    {
+        return new AdminController(
+            $this->getAdminModel(),
+            $this->getRender()
+        );
+    }
+
+    private function getAdminModel()
+    {
+        return new AdminModel($this->getDatabase());
     }
 
     public function getRouter()
