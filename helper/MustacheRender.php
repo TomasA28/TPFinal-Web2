@@ -31,12 +31,17 @@ class MustacheRender
 
     private function agregarDatosHeader($data)
     {
-        if (!isset($_SESSION['usuario_id'])) {
-            $data['logueado'] = $data['logueado'] ?? false;
+        $rol = $_SESSION['rol'] ?? null;
+
+        $data['logueado'] = isset($_SESSION['usuario_id']);
+        $data['rol'] = $rol;
+        $data['esJugador'] = $rol === 'jugador';
+        $data['esEditor'] = in_array($rol, ['editor', 'administrador'], true);
+        $data['esAdmin'] = $rol === 'administrador';
+
+        if (!$data['logueado']) {
             return $data;
         }
-
-        $data['logueado'] = true;
 
         if (!isset($data['fotoDePerfil'])) {
             $data['fotoDePerfil'] = $this->headerModel

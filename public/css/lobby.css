@@ -218,6 +218,20 @@ body:has(.lobby-page) {
         inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
+.lobby-play-button--crear {
+    border-color: rgba(160, 128, 230, 0.6);
+    background: linear-gradient(135deg, #6D4AB8 0%, #57379B 45%, #3B2470 100%);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32), 0 0 18px rgba(120, 80, 200, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.lobby-play-button--crear:hover,
+.lobby-play-button--crear:focus-visible {
+    border-color: var(--lila);
+    box-shadow: 0 0 22px rgba(120, 80, 200, 0.3), 0 16px 34px rgba(0, 0, 0, 0.38),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
 .lobby-play-button--ranking:hover,
 .lobby-play-button--ranking:focus-visible {
     border-color: var(--magenta);

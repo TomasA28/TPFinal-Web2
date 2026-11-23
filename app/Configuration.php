@@ -22,6 +22,8 @@ use app\controller\TrampitasController;
 use app\model\TrampitasModel;
 use app\controller\SugerenciasController;
 use app\model\SugerenciasModel;
+use app\controller\PreguntasController;
+use app\model\PreguntasModel;
 
 
 use MustacheRender;
@@ -197,6 +199,21 @@ class Configuration
     private function getSugerenciasModel()
     {
         return new SugerenciasModel(
+            $this->getDatabase()
+        );
+    }
+
+    public function getPreguntasController()
+    {
+        return new PreguntasController(
+            $this->getPreguntasModel(),
+            $this->getRender()
+        );
+    }
+
+    private function getPreguntasModel()
+    {
+        return new PreguntasModel(
             $this->getDatabase()
         );
     }

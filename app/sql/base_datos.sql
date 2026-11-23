@@ -39,18 +39,36 @@ CREATE TABLE preguntas (
     opcion_c VARCHAR(255) NOT NULL,
     opcion_d VARCHAR(255) NOT NULL,
     respuesta_correcta CHAR(1) NOT NULL,
-    categoria VARCHAR(50) NOT NULL
+    categoria VARCHAR(50) NOT NULL,
+    creado_por INT NULL,
+    origen ENUM('directa', 'sugerencia') NOT NULL DEFAULT 'directa',
+    CONSTRAINT fk_preguntas_creador
+        FOREIGN KEY (creado_por) REFERENCES usuarios(id) ON DELETE SET NULL
 );
 
 CREATE TABLE preguntas_sugeridas (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
     descripcion TEXT NOT NULL,
     opcion_a VARCHAR(255) NOT NULL,
     opcion_b VARCHAR(255) NOT NULL,
     opcion_c VARCHAR(255) NOT NULL,
     opcion_d VARCHAR(255) NOT NULL,
     respuesta_correcta CHAR(1) NOT NULL,
-    categoria VARCHAR(50) NOT NULL
+    categoria VARCHAR(50) NOT NULL,
+    estado ENUM('pendiente', 'aprobada', 'rechazada') NOT NULL DEFAULT 'pendiente',
+    motivo_rechazo TEXT NULL,
+    revisado_por INT NULL,
+    revisado_en DATETIME NULL,
+    pregunta_id INT NULL,
+    creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_sugerencias_usuario
+        FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    CONSTRAINT fk_sugerencias_revisor
+        FOREIGN KEY (revisado_por) REFERENCES usuarios(id) ON DELETE SET NULL,
+    CONSTRAINT fk_sugerencias_pregunta
+        FOREIGN KEY (pregunta_id) REFERENCES preguntas(id) ON DELETE SET NULL,
+    INDEX idx_sugerencias_estado (estado)
 );
 
 CREATE TABLE preguntas_activas (
