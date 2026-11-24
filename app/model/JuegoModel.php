@@ -75,7 +75,7 @@ class JuegoModel
                        AVG(r.es_correcta) * 100 AS tasa_acierto
                 FROM preguntas p
                 LEFT JOIN respuestas r ON r.pregunta_id = p.id
-                WHERE p.categoria = ?";
+                WHERE p.categoria = ? AND p.activa = 1";
         $params = [$categoria];
 
         if ($soloNuevas) {
@@ -97,6 +97,40 @@ class JuegoModel
         $sql .= " ORDER BY RAND() LIMIT 1";
 
         return $this->database->queryOne($sql, $params);
+    }
+
+    public function getPreguntasPorIds($ids)
+    {
+        $ids = array_values(array_unique(array_map('intval', (array) $ids)));
+        $ids = array_filter($ids, function ($id) {
+            return $id > 0;
+        });
+
+        if (count($ids) === 0) {
+            return [];
+        }
+
+        $marcas = implode(',', array_fill(0, count($ids), '?'));
+        $filas = $this->database->queryAll(
+            "SELECT id, descripcion, categoria
+             FROM preguntas
+             WHERE id IN ($marcas)",
+            $ids
+        );
+
+        $porId = [];
+        foreach ($filas as $fila) {
+            $porId[(int) $fila['id']] = $fila;
+        }
+
+        $ordenadas = [];
+        foreach ($ids as $id) {
+            if (isset($porId[$id])) {
+                $ordenadas[] = $porId[$id];
+            }
+        }
+
+        return $ordenadas;
     }
 
     public function procesarRespuesta($respuestaElegida, $preguntaId, $usuarioId)
@@ -144,13 +178,15 @@ class JuegoModel
         );
     }
 
-    public function guardarPartidaTerminada($usuarioId, $puntajeFinal)
+    public function guardarPartidaTerminada($usuarioId, $puntajeFinal, $totalPreguntas = 0)
     {
         $usuarioId = (int) $usuarioId;
         $puntajeFinal = (int) $puntajeFinal;
+        $totalPreguntas = (int) $totalPreguntas;
 
         $this->database->execute(
-            "INSERT INTO partida (fecha) VALUES (NOW())"
+            "INSERT INTO partida (tipo, estado, total_preguntas) VALUES ('solo', 'finalizada', ?)",
+            [$totalPreguntas]
         );
 
         $partidaId = (int) $this->database->lastInsertId();

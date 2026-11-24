@@ -1,11 +1,16 @@
 CREATE DATABASE IF NOT EXISTS my_web CHARACTER SET utf8mb4;
 USE my_web;
 
+DROP TABLE IF EXISTS reportes_preguntas;
 DROP TABLE IF EXISTS respuestas;
 DROP TABLE IF EXISTS preguntas_activas;
+DROP TABLE IF EXISTS partida_pregunta;
 DROP TABLE IF EXISTS historial_partidas;
 DROP TABLE IF EXISTS partida_jugador;
 DROP TABLE IF EXISTS partida;
+DROP TABLE IF EXISTS movimiento_trampitas;
+DROP TABLE IF EXISTS compra_trampitas;
+DROP TABLE IF EXISTS preguntas_sugeridas;
 DROP TABLE IF EXISTS preguntas;
 DROP TABLE IF EXISTS usuarios;
 CREATE TABLE usuarios (
@@ -38,7 +43,38 @@ CREATE TABLE preguntas (
     opcion_c VARCHAR(255) NOT NULL,
     opcion_d VARCHAR(255) NOT NULL,
     respuesta_correcta CHAR(1) NOT NULL,
-    categoria VARCHAR(50) NOT NULL
+    categoria VARCHAR(50) NOT NULL,
+    creado_por INT NULL,
+    origen ENUM('directa', 'sugerencia') NOT NULL DEFAULT 'directa',
+    activa TINYINT(1) NOT NULL DEFAULT 1,
+    creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_preguntas_creador
+        FOREIGN KEY (creado_por) REFERENCES usuarios(id) ON DELETE SET NULL
+);
+
+CREATE TABLE preguntas_sugeridas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    descripcion TEXT NOT NULL,
+    opcion_a VARCHAR(255) NOT NULL,
+    opcion_b VARCHAR(255) NOT NULL,
+    opcion_c VARCHAR(255) NOT NULL,
+    opcion_d VARCHAR(255) NOT NULL,
+    respuesta_correcta CHAR(1) NOT NULL,
+    categoria VARCHAR(50) NOT NULL,
+    estado ENUM('pendiente', 'aprobada', 'rechazada') NOT NULL DEFAULT 'pendiente',
+    motivo_rechazo TEXT NULL,
+    revisado_por INT NULL,
+    revisado_en DATETIME NULL,
+    pregunta_id INT NULL,
+    creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_sugerencias_usuario
+        FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    CONSTRAINT fk_sugerencias_revisor
+        FOREIGN KEY (revisado_por) REFERENCES usuarios(id) ON DELETE SET NULL,
+    CONSTRAINT fk_sugerencias_pregunta
+        FOREIGN KEY (pregunta_id) REFERENCES preguntas(id) ON DELETE SET NULL,
+    INDEX idx_sugerencias_estado (estado)
 );
 
 CREATE TABLE preguntas_activas (
@@ -56,6 +92,7 @@ CREATE TABLE respuestas (
     usuario_id INT NOT NULL,
     pregunta_id INT NOT NULL,
     es_correcta BOOLEAN NOT NULL,
+    con_trampita BOOLEAN NOT NULL DEFAULT 0,
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_respuestas_usuario
         FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
@@ -332,6 +369,32 @@ UPDATE preguntas SET categoria = 'Deporte' WHERE categoria = 'Deportes';
 ALTER TABLE respuestas
 ADD UNIQUE KEY uq_resp_partida (partida_id, pregunta_id, usuario_id);
 
+-- Partidas vs_bot: se registra si la respuesta usó trampita (el bot lo usa para su ratio).
+-- IF NOT EXISTS para no romper instalaciones que ya tienen la columna.
+ALTER TABLE respuestas
+ADD COLUMN IF NOT EXISTS con_trampita BOOLEAN NOT NULL DEFAULT 0;
+
+
+CREATE TABLE reportes_preguntas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    pregunta_id INT NULL,
+    usuario_id INT NOT NULL,
+    partida_id INT NULL,
+    motivo ENUM('respuesta_incorrecta', 'mal_formulada', 'ambigua',
+                'ofensiva', 'duplicada', 'otro') NOT NULL,
+    detalle TEXT NULL,
+    estado ENUM('pendiente', 'editada', 'desactivada', 'eliminada', 'cerrada')
+        NOT NULL DEFAULT 'pendiente',
+    resuelto_por INT NULL,
+    resuelto_en DATETIME NULL,
+    creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_reportes_pregunta FOREIGN KEY (pregunta_id) REFERENCES preguntas(id) ON DELETE SET NULL,
+    CONSTRAINT fk_reportes_usuario  FOREIGN KEY (usuario_id)  REFERENCES usuarios(id)  ON DELETE CASCADE,
+    CONSTRAINT fk_reportes_partida  FOREIGN KEY (partida_id)  REFERENCES partida(id)   ON DELETE SET NULL,
+    CONSTRAINT fk_reportes_revisor  FOREIGN KEY (resuelto_por) REFERENCES usuarios(id) ON DELETE SET NULL,
+    CONSTRAINT uq_reporte_usuario_pregunta UNIQUE (usuario_id, pregunta_id),
+    INDEX idx_reportes_estado (estado)
+);
 
 ALTER TABLE usuarios ADD rol ENUM('jugador','editor','admin') NOT NULL DEFAULT 'jugador';
 UPDATE usuarios SET rol = 'admin' WHERE usuario = 'admin';

@@ -1,0 +1,90 @@
+/* Estilos para el formulario de reporte de una pregunta (usado por jugadores). */
+
+.reporte-pregunta {
+    margin: 1.25rem 0;
+    padding: clamp(1rem, 3vw, 1.5rem);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-tarjeta);
+    background: linear-gradient(150deg, rgba(37, 39, 82, 0.82), rgba(15, 17, 42, 0.92));
+    box-shadow: var(--sombra-tarjeta);
+}
+
+.reporte-pregunta-categoria {
+    margin: 0 0 0.5rem;
+    color: var(--texto-secundario);
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.reporte-pregunta-texto {
+    margin: 0;
+    color: var(--texto);
+    font-size: clamp(1rem, 2.6vw, 1.15rem);
+    font-weight: 600;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.reporte-form {
+    margin-top: 0.25rem;
+}
+
+.reporte-motivos {
+    margin: 0.9rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.reporte-motivo-label {
+    margin: 0 0 0.35rem;
+    color: var(--texto-secundario);
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.reporte-motivo {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    background: rgba(9, 10, 28, 0.35);
+    cursor: pointer;
+    transition: border-color 180ms ease, background-color 180ms ease;
+}
+
+.reporte-motivo:hover,
+.reporte-motivo:focus-within {
+    border-color: var(--cian);
+}
+
+.reporte-motivo input {
+    margin-top: 0.25rem;
+    accent-color: var(--cian);
+}
+
+.reporte-motivo-texto {
+    font-size: 0.88rem;
+    line-height: 1.4;
+}
+
+.reporte-estado {
+    margin: 1.25rem 0;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-tarjeta);
+    background: linear-gradient(150deg, rgba(37, 39, 82, 0.82), rgba(15, 17, 42, 0.92));
+    box-shadow: var(--sombra-tarjeta);
+}
+
+.reporte-estado p {
+    margin: 0 0 0.8rem;
+}
+
+.reporte-estado .btn-pregunta-form {
+    margin: 0;
+}
