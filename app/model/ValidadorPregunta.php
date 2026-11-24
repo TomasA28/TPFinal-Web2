@@ -10,14 +10,16 @@ class ValidadorPregunta
      */
     public static function validar($descripcion, $opcion_a, $opcion_b, $opcion_c, $opcion_d, $respuesta_correcta, $categoria)
     {
+        // Guardamos el texto tal cual; el escapado de HTML se hace al mostrarlo
+        // (Mustache escapa por defecto). Así evitamos el doble escapado al editar.
         $datos = [
-            'descripcion'        => trim(htmlspecialchars($descripcion ?? "", ENT_QUOTES, 'UTF-8')),
-            'opcion_a'           => trim(htmlspecialchars($opcion_a ?? "", ENT_QUOTES, 'UTF-8')),
-            'opcion_b'           => trim(htmlspecialchars($opcion_b ?? "", ENT_QUOTES, 'UTF-8')),
-            'opcion_c'           => trim(htmlspecialchars($opcion_c ?? "", ENT_QUOTES, 'UTF-8')),
-            'opcion_d'           => trim(htmlspecialchars($opcion_d ?? "", ENT_QUOTES, 'UTF-8')),
-            'respuesta_correcta' => strtoupper(trim(htmlspecialchars($respuesta_correcta ?? "", ENT_QUOTES, 'UTF-8'))),
-            'categoria'          => trim(htmlspecialchars($categoria ?? "", ENT_QUOTES, 'UTF-8')),
+            'descripcion'        => trim((string) $descripcion),
+            'opcion_a'           => trim((string) $opcion_a),
+            'opcion_b'           => trim((string) $opcion_b),
+            'opcion_c'           => trim((string) $opcion_c),
+            'opcion_d'           => trim((string) $opcion_d),
+            'respuesta_correcta' => strtoupper(trim((string) $respuesta_correcta)),
+            'categoria'          => trim((string) $categoria),
         ];
 
         if ($datos['descripcion'] === "") {

@@ -144,6 +144,30 @@ class PartidaModel
         return $partida;
     }
 
+    public function getPreguntasDePartida($partidaId)
+    {
+        $filas = $this->database->queryAll(
+            "SELECT p.id, p.descripcion, p.categoria, pp.orden
+             FROM partida_pregunta pp
+             INNER JOIN preguntas p ON p.id = pp.pregunta_id
+             WHERE pp.partida_id = ?
+             ORDER BY pp.orden ASC",
+            [(int) $partidaId]
+        );
+
+        $preguntas = [];
+        foreach ($filas as $fila) {
+            $preguntas[] = [
+                'id'          => (int) $fila['id'],
+                'descripcion' => $fila['descripcion'],
+                'categoria'   => $fila['categoria'],
+                'orden'       => (int) $fila['orden'],
+            ];
+        }
+
+        return $preguntas;
+    }
+
 
     public function responder($partidaId, $jugadorId, $orden, $letra, $pideTrampita = false)
     {
@@ -205,7 +229,8 @@ class PartidaModel
 
         $preguntas = $this->database->queryAll(
             "SELECT id FROM preguntas
-             WHERE id NOT IN (SELECT pregunta_id FROM respuestas WHERE usuario_id = ?)
+             WHERE activa = 1
+               AND id NOT IN (SELECT pregunta_id FROM respuestas WHERE usuario_id = ?)
              ORDER BY RAND() LIMIT $cantidad",
             [$jugadorId]
         );
@@ -215,7 +240,7 @@ class PartidaModel
             $ids     = array_map('intval', array_column($preguntas, 'id'));
             $excluir = $ids ? implode(',', $ids) : '0';
             $extra   = $this->database->queryAll(
-                "SELECT id FROM preguntas WHERE id NOT IN ($excluir) ORDER BY RAND() LIMIT $faltan"
+                "SELECT id FROM preguntas WHERE activa = 1 AND id NOT IN ($excluir) ORDER BY RAND() LIMIT $faltan"
             );
             $preguntas = array_merge($preguntas, $extra);
         }

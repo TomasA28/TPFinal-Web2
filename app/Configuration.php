@@ -24,6 +24,9 @@ use app\controller\SugerenciasController;
 use app\model\SugerenciasModel;
 use app\controller\PreguntasController;
 use app\model\PreguntasModel;
+use app\controller\AdministracionController;
+use app\model\ReportesModel;
+use app\controller\ReportesController;
 
 
 use MustacheRender;
@@ -215,6 +218,28 @@ class Configuration
     {
         return new PreguntasModel(
             $this->getDatabase()
+        );
+    }
+
+    public function getAdministracionController()
+    {
+        $database = $this->getDatabase();
+
+        return new AdministracionController(
+            new SugerenciasModel($database),
+            new PreguntasModel($database),
+            new ReportesModel($database),
+            $this->getRender()
+        );
+    }
+
+    public function getReportesController()
+    {
+        $database = $this->getDatabase();
+
+        return new ReportesController(
+            new ReportesModel($database),
+            $this->getRender()
         );
     }
 

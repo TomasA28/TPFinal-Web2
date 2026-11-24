@@ -35,7 +35,9 @@ class JuegoController
     {
         $this->juegoModel->limpiarPreguntaActiva($_SESSION['usuario_id']);
         unset($_SESSION['pregunta_activa_id'], $_SESSION['pregunta_activa_expira_en']);
+        $_SESSION['preguntas_vistas'] = [];
         $_SESSION['puntaje_actual'] = 0;
+        unset($_SESSION['ultimo_resumen'], $_SESSION['ultimo_resumen_puntaje']);
         $this->jugar();
     }
 
@@ -123,6 +125,14 @@ class JuegoController
             $_SESSION['puntaje_actual'] = 0;
         }
 
+        if (!isset($_SESSION['preguntas_vistas'])) {
+            $_SESSION['preguntas_vistas'] = [];
+        }
+
+        if (!in_array((int) $preguntaId, $_SESSION['preguntas_vistas'], true)) {
+            $_SESSION['preguntas_vistas'][] = (int) $preguntaId;
+        }
+
         if ($esCorrecta) {
             $_SESSION['puntaje_actual']++;
             $data = [
@@ -135,17 +145,49 @@ class JuegoController
             $puntajeFinal = $_SESSION['puntaje_actual'];
             $puntajeFinal === null ? $puntajeFinal = 0 : $puntajeFinal;
 
-            $this->juegoModel->guardarPartidaTerminada($usuarioId, $puntajeFinal);
+            $this->juegoModel->guardarPartidaTerminada($usuarioId, $puntajeFinal, count($_SESSION['preguntas_vistas']));
+
+            $resumen = $this->juegoModel->getPreguntasPorIds($_SESSION['preguntas_vistas']);
+
+            // Guardamos el resumen para poder volver a él desde el formulario de reporte.
+            $_SESSION['ultimo_resumen'] = $resumen;
+            $_SESSION['ultimo_resumen_puntaje'] = $puntajeFinal;
 
             $data = [
                 'es_incorrecta' => true,
-                'puntaje_final' => $puntajeFinal
+                'puntaje_final' => $puntajeFinal,
+                'resumen_preguntas' => $resumen,
+                'hay_resumen' => count($resumen) > 0
             ];
 
-            unset($_SESSION['puntaje_actual']);
+            unset($_SESSION['preguntas_vistas'], $_SESSION['puntaje_actual']);
         }
 
         $this->render->renderiza('juegoView', $data);
+    }
+
+    /**
+     * GET del resumen de la partida de la ruleta, para que el botón "Volver"
+     * del reporte pueda volver al mismo lugar donde se generó el link.
+     */
+    public function resumen()
+    {
+        if (!isset($_SESSION['usuario_id'])) {
+            Redirect::to('/login/show');
+            return;
+        }
+
+        if (empty($_SESSION['ultimo_resumen'])) {
+            Redirect::to('/juego/jugar');
+            return;
+        }
+
+        $this->render->renderiza('juegoView', [
+            'es_incorrecta'     => true,
+            'puntaje_final'     => (int) ($_SESSION['ultimo_resumen_puntaje'] ?? 0),
+            'resumen_preguntas' => $_SESSION['ultimo_resumen'],
+            'hay_resumen'       => true,
+        ]);
     }
 
     private function renderizarPregunta($pregunta, $expiraEn)

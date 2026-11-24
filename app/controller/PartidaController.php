@@ -123,6 +123,11 @@ class PartidaController
             return;
         }
 
+        $preguntasPartida = $this->model->getPreguntasDePartida((int) $data['id']);
+        $data['preguntas_partida'] = $preguntasPartida;
+        $data['hay_preguntas_partida'] = count($preguntasPartida) > 0;
+        $data['partida_id'] = (int) $data['id'];
+
         $data['logueado'] = true;
         $this->render->renderiza('partida_resultado', $data);
     }

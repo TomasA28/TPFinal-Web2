@@ -4,7 +4,7 @@
         {{#empate}}<span class="trofeo">🤝</span><h2 class="titulo-final">¡Empate!</h2>{{/empate}}
         {{^empate}}
             {{#gano_humano}}<span class="trofeo">🏆</span><h2 class="titulo-final">¡Ganaste!</h2>{{/gano_humano}}
-            {{^gano_humano}}<span class="trofeo">😢</span><h2 class="titulo-final">Ganó {{bot_nombre}}</h2>{{/gano_humano}}
+            {{^gano_humano}}<span class="trofeo">😢</span><h2 class="titulo-final">¡Ganó {{bot_nombre}}!</h2>{{/gano_humano}}
         {{/empate}}
 
         <h3 class="marcador-grande">Vos {{puntos_humano}} – {{puntos_bot}} 🤖 {{bot_nombre}}</h3>
@@ -12,4 +12,26 @@
         <a href="/partida/iniciarVsBot" class="btn-accion">🔁 Revancha</a>
         <a href="/lobby/show" class="btn-accion secundario">Volver al lobby</a>
     </div>
+
+    {{#hay_preguntas_partida}}
+    <section class="resumen-preguntas">
+        <h2 class="resumen-preguntas-titulo">Preguntas de esta partida</h2>
+        <p class="resumen-preguntas-ayuda">Si alguna de las preguntas que jugaste tenía un error, podés reportarla para que un editor la revise.</p>
+
+        <ul class="resumen-preguntas-lista">
+            {{#preguntas_partida}}
+            <li class="resumen-preguntas-item">
+                <div>
+                    <p class="resumen-preguntas-texto">{{descripcion}}</p>
+                    <span class="resumen-preguntas-categoria">Categoría: {{categoria}}</span>
+                </div>
+                <a href="/reportes/nueva?pregunta_id={{id}}{{#partida_id}}&partida_id={{partida_id}}{{/partida_id}}"
+                    class="resumen-preguntas-reportar">
+                    Reportar
+                </a>
+            </li>
+            {{/preguntas_partida}}
+        </ul>
+    </section>
+    {{/hay_preguntas_partida}}
 </div>
