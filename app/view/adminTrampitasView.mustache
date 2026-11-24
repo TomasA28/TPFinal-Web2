@@ -1,0 +1,50 @@
+<style>
+    .admin-page { max-width: 1000px; margin: 0 auto; padding: 16px; }
+    .admin-filtros { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .admin-filtros a, .admin-filtros button {
+        padding: 8px 14px; border: 1px solid #888; border-radius: 6px;
+        text-decoration: none; color: inherit; background: transparent; cursor: pointer;
+    }
+    .admin-filtros .activo { background: #2980b9; color: #fff; border-color: #2980b9; }
+    .admin-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .admin-kpi { border: 1px solid #ccc; border-radius: 8px; padding: 12px; text-align: center; }
+    .admin-kpi strong { display: block; font-size: 1.8rem; }
+    .admin-tabla-wrap { overflow-x: auto; }
+    .admin-tabla { width: 100%; border-collapse: collapse; }
+    .admin-tabla th, .admin-tabla td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+    @media print { .no-print, nav, header, footer { display: none !important; } }
+</style>
+
+<main class="admin-page">
+    <h1>Trampitas</h1>
+    <p><a href="/admin/show?periodo={{periodo}}" class="no-print">← Volver al panel</a></p>
+
+    <div class="admin-filtros no-print">
+        {{#periodos}}
+            <a href="{{url}}" class="{{#activo}}activo{{/activo}}">{{nombre}}</a>
+        {{/periodos}}
+        <button type="button" onclick="window.print()">🖨️ Imprimir</button>
+    </div>
+
+    <h2>Recaudación (período: {{periodo}})</h2>
+    <section class="admin-kpis">
+        <div class="admin-kpi"><strong>USD {{ganancias.total_usd}}</strong>Total</div>
+        <div class="admin-kpi"><strong>USD {{ganancias.real_usd}}</strong>Cobro real</div>
+        <div class="admin-kpi"><strong>USD {{ganancias.simulado_usd}}</strong>Simulado (pruebas)</div>
+        <div class="admin-kpi"><strong>{{ganancias.vendidas}}</strong>Trampitas vendidas</div>
+        <div class="admin-kpi"><strong>{{ganancias.compras}}</strong>Compras</div>
+    </section>
+
+    <h2>Balance acumulado por usuario</h2>
+    <div class="admin-tabla-wrap">
+        <table class="admin-tabla">
+            <thead><tr><th>Usuario</th><th>Compradas</th><th>Usadas</th><th>Saldo</th></tr></thead>
+            <tbody>
+            {{#balance}}
+                <tr><td>{{usuario}}</td><td>{{compradas}}</td><td>{{usadas}}</td><td>{{saldo}}</td></tr>
+            {{/balance}}
+            {{^balance}}<tr><td colspan="4">Todavía no hay movimientos.</td></tr>{{/balance}}
+            </tbody>
+        </table>
+    </div>
+</main>

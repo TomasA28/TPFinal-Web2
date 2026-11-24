@@ -20,7 +20,7 @@ class LobbyModel
                         FROM partida_jugador pj
                         JOIN partida p ON p.id = pj.partida_id
                         WHERE pj.usuario_id = u.id
-                        ORDER BY p.fecha DESC, pj.id DESC
+                        ORDER BY p.fecha DESC, p.id DESC
                         LIMIT 1
                     ) AS puntaje,
                     (

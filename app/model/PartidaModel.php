@@ -184,17 +184,26 @@ class PartidaModel
         // Atómico: solo UN request puede consumir el reloj de esta pregunta
         $enTiempo = $this->consumirReloj($humanoId, $pregunta['id']);
 
-        // La trampita solo vale en tiempo y se descuenta en el servidor (atómico)
-        $usaTrampita   = $pideTrampita && $enTiempo && $this->trampitas->usar($humanoId);
+        // La trampita solo vale en tiempo y se descuenta en el servidor (atómico).
+        // Queda registrada con la partida y la pregunta donde se usó.
+        $usaTrampita = $pideTrampita
+            && $enTiempo
+            && $this->trampitas->usar($humanoId, (int)$partida['id'], (int)$pregunta['id']);
+
         $tiempoAgotado = !$enTiempo || ($letra === '' && !$usaTrampita);
 
         $humano = $this->resolverJugadaHumano($letra, $pregunta['respuesta_correcta'], $tiempoAgotado, $usaTrampita);
         $bot    = $this->resolverJugadaBot($partida['jugador2_id'], $pregunta);
 
-
         try {
             $this->registrarJugada($partida, $pregunta['id'], $humano, $bot);
         } catch (\Throwable $e) {
+            error_log('PartidaModel::registrarJugada falló: ' . $e->getMessage());
+
+            // Si ya se había gastado la trampita, se devuelve: el jugador no tuvo culpa
+            if ($usaTrampita) {
+                $this->trampitas->devolver($humanoId);
+            }
             return null;
         }
 

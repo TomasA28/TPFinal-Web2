@@ -28,10 +28,13 @@ use app\controller\AdministracionController;
 use app\model\ReportesModel;
 use app\controller\ReportesController;
 
+use app\controller\AdminController;
+use app\model\AdminModel;
 
 use MustacheRender;
 use MyDatabase;
 use Router;
+
 
 require_once("helper/Autoloader.php");
 
@@ -229,6 +232,12 @@ class Configuration
             new SugerenciasModel($database),
             new PreguntasModel($database),
             new ReportesModel($database),
+
+
+    public function getAdminController()
+    {
+        return new AdminController(
+            $this->getAdminModel(),
             $this->getRender()
         );
     }
@@ -241,6 +250,9 @@ class Configuration
             new ReportesModel($database),
             $this->getRender()
         );
+    private function getAdminModel()
+    {
+        return new AdminModel($this->getDatabase());
     }
 
     public function getRouter()
