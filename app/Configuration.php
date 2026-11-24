@@ -80,7 +80,8 @@ class Configuration
     {
         return new JuegoController(
             $this->getJuegoModel(),
-            $this->getRender()
+            $this->getRender(),
+            $this->getTrampitasModel()
         );
     }
 
@@ -232,7 +233,9 @@ class Configuration
             new SugerenciasModel($database),
             new PreguntasModel($database),
             new ReportesModel($database),
-
+            $this->getRender()
+        );
+    }
 
     public function getAdminController()
     {
@@ -250,6 +253,8 @@ class Configuration
             new ReportesModel($database),
             $this->getRender()
         );
+    }
+
     private function getAdminModel()
     {
         return new AdminModel($this->getDatabase());
