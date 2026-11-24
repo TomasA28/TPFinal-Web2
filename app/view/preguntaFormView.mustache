@@ -1,0 +1,71 @@
+<link rel="stylesheet" href="/public/css/pregunta-form.css">
+
+<main class="contenedor-pregunta-form">
+    <h1 class="titulo-pregunta-form">{{titulo}}</h1>
+
+    <p class="subtitulo-pregunta-form">{{subtitulo}}</p>
+
+    <div id="alerta-error" class="alerta-pregunta-form alerta-error" role="alert" {{^error}}hidden{{/error}}>
+        <p>{{error}}</p>
+    </div>
+
+    <form id="form-pregunta" method="post" action="{{form_action}}">
+        {{#sugerencia_id}}<input type="hidden" name="sugerencia_id" value="{{sugerencia_id}}">{{/sugerencia_id}}
+        {{#pregunta_id}}<input type="hidden" name="pregunta_id" value="{{pregunta_id}}">{{/pregunta_id}}
+        {{#reporte_id}}<input type="hidden" name="reporte_id" value="{{reporte_id}}">{{/reporte_id}}
+
+        <div class="grupo-formulario">
+            <label for="descripcion">Enunciado de la pregunta:</label>
+            <textarea id="descripcion" name="descripcion" required>{{pregunta.descripcion}}</textarea>
+        </div>
+
+        <div class="grupo-formulario">
+            <label for="opcion_a">Opción A:</label>
+            <input type="text" id="opcion_a" name="opcion_a" value="{{pregunta.opcion_a}}" required>
+        </div>
+
+        <div class="grupo-formulario">
+            <label for="opcion_b">Opción B:</label>
+            <input type="text" id="opcion_b" name="opcion_b" value="{{pregunta.opcion_b}}" required>
+        </div>
+
+        <div class="grupo-formulario">
+            <label for="opcion_c">Opción C:</label>
+            <input type="text" id="opcion_c" name="opcion_c" value="{{pregunta.opcion_c}}" required>
+        </div>
+
+        <div class="grupo-formulario">
+            <label for="opcion_d">Opción D:</label>
+            <input type="text" id="opcion_d" name="opcion_d" value="{{pregunta.opcion_d}}" required>
+        </div>
+
+        <div class="grupo-formulario">
+            <label for="respuesta_correcta">Opción Correcta:</label>
+            <select id="respuesta_correcta" name="respuesta_correcta" required>
+                <option value="A" {{#sel_a}}selected{{/sel_a}}>A</option>
+                <option value="B" {{#sel_b}}selected{{/sel_b}}>B</option>
+                <option value="C" {{#sel_c}}selected{{/sel_c}}>C</option>
+                <option value="D" {{#sel_d}}selected{{/sel_d}}>D</option>
+            </select>
+        </div>
+
+        <div class="grupo-formulario">
+            <label for="categoria">Categoría:</label>
+            <select id="categoria" name="categoria" required>
+                {{#categorias}}
+                <option value="{{nombre}}" {{#sel}}selected{{/sel}}>{{nombre}}</option>
+                {{/categorias}}
+            </select>
+        </div>
+
+        <div class="acciones-pregunta-form">
+            <button type="submit" class="btn-pregunta-form btn-principal">
+                {{texto_boton}}
+            </button>
+
+            <a href="{{url_volver}}" class="btn-pregunta-form btn-secundario">
+                Cancelar
+            </a>
+        </div>
+    </form>
+</main>

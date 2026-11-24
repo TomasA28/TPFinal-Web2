@@ -1,0 +1,106 @@
+<link rel="stylesheet" href="/public/css/pregunta-form.css">
+<link rel="stylesheet" href="/public/css/reporte.css">
+
+<main class="contenedor-pregunta-form">
+    <h1 class="titulo-pregunta-form">Reportar pregunta</h1>
+
+    <p class="subtitulo-pregunta-form">Contame qué está mal con la pregunta. Un editor la revisará.</p>
+
+    {{#exito}}
+    {{^ya_reportada}}
+    <div class="alerta-pregunta-form alerta-exito" role="status">
+        <p>{{exito}}</p>
+    </div>
+    {{/ya_reportada}}
+    {{/exito}}
+
+    {{#error}}
+    <div class="alerta-pregunta-form alerta-error" role="alert">
+        <p>{{error}}</p>
+    </div>
+    {{/error}}
+
+    {{#tiene_pregunta}}
+    {{#pregunta_descripcion}}
+    <section class="reporte-pregunta">
+        <p class="reporte-pregunta-categoria">Categoría: {{pregunta_categoria}}</p>
+        <p class="reporte-pregunta-texto">{{pregunta_descripcion}}</p>
+    </section>
+    {{/pregunta_descripcion}}
+
+    {{#ya_reportada}}
+    {{#exito}}
+    <div class="alerta-pregunta-form alerta-exito" role="status">
+        <p>{{exito}}</p>
+    </div>
+    {{/exito}}
+    <div class="reporte-estado">
+        <p>Ya reportaste esta pregunta.</p>
+        <a href="{{url_volver}}" class="btn-pregunta-form btn-secundario">Volver</a>
+    </div>
+    {{/ya_reportada}}
+    {{^ya_reportada}}
+    <form id="form-reporte" method="post" action="/reportes/crear" class="reporte-form">
+        <input type="hidden" name="pregunta_id" value="{{pregunta_id}}">
+        <input type="hidden" name="partida_id" value="{{partida_id}}">
+        <input type="hidden" name="volver" value="{{url_volver}}">
+
+        <div class="reporte-motivos">
+            <p class="reporte-motivo-label">Motivo del reporte:</p>
+            {{#motivos}}
+            <label class="reporte-motivo">
+                <input type="radio" name="motivo" value="{{valor}}" {{#seleccionado}}checked{{/seleccionado}}>
+                <span class="reporte-motivo-texto">{{texto}}</span>
+            </label>
+            {{/motivos}}
+        </div>
+
+        <div class="grupo-formulario">
+            <label for="detalle">Detalle del reporte:</label>
+            <textarea id="detalle" name="detalle" placeholder="Contanos qué pasó. Obligatorio si elegís \"Otro motivo\"."></textarea>
+        </div>
+
+        <div class="acciones-pregunta-form">
+            <button type="submit" class="btn-pregunta-form btn-principal">Enviar reporte</button>
+            <a href="{{url_volver}}" class="btn-pregunta-form btn-secundario">Cancelar</a>
+        </div>
+    </form>
+    {{/ya_reportada}}
+    {{/tiene_pregunta}}
+    {{^tiene_pregunta}}
+    <div class="reporte-estado">
+        <p>No se pudo encontrar la pregunta para reportar.
+            {{#url_volver_es_lobby}}Volvé al lobby.{{/url_volver_es_lobby}}
+            {{^url_volver_es_lobby}}Volvé al resumen de tu partida.{{/url_volver_es_lobby}}
+        </p>
+        <a href="{{url_volver}}" class="btn-pregunta-form btn-secundario">Volver</a>
+    </div>
+    {{/tiene_pregunta}}
+</main>
+
+<script>
+(function () {
+    var radios = document.querySelectorAll('input[name="motivo"]');
+    var detalle = document.getElementById('detalle');
+
+    function actualizar() {
+        var seleccionado = document.querySelector('input[name="motivo"]:checked');
+        if (!seleccionado) {
+            detalle.required = false;
+            return;
+        }
+        detalle.required = seleccionado.value === 'otro';
+        detalle.placeholder = seleccionado.value === 'otro'
+            ? 'Contanos qué pasó.'
+            : 'Podés agregar un detalle opcional.';
+    }
+
+    radios.forEach(function (radio) {
+        radio.addEventListener('change', actualizar);
+    });
+
+    if (detalle) {
+        actualizar();
+    }
+})();
+</script>

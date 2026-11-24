@@ -20,6 +20,14 @@ use app\controller\PartidaController;
 use app\model\PartidaModel;
 use app\controller\TrampitasController;
 use app\model\TrampitasModel;
+use app\controller\SugerenciasController;
+use app\model\SugerenciasModel;
+use app\controller\PreguntasController;
+use app\model\PreguntasModel;
+use app\controller\AdministracionController;
+use app\model\ReportesModel;
+use app\controller\ReportesController;
+
 use app\controller\AdminController;
 use app\model\AdminModel;
 
@@ -72,7 +80,8 @@ class Configuration
     {
         return new JuegoController(
             $this->getJuegoModel(),
-            $this->getRender()
+            $this->getRender(),
+            $this->getTrampitasModel()
         );
     }
 
@@ -186,12 +195,62 @@ class Configuration
         );
     }
 
+    public function getSugerenciasController()
+    {
+        return new SugerenciasController(
+            $this->getSugerenciasModel(),
+            $this->getRender()
+        );
+    }
 
+    private function getSugerenciasModel()
+    {
+        return new SugerenciasModel(
+            $this->getDatabase()
+        );
+    }
+
+    public function getPreguntasController()
+    {
+        return new PreguntasController(
+            $this->getPreguntasModel(),
+            $this->getRender()
+        );
+    }
+
+    private function getPreguntasModel()
+    {
+        return new PreguntasModel(
+            $this->getDatabase()
+        );
+    }
+
+    public function getAdministracionController()
+    {
+        $database = $this->getDatabase();
+
+        return new AdministracionController(
+            new SugerenciasModel($database),
+            new PreguntasModel($database),
+            new ReportesModel($database),
+            $this->getRender()
+        );
+    }
 
     public function getAdminController()
     {
         return new AdminController(
             $this->getAdminModel(),
+            $this->getRender()
+        );
+    }
+
+    public function getReportesController()
+    {
+        $database = $this->getDatabase();
+
+        return new ReportesController(
+            new ReportesModel($database),
             $this->getRender()
         );
     }
