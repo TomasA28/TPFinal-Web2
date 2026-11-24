@@ -1,5 +1,4 @@
 <?php
-
 namespace app\controller;
 
 use Redirect;
@@ -66,7 +65,6 @@ class SugerenciasController
         $resultado = $this->model->sugerir($usuarioId, $descripcion, $opcion_a, $opcion_b, $opcion_c, $opcion_d,
             $respuesta_correcta, $categoria);
 
-        // AJAX: la vista se actualiza sin recargar la página.
         if ($esAjax) {
             if ($resultado['ok']) {
                 $resultado["mensaje"] = "La sugerencia ha sido enviada!";
@@ -76,7 +74,6 @@ class SugerenciasController
             return;
         }
 
-        // Fallback sin JavaScript: submit tradicional con patrón PRG.
         if ($resultado['ok']) {
             Redirect::to('/sugerencias/show?exito=1');
             return;

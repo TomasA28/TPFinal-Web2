@@ -95,10 +95,6 @@ class SugerenciasModel
         );
     }
 
-    /**
-     * Aprueba una sugerencia y la copia al banco de preguntas.
-     * Si se pasan $datos, se usan esos valores (edición previa del editor).
-     */
     public function aprobar($id, $revisorId, $datos = null)
     {
         $sugerencia = $this->getPorId($id);

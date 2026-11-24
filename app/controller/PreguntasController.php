@@ -1,5 +1,4 @@
 <?php
-
 namespace app\controller;
 
 use Redirect;

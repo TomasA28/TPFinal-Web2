@@ -1,5 +1,4 @@
 <?php
-
 namespace app\model;
 
 class PreguntasModel
