@@ -28,25 +28,74 @@ class JuegoController
     }
     public function jugar()
     {
+        $this->evitarCache();
+        $usuarioId = (int) ($_SESSION['usuario_id'] ?? 0);
+        if ($this->juegoModel->tienePartidaVsBotActiva($usuarioId)) {
+            Redirect::to('/partida/jugar');
+            return;
+        }
         if (!isset($_SESSION['puntaje_actual'])) {
             $_SESSION['puntaje_actual'] = 0;
         }
 
-        $this->render->renderiza('ruletaView');
+        $usuarioId = (int) ($_SESSION['usuario_id'] ?? 0);
+        $preguntaId = $this->juegoModel->getPreguntaIdActiva($usuarioId);
+        if ($preguntaId !== null) {
+            $_SESSION['partida_ruleta_en_curso'] = true;
+            $pregunta = $this->juegoModel->getPreguntaActiva($usuarioId, $preguntaId);
+            if ($pregunta !== null) {
+                $_SESSION['pregunta_activa_id'] = $preguntaId;
+                $_SESSION['pregunta_activa_expira_en'] = (int) $pregunta['expira_en'];
+                $this->renderizarPregunta($pregunta, $_SESSION['pregunta_activa_expira_en']);
+                return;
+            }
+        }
+
+        $avisoModo = $_SESSION['aviso_modo'] ?? null;
+        unset($_SESSION['aviso_modo']);
+        $this->render->renderiza('ruletaView', ['aviso_modo' => $avisoModo]);
     }
 
     public function nuevaPartida()
     {
-        $this->juegoModel->limpiarPreguntaActiva($_SESSION['usuario_id']);
-        unset($_SESSION['pregunta_activa_id'], $_SESSION['pregunta_activa_expira_en']);
+        $this->evitarCache();
+        $usuarioId = (int) ($_SESSION['usuario_id'] ?? 0);
+        if ($this->juegoModel->tienePartidaVsBotActiva($usuarioId)) {
+            if (!$this->juegoModel->cerrarPartidaVsBotActiva($usuarioId)) {
+                Redirect::to('/partida/jugar');
+                return;
+            }
+            unset(
+                $_SESSION['preguntas_vistas'],
+                $_SESSION['puntaje_actual'],
+                $_SESSION['pregunta_activa_id'],
+                $_SESSION['pregunta_activa_expira_en']
+            );
+            $_SESSION['partida_ruleta_en_curso'] = false;
+            $_SESSION['aviso_modo'] = 'La partida contra el bot se cerró al iniciar el modo solo.';
+        }
+        if ($this->juegoModel->getPreguntaIdActiva($usuarioId) !== null) {
+            Redirect::to('/juego/jugar');
+            return;
+        }
+        if (!empty($_SESSION['partida_ruleta_en_curso'])) {
+            Redirect::to('/juego/jugar');
+            return;
+        }
         $_SESSION['preguntas_vistas'] = [];
         $_SESSION['puntaje_actual'] = 0;
+        $_SESSION['partida_ruleta_en_curso'] = true;
         unset($_SESSION['ultimo_resumen'], $_SESSION['ultimo_resumen_puntaje']);
         $this->jugar();
     }
 
     public function procesarPregunta()
     {
+        $this->evitarCache();
+        if ($this->juegoModel->tienePartidaVsBotActiva((int) ($_SESSION['usuario_id'] ?? 0))) {
+            Redirect::to('/partida/jugar');
+            return;
+        }
         if (isset($_SESSION['pregunta_activa_id'])) {
             $pregunta = $this->juegoModel->getPreguntaActiva(
                 $_SESSION['usuario_id'],
@@ -74,6 +123,7 @@ class JuegoController
         }
 
         $categoria = $this->categorias[$categoriaElegida];
+        $_SESSION['partida_ruleta_en_curso'] = true;
         $pregunta = $this->juegoModel->getPreguntaAleatoria(
             $categoria,
             $_SESSION['usuario_id']
@@ -97,31 +147,26 @@ class JuegoController
 
     public function procesarRespuesta()
     {
-        $respuestaElegida = Request::post('respuesta');
-        $preguntaId = Request::post('pregunta_id');
-
-        if (
-            !isset($_SESSION['pregunta_activa_id'])
-            || (int) $_SESSION['pregunta_activa_id'] !== (int) $preguntaId
-        ) {
-            $this->render->renderiza('juegoView', [
-                'error_respuesta' => 'La pregunta enviada ya no está activa. Volvé a elegir una pregunta.',
-            ]);
+        $this->evitarCache();
+        if ($this->juegoModel->tienePartidaVsBotActiva((int) ($_SESSION['usuario_id'] ?? 0))) {
+            Redirect::to('/partida/jugar');
             return;
         }
-
-        $esCorrecta = $this->juegoModel->procesarRespuesta(
+        $respuestaElegida = Request::post('respuesta');
+        $resultado = $this->juegoModel->procesarRespuesta(
             $respuestaElegida,
-            $preguntaId,
             $_SESSION['usuario_id']
         );
 
-        if ($esCorrecta === null) {
+        if ($resultado === null) {
             $this->render->renderiza('juegoView', [
                 'error_respuesta' => 'No se pudo registrar la respuesta. Volvé a elegir una pregunta.',
             ]);
             return;
         }
+
+        $preguntaId = (int) $resultado['pregunta_id'];
+        $esCorrecta = $resultado['es_correcta'];
 
         unset($_SESSION['pregunta_activa_id'], $_SESSION['pregunta_activa_expira_en']);
 
@@ -165,6 +210,7 @@ class JuegoController
             ];
 
             unset($_SESSION['preguntas_vistas'], $_SESSION['puntaje_actual']);
+            $_SESSION['partida_ruleta_en_curso'] = false;
         }
 
         $this->render->renderiza('juegoView', $data);
@@ -176,6 +222,7 @@ class JuegoController
      */
     public function resumen()
     {
+        $this->evitarCache();
         if (!isset($_SESSION['usuario_id'])) {
             Redirect::to('/login/show');
             return;
@@ -211,11 +258,15 @@ class JuegoController
 
     public function usarTrampita()
     {
+        $this->evitarCache();
         $uid = (int) $_SESSION['usuario_id'];
-        $preguntaId = (int) Request::post('pregunta_id');
+        if ($this->juegoModel->tienePartidaVsBotActiva($uid)) {
+            Redirect::to('/partida/jugar');
+            return;
+        }
+        $preguntaId = $this->juegoModel->getPreguntaIdActiva($uid);
 
-        if (!isset($_SESSION['pregunta_activa_id'])
-            || (int) $_SESSION['pregunta_activa_id'] !== $preguntaId) {
+        if ($preguntaId === null) {
             $this->render->renderiza('juegoView', [
                 'error_respuesta' => 'La pregunta ya no está activa.',
             ]);
@@ -230,7 +281,7 @@ class JuegoController
             return;
         }
 
-        if ($this->juegoModel->procesarRespuestaConTrampita($preguntaId, $uid) === null) {
+        if ($this->juegoModel->procesarRespuestaConTrampita($uid) === null) {
             $this->trampitasModel->devolver($uid);   // ver nota abajo
             $this->render->renderiza('juegoView', [
                 'error_respuesta' => 'La pregunta expiró. No se descontó la trampita.',
@@ -246,5 +297,12 @@ class JuegoController
             'puntaje_actual' => $_SESSION['puntaje_actual'],
             'uso_trampita'   => true,
         ]);
+    }
+
+    private function evitarCache()
+    {
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        header('Pragma: no-cache');
+        header('Expires: 0');
     }
 }

@@ -1,7 +1,9 @@
 <link rel="stylesheet" href="/public/css/juego.css">
-<main class="w3-content juego-contenedor">
+<button class="control-audio" type="button" data-audio-toggle aria-pressed="false">Silenciar música</button>
+<main class="w3-content juego-contenedor" data-safe-back="/juego/jugar">
     <section class="ruleta-tarjeta" aria-labelledby="ruleta-titulo">
         <h1 id="ruleta-titulo">Ruleta de categorías</h1>
+        {{#aviso_modo}}<p class="ruleta-error" role="status">{{aviso_modo}}</p>{{/aviso_modo}}
         {{#error}}
             <p class="ruleta-error" role="alert">{{error}}</p>
         {{/error}}
@@ -28,6 +30,9 @@
         </form>
     </section>
 </main>
+
+<script src="/public/js/audio-control.js" defer></script>
+<script src="/public/js/bloqueo-atras.js" defer></script>
 
 <script>
     (() => {

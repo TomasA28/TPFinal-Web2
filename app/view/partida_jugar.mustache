@@ -1,5 +1,8 @@
-<div class="w3-content" style="max-width:600px">
+<button class="control-audio" type="button" data-audio-toggle aria-pressed="false">Silenciar música</button>
+<div class="w3-content" style="max-width:600px" data-safe-back="/partida/jugar">
     <div class="panel-partida" style="--cat: {{pregunta.color}}">
+
+        {{#aviso_modo}}<p role="status">{{aviso_modo}}</p>{{/aviso_modo}}
 
         <div class="marcador">
             <div><b>{{usuario}}</b> <span class="puntos">{{puntos_humano}}</span></div>
@@ -17,8 +20,6 @@
         <h3 class="enunciado">{{pregunta.enunciado}}</h3>
 
         <form id="form-respuesta" method="post" action="/partida/responder">
-            <input type="hidden" name="partida_id" value="{{partida_id}}">
-            <input type="hidden" name="orden" value="{{orden}}">
             <input type="hidden" id="respuesta-timeout" name="respuesta" value="" disabled>
 
             {{#pregunta.opciones}}
@@ -38,6 +39,9 @@
         <p class="reloj-texto"><a href="/trampitas/show">Comprar más trampitas</a></p>
     </div>
 </div>
+
+<script src="/public/js/audio-control.js" defer></script>
+<script src="/public/js/bloqueo-atras.js" defer></script>
 
 <script>
     (function () {

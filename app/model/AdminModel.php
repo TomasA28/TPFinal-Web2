@@ -41,9 +41,12 @@ class AdminModel
         };
 
         return [
-            'jugadores'         => $uno("SELECT COUNT(*) AS n FROM usuarios WHERE es_bot = 0 AND rol = 'jugador'"),
+            'jugadores'         => $uno("SELECT COUNT(DISTINCT r.usuario_id) AS n
+                                         FROM respuestas r
+                                         INNER JOIN usuarios u ON u.id = r.usuario_id
+                                         WHERE u.es_bot = 0 AND u.rol = 'jugador' AND r.fecha >= $d"),
             'partidas'          => $uno("SELECT COUNT(*) AS n FROM partida WHERE fecha >= $d"),
-            'preguntas'         => $uno("SELECT COUNT(*) AS n FROM preguntas"),
+            'preguntas'         => $uno("SELECT COUNT(*) AS n FROM preguntas WHERE activa = 1 AND fecha_creacion >= $d"),
             'preguntas_creadas' => $uno("SELECT COUNT(*) AS n FROM preguntas WHERE fecha_creacion >= $d"),
             'usuarios_nuevos'   => $uno("SELECT COUNT(*) AS n FROM usuarios WHERE es_bot = 0 AND fecha_registro >= $d"),
         ];

@@ -21,21 +21,47 @@ class PartidaController
         $usuarioId = $this->exigirLogin();
         if (!$usuarioId) { return; }
 
+        if ($this->model->getPartidaActiva($usuarioId) !== null) {
+            Redirect::to('/partida/jugar');
+            return;
+        }
+
+        // Cambiar al modo contra bot cierra el turno de ruleta para no mantener
+        // dos partidas activas a la vez.
+        if (!empty($_SESSION['partida_ruleta_en_curso']) || $this->model->tienePreguntaActiva($usuarioId)) {
+            $_SESSION['aviso_modo'] = 'La partida en solitario se cerró al iniciar el modo contra el bot.';
+            $this->model->limpiarPreguntaActiva($usuarioId);
+            unset(
+                $_SESSION['partida_ruleta_en_curso'],
+                $_SESSION['preguntas_vistas'],
+                $_SESSION['puntaje_actual'],
+                $_SESSION['pregunta_activa_id'],
+                $_SESSION['pregunta_activa_expira_en']
+            );
+        }
+
         $partidaId = $this->model->crearPartidaVsBot($usuarioId);
         if (!$partidaId) {
+            if ($this->model->tienePreguntaActiva($usuarioId)) {
+                Redirect::to('/juego/jugar');
+                return;
+            }
             Redirect::to('/lobby/show');
             return;
         }
-        Redirect::to('/partida/jugar?id=' . $partidaId);
+        Redirect::to('/partida/jugar');
     }
 
 
     public function jugar()
     {
+        $this->evitarCache();
         $usuarioId = $this->exigirLogin();
         if (!$usuarioId) { return; }
 
-        $partida = $this->getPartidaPropia(Request::get('id'), $usuarioId);
+        // La partida activa se resuelve desde el usuario de la sesión, no desde
+        // un id enviado por la URL o por el formulario.
+        $partida = $this->model->getPartidaActiva($usuarioId);
         if (!$partida) {
             Redirect::to('/lobby/show');
             return;
@@ -54,7 +80,10 @@ class PartidaController
 
         $marcador = $this->model->getMarcador($partida['id']);
 
+        $avisoModo = $_SESSION['aviso_modo'] ?? null;
+        unset($_SESSION['aviso_modo']);
         $this->render->renderiza('partida_jugar', [
+            'aviso_modo'       => $avisoModo,
             'logueado'         => true,
             'partida_id'       => (int)$partida['id'],
             'orden'            => (int)$partida['orden_actual'],
@@ -73,6 +102,7 @@ class PartidaController
 
     public function responder()
     {
+        $this->evitarCache();
         $usuarioId = $this->exigirLogin();
         if (!$usuarioId) { return; }
 
@@ -81,21 +111,18 @@ class PartidaController
             return;
         }
 
-        $partidaId = (int)($_POST['partida_id'] ?? 0);
-
         $res = $this->model->responder(
-            $partidaId,
             $usuarioId,
-            (int)($_POST['orden'] ?? 0),
             $_POST['respuesta'] ?? '',
             ($_POST['usar_trampita'] ?? '') === '1'
         );
 
         if ($res === null) {
-            Redirect::to('/partida/jugar?id=' . $partidaId);
+            Redirect::to('/partida/jugar');
             return;
         }
 
+        $partidaId = (int) $res['partida_id'];
         $partida  = $this->model->getPartida($partidaId);
         $marcador = $this->model->getMarcador($partidaId);
 
@@ -105,7 +132,7 @@ class PartidaController
         $res['puntos_bot']    = $marcador['bot'];
         $res['url_siguiente'] = $res['terminada']
             ? '/partida/resultado?id=' . $partidaId
-            : '/partida/jugar?id=' . $partidaId;
+            : '/partida/jugar';
 
         $this->render->renderiza('partida_feedback', $res);
     }
@@ -113,6 +140,7 @@ class PartidaController
 
     public function resultado()
     {
+        $this->evitarCache();
         $usuarioId = $this->exigirLogin();
         if (!$usuarioId) { return; }
 
@@ -143,13 +171,11 @@ class PartidaController
     }
 
 
-    private function getPartidaPropia($partidaId, $usuarioId)
+    private function evitarCache()
     {
-        $partida = $this->model->getPartida($partidaId);
-        if (!$partida || (int)$partida['jugador1_id'] !== (int)$usuarioId) {
-            return null;
-        }
-        return $partida;
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        header('Pragma: no-cache');
+        header('Expires: 0');
     }
 
     private function esPost()

@@ -36,6 +36,9 @@ class LobbyController
 
         $data = [
             'logueado' => isset($_SESSION['usuario_id']),
+            'esAdministrador' => ($_SESSION['rol'] ?? '') === 'administrador',
+            'esEditor' => ($_SESSION['rol'] ?? '') === 'editor',
+            'esJugador' => ($_SESSION['rol'] ?? 'jugador') === 'jugador',
             'usuario' => $usuario,
             'hay_partida' => $usuario['puntaje'] !== null,
             'partidas' => $partidas

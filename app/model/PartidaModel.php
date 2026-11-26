@@ -43,24 +43,86 @@ class PartidaModel
     public function crearPartidaVsBot($jugadorId, $cantidad = self::PREGUNTAS_POR_PARTIDA)
     {
         $jugadorId = (int)$jugadorId;
+        $this->database->begin();
+        try {
+            // Serializa los inicios del mismo usuario; así dos clics simultáneos
+            // tampoco pueden crear dos partidas activas.
+            $usuario = $this->database->queryOne(
+                "SELECT id FROM usuarios WHERE id = ? FOR UPDATE",
+                [$jugadorId]
+            );
+            if ($usuario === null) {
+                $this->database->commit();
+                return null;
+            }
 
-        $botId = $this->elegirBot();
-        if (!$botId) {
+            $activa = $this->getPartidaActiva($jugadorId);
+            if ($activa !== null) {
+                $this->database->commit();
+                return (int) $activa['id'];
+            }
+
+            // La ruleta también mantiene un turno activo en esta tabla. No
+            // permitimos abrir otro modo de juego hasta resolverlo.
+            $turnoActivo = $this->database->queryOne(
+                "SELECT pregunta_id FROM preguntas_activas WHERE usuario_id = ?",
+                [$jugadorId]
+            );
+            if ($turnoActivo !== null) {
+                $this->database->commit();
+                return null;
+            }
+
+            $botId = $this->elegirBot();
+            if (!$botId) {
+                $this->database->commit();
+                return null;
+            }
+
+            $preguntas = $this->seleccionarPreguntas($jugadorId, (int)$cantidad);
+            if (count($preguntas) === 0) {
+                $this->database->commit();
+                return null;
+            }
+
+            $partidaId = $this->insertarPartida(count($preguntas), $jugadorId, $botId);
+            $this->asignarPreguntas($partidaId, $preguntas);
+            $this->database->commit();
+            return $partidaId;
+        } catch (\Throwable $e) {
+            $this->database->rollback();
+            error_log('PartidaModel::crearPartidaVsBot falló: ' . $e->getMessage());
             return null;
         }
+    }
 
-        $preguntas = $this->seleccionarPreguntas($jugadorId, (int)$cantidad);
-        if (count($preguntas) === 0) {
-            return null;
-        }
+    public function getPartidaActiva($jugadorId)
+    {
+        $fila = $this->database->queryOne(
+            "SELECT pa.id
+             FROM partida pa
+             INNER JOIN partida_jugador pj ON pj.partida_id = pa.id
+             WHERE pa.tipo = 'vs_bot' AND pa.estado = 'en_curso' AND pj.usuario_id = ?
+             ORDER BY pa.id DESC LIMIT 1",
+            [(int) $jugadorId]
+        );
+        return $fila ? $this->getPartida((int) $fila['id']) : null;
+    }
 
-        $partidaId = $this->insertarPartida(count($preguntas), $jugadorId, $botId);
-        $this->asignarPreguntas($partidaId, $preguntas);
+    public function tienePreguntaActiva($jugadorId)
+    {
+        return $this->database->queryOne(
+                "SELECT pregunta_id FROM preguntas_activas WHERE usuario_id = ?",
+                [(int) $jugadorId]
+            ) !== null;
+    }
 
-        // Limpia un reloj abandonado de una partida anterior
-        $this->database->execute("DELETE FROM preguntas_activas WHERE usuario_id = ?", [$jugadorId]);
-
-        return $partidaId;
+    public function limpiarPreguntaActiva($jugadorId)
+    {
+        $this->database->execute(
+            "DELETE FROM preguntas_activas WHERE usuario_id = ?",
+            [(int) $jugadorId]
+        );
     }
 
 
@@ -169,17 +231,21 @@ class PartidaModel
     }
 
 
-    public function responder($partidaId, $jugadorId, $orden, $letra, $pideTrampita = false)
+    public function responder($jugadorId, $letra, $pideTrampita = false)
     {
-        $partida = $this->getPartida($partidaId);
+        $partida = $this->getPartidaActiva($jugadorId);
         $letra   = strtoupper(trim((string)$letra));
 
-        if (!$this->esJugadaValida($partida, $jugadorId, $orden, $letra)) {
+        if (!$this->esJugadaValida($partida, $jugadorId, $letra)) {
             return null;
         }
 
         $humanoId = (int)$partida['jugador1_id'];
+        $orden = (int) $partida['orden_actual'];
         $pregunta = $this->getPreguntaDeOrden($partida['id'], $orden);
+        if ($pregunta === null) {
+            return null;
+        }
 
         // Atómico: solo UN request puede consumir el reloj de esta pregunta
         $enTiempo = $this->consumirReloj($humanoId, $pregunta['id']);
@@ -210,6 +276,7 @@ class PartidaModel
         $terminada = $this->avanzarOFinalizar($partida);
 
         return [
+            'partida_id'     => (int)$partida['id'],
             'humano_acierta' => $humano['acierta'],
             'bot_acierta'    => $bot['acierta'],
             'letra_correcta' => $pregunta['respuesta_correcta'],
@@ -235,25 +302,84 @@ class PartidaModel
     private function seleccionarPreguntas($jugadorId, $cantidad)
     {
         $cantidad = max(1, (int)$cantidad);
-
-        $preguntas = $this->database->queryAll(
-            "SELECT id FROM preguntas
-             WHERE activa = 1
-               AND id NOT IN (SELECT pregunta_id FROM respuestas WHERE usuario_id = ?)
-             ORDER BY RAND() LIMIT $cantidad",
-            [$jugadorId]
-        );
-
-        $faltan = $cantidad - count($preguntas);
-        if ($faltan > 0) {
-            $ids     = array_map('intval', array_column($preguntas, 'id'));
-            $excluir = $ids ? implode(',', $ids) : '0';
-            $extra   = $this->database->queryAll(
-                "SELECT id FROM preguntas WHERE activa = 1 AND id NOT IN ($excluir) ORDER BY RAND() LIMIT $faltan"
-            );
-            $preguntas = array_merge($preguntas, $extra);
+        $tasaUsuario = $this->getTasaAciertoUsuario($jugadorId);
+        $filtroTasa = null;
+        if ($tasaUsuario['respuestas'] >= 10) {
+            if ($tasaUsuario['tasa'] < 30) {
+                $filtroTasa = '> 70'; // al jugador le cuesta: priorizar preguntas fáciles
+            } elseif ($tasaUsuario['tasa'] > 70) {
+                $filtroTasa = '< 30'; // al jugador le va bien: priorizar preguntas difíciles
+            }
         }
-        return $preguntas;
+
+        $seleccionadas = $this->buscarPreguntas($jugadorId, $cantidad, true, $filtroTasa);
+        $faltan = $cantidad - count($seleccionadas);
+        if ($faltan > 0) {
+            $seleccionadas = array_merge($seleccionadas, $this->buscarPreguntas(
+                $jugadorId, $faltan, true, null, array_column($seleccionadas, 'id')
+            ));
+        }
+
+        // Solo se repiten preguntas cuando ya no quedan preguntas nuevas.
+        $faltan = $cantidad - count($seleccionadas);
+        if ($faltan > 0) {
+            $seleccionadas = array_merge($seleccionadas, $this->buscarPreguntas(
+                $jugadorId, $faltan, false, $filtroTasa, array_column($seleccionadas, 'id')
+            ));
+        }
+        $faltan = $cantidad - count($seleccionadas);
+        if ($faltan > 0) {
+            $seleccionadas = array_merge($seleccionadas, $this->buscarPreguntas(
+                $jugadorId, $faltan, false, null, array_column($seleccionadas, 'id')
+            ));
+        }
+        return $seleccionadas;
+    }
+
+    private function getTasaAciertoUsuario($jugadorId)
+    {
+        $fila = $this->database->queryOne(
+            "SELECT COUNT(*) AS respuestas, COALESCE(AVG(r.es_correcta) * 100, 0) AS tasa
+             FROM respuestas r
+             INNER JOIN usuarios u ON u.id = r.usuario_id
+             WHERE r.usuario_id = ? AND u.es_bot = 0 AND r.con_trampita = 0",
+            [(int) $jugadorId]
+        );
+        return ['respuestas' => (int) $fila['respuestas'], 'tasa' => (float) $fila['tasa']];
+    }
+
+    private function buscarPreguntas($jugadorId, $cantidad, $soloNuevas, $filtroTasa = null, $excluirIds = [])
+    {
+        $cantidad = max(0, (int) $cantidad);
+        if ($cantidad === 0) {
+            return [];
+        }
+
+        $sql = "SELECT p.id
+                FROM preguntas p
+                LEFT JOIN respuestas r ON r.pregunta_id = p.id AND r.con_trampita = 0
+                LEFT JOIN usuarios u ON u.id = r.usuario_id
+                WHERE p.activa = 1";
+        $params = [];
+        if ($soloNuevas) {
+            $sql .= " AND NOT EXISTS (
+                         SELECT 1 FROM respuestas vistas
+                         WHERE vistas.usuario_id = ? AND vistas.pregunta_id = p.id
+                     )";
+            $params[] = (int) $jugadorId;
+        }
+        $excluirIds = array_values(array_unique(array_filter(array_map('intval', (array) $excluirIds))));
+        if ($excluirIds) {
+            $sql .= ' AND p.id NOT IN (' . implode(',', array_fill(0, count($excluirIds), '?')) . ')';
+            $params = array_merge($params, $excluirIds);
+        }
+        $sql .= ' GROUP BY p.id';
+        if ($filtroTasa !== null) {
+            $sql .= " HAVING COUNT(CASE WHEN u.es_bot = 0 THEN r.id END) >= 10
+                      AND AVG(CASE WHEN u.es_bot = 0 THEN r.es_correcta END) $filtroTasa";
+        }
+        $sql .= ' ORDER BY RAND() LIMIT ' . $cantidad;
+        return $this->database->queryAll($sql, $params);
     }
 
     private function insertarPartida($total, $jugadorId, $botId)
@@ -320,12 +446,11 @@ class PartidaModel
 
 
 
-    private function esJugadaValida($partida, $jugadorId, $orden, $letra)
+    private function esJugadaValida($partida, $jugadorId, $letra)
     {
         return $partida
             && (int)$partida['jugador1_id'] === (int)$jugadorId
             && $partida['estado'] === 'en_curso'
-            && (int)$partida['orden_actual'] === (int)$orden
             && in_array($letra, ['', 'A', 'B', 'C', 'D'], true);   // '' = sin letra (timeout o trampita)
     }
 
