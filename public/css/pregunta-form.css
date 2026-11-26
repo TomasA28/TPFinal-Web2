@@ -1,0 +1,163 @@
+﻿@import url("https://fonts.googleapis.com/css2?family=Titan+One&display=swap");
+
+/* Estilos compartidos por los formularios de sugerencia y de creación directa
+   de preguntas. Fondo oscuro en degradado, tarjeta con borde sutil y acentos
+   cian; el botón principal replica el naranja del botón "Sugerir Preguntas"
+   del lobby. */
+
+body:has(.contenedor-pregunta-form) {
+    background:
+        radial-gradient(circle at 12% 6%, rgba(212, 147, 20, 0.14), transparent 42%),
+        radial-gradient(circle at 88% 10%, rgba(33, 192, 194, 0.12), transparent 44%),
+        radial-gradient(circle at 50% 105%, rgba(47, 30, 86, 0.55), transparent 62%),
+        linear-gradient(160deg, #0c0e24 0%, #080a1a 52%, #060714 100%);
+    background-attachment: fixed;
+}
+
+.contenedor-pregunta-form {
+    width: min(100% - 2.5rem, 46rem);
+    margin: clamp(1.5rem, 4vh, 3rem) auto;
+    padding: clamp(1.25rem, 3.5vw, 2.25rem);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-tarjeta);
+    background: linear-gradient(150deg, rgba(37, 39, 82, 0.82), rgba(15, 17, 42, 0.92));
+    box-shadow: var(--sombra-tarjeta);
+    backdrop-filter: blur(8px);
+}
+
+.titulo-pregunta-form {
+    margin: 0;
+    font-family: "Titan One", "Outfit", sans-serif;
+    font-weight: 400;
+    font-size: clamp(1.6rem, 5vw, 2.25rem);
+    letter-spacing: 0.02em;
+}
+
+.subtitulo-pregunta-form {
+    margin: 0.35rem 0 1.25rem;
+    color: var(--texto-secundario);
+    font-size: 0.95rem;
+}
+
+/* ── Alertas ── */
+.alerta-pregunta-form {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    font-size: 0.92rem;
+}
+
+.alerta-pregunta-form[hidden] {
+    display: none;
+}
+
+.alerta-pregunta-form p {
+    margin: 0;
+}
+
+.alerta-error {
+    border: 1px solid rgba(212, 60, 60, 0.6);
+    background: rgba(120, 30, 30, 0.35);
+    color: #F3B0B0;
+}
+
+.alerta-exito {
+    border: 1px solid rgba(33, 192, 194, 0.6);
+    background: rgba(18, 80, 84, 0.4);
+    color: #9BE3E2;
+}
+
+/* ── Formulario ── */
+.grupo-formulario {
+    margin-bottom: 0.9rem;
+}
+
+.grupo-formulario label {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--texto-secundario);
+    font-size: 0.88rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+.grupo-formulario input,
+.grupo-formulario select,
+.grupo-formulario textarea {
+    width: 100%;
+    min-height: 2.55rem;
+    padding: 0.55rem 0.7rem;
+    font-size: 0.92rem;
+}
+
+.grupo-formulario textarea {
+    min-height: 5.5rem;
+    resize: vertical;
+}
+
+/* ── Acciones ── */
+.acciones-pregunta-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.85rem;
+    margin-top: 1.25rem;
+}
+
+.btn-pregunta-form {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.7rem;
+    padding: 0.6rem 1.3rem;
+    border-radius: var(--radio-boton);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background-color 180ms ease;
+}
+
+.btn-principal {
+    border: 1px solid rgba(232, 151, 84, 0.6);
+    background: linear-gradient(135deg, #d4852b 0%, #b3721e 45%, #7e501b 100%);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32), 0 0 18px rgba(216, 147, 20, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    color: #FFFFFF;
+}
+
+.btn-principal:hover,
+.btn-principal:focus-visible {
+    border-color: #f0a94e;
+    box-shadow: 0 0 22px rgba(216, 115, 20, 0.3), 0 16px 34px rgba(0, 0, 0, 0.38),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    transform: translateY(-2px);
+    color: #FFFFFF;
+}
+
+.btn-secundario {
+    border: 1px solid var(--borde);
+    background: rgba(18, 18, 49, 0.58);
+    color: var(--texto);
+}
+
+.btn-secundario:hover,
+.btn-secundario:focus-visible {
+    border-color: var(--cian);
+    background: rgba(33, 192, 194, 0.12);
+    box-shadow: 0 0 20px rgba(33, 192, 194, 0.24), 0 12px 28px rgba(0, 0, 0, 0.3);
+    color: #FFFFFF;
+    text-shadow: none;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 640px) {
+    .acciones-pregunta-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-pregunta-form {
+        width: 100%;
+    }
+}

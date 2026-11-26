@@ -1,0 +1,369 @@
+<link rel="stylesheet" href="/public/css/administracion.css">
+
+<main class="admin-page">
+    <header class="admin-header">
+        <div>
+            <h1>Administrar preguntas</h1>
+            <p>Revisá sugerencias, gestioná reportes y administrá el banco de preguntas del juego.</p>
+        </div>
+        <a href="/lobby/show" class="admin-back">← Volver al lobby</a>
+    </header>
+
+    <nav class="admin-tabs" aria-label="Secciones de administración">
+        <a href="/administracion/show?seccion=sugerencias"
+            class="admin-tab {{#es_seccion_sugerencias}}activa{{/es_seccion_sugerencias}}">
+            Sugerencias
+            {{#pendientes_sugerencias}}<span class="admin-badge">{{pendientes_sugerencias}}</span>{{/pendientes_sugerencias}}
+        </a>
+        <a href="/administracion/show?seccion=reportes"
+            class="admin-tab {{#es_seccion_reportes}}activa{{/es_seccion_reportes}}">
+            Reportes
+            {{#pendientes_reportes}}<span class="admin-badge admin-badge-alerta">{{pendientes_reportes}}</span>{{/pendientes_reportes}}
+        </a>
+        <a href="/administracion/show?seccion=preguntas"
+            class="admin-tab {{#es_seccion_preguntas}}activa{{/es_seccion_preguntas}}">
+            Gestionar preguntas
+            {{#total_preguntas}}<span class="admin-badge">{{total_preguntas}}</span>{{/total_preguntas}}
+        </a>
+    </nav>
+
+    {{#exito}}<div class="admin-alerta admin-alerta-exito" role="status">{{exito}}</div>{{/exito}}
+    {{#error}}<div class="admin-alerta admin-alerta-error" role="alert">{{error}}</div>{{/error}}
+
+    {{#es_seccion_sugerencias}}
+    <section class="admin-seccion" aria-labelledby="titulo-sugerencias">
+        <div class="admin-seccion-header">
+            <div>
+                <h2 id="titulo-sugerencias">Sugerencias de jugadores</h2>
+                <p>Aprobá, editá o rechazá las preguntas propuestas por los jugadores.</p>
+            </div>
+        </div>
+
+        <div class="admin-filtros">
+            <a href="/administracion/show?seccion=sugerencias&estado=pendiente"
+                class="{{#filtro_pendiente}}activo{{/filtro_pendiente}}">Pendientes ({{pendientes_sugerencias}})</a>
+            <a href="/administracion/show?seccion=sugerencias&estado=aprobada"
+                class="{{#filtro_aprobada}}activo{{/filtro_aprobada}}">Aprobadas ({{aprobadas_sugerencias}})</a>
+            <a href="/administracion/show?seccion=sugerencias&estado=rechazada"
+                class="{{#filtro_rechazada}}activo{{/filtro_rechazada}}">Rechazadas ({{rechazadas_sugerencias}})</a>
+            <a href="/administracion/show?seccion=sugerencias&estado=todas"
+                class="{{#filtro_todas}}activo{{/filtro_todas}}">Todas</a>
+        </div>
+
+        {{#hay_sugerencias}}
+        <div class="admin-lista">
+            {{#sugerencias}}
+            <article class="admin-card">
+                <header>
+                    <span class="admin-estado admin-estado-{{estado}}">{{estado_texto}}</span>
+                    <span class="admin-card-meta">Sugerida por <strong>{{usuario_nombre}}</strong> · {{fecha}}</span>
+                </header>
+
+                <h3>{{descripcion}}</h3>
+
+                <ul class="admin-opciones">
+                    <li class="{{#es_correcta_a}}correcta{{/es_correcta_a}}">
+                        <b>A.</b> {{opcion_a}}{{#es_correcta_a}} <span class="admin-tag-correcta">Correcta</span>{{/es_correcta_a}}
+                    </li>
+                    <li class="{{#es_correcta_b}}correcta{{/es_correcta_b}}">
+                        <b>B.</b> {{opcion_b}}{{#es_correcta_b}} <span class="admin-tag-correcta">Correcta</span>{{/es_correcta_b}}
+                    </li>
+                    <li class="{{#es_correcta_c}}correcta{{/es_correcta_c}}">
+                        <b>C.</b> {{opcion_c}}{{#es_correcta_c}} <span class="admin-tag-correcta">Correcta</span>{{/es_correcta_c}}
+                    </li>
+                    <li class="{{#es_correcta_d}}correcta{{/es_correcta_d}}">
+                        <b>D.</b> {{opcion_d}}{{#es_correcta_d}} <span class="admin-tag-correcta">Correcta</span>{{/es_correcta_d}}
+                    </li>
+                </ul>
+
+                <p class="admin-meta">Categoría: <strong>{{categoria}}</strong></p>
+
+                {{#estado_pendiente}}
+                <div class="admin-acciones">
+                    <form method="post" action="/administracion/aprobarSugerencia"
+                        data-confirm="¿Aprobar esta sugerencia y agregarla al juego?">
+                        <input type="hidden" name="id" value="{{id}}">
+                        <button type="submit" class="admin-btn admin-btn-ok">Aprobar</button>
+                    </form>
+
+                    <a href="/administracion/sugerenciaForm?id={{id}}" class="admin-btn admin-btn-editar">
+                        Editar y aprobar
+                    </a>
+
+                    <details class="admin-rechazo">
+                        <summary class="admin-btn admin-btn-peligro">Rechazar</summary>
+                        <form method="post" action="/administracion/rechazarSugerencia">
+                            <input type="hidden" name="id" value="{{id}}">
+                            <label for="motivo-sugerencia-{{id}}">Motivo del rechazo (obligatorio)</label>
+                            <textarea id="motivo-sugerencia-{{id}}" name="motivo" required
+                                placeholder="Contale al jugador por qué no se aprueba su sugerencia."></textarea>
+                            <button type="submit" class="admin-btn admin-btn-peligro">Confirmar rechazo</button>
+                        </form>
+                    </details>
+                </div>
+                {{/estado_pendiente}}
+
+                {{#estado_rechazada}}
+                <p class="admin-resolucion"><strong>Motivo del rechazo:</strong> {{motivo_rechazo}}</p>
+                {{/estado_rechazada}}
+
+                {{#revisado_info}}<p class="admin-resolucion">{{revisado_info}}</p>{{/revisado_info}}
+            </article>
+            {{/sugerencias}}
+        </div>
+        {{/hay_sugerencias}}
+        {{^hay_sugerencias}}
+        <p class="admin-vacio">No hay sugerencias en este estado.</p>
+        {{/hay_sugerencias}}
+    </section>
+    {{/es_seccion_sugerencias}}
+
+    {{#es_seccion_reportes}}
+    <section class="admin-seccion" aria-labelledby="titulo-reportes">
+        <div class="admin-seccion-header">
+            <div>
+                <h2 id="titulo-reportes">Reportes de preguntas</h2>
+                <p>Los jugadores reportan preguntas al terminar una partida. Resolvé cada reporte editando, desactivando o eliminando la pregunta, o cerralo sin cambios.</p>
+            </div>
+        </div>
+
+        <div class="admin-filtros">
+            <a href="/administracion/show?seccion=reportes&estado=pendientes"
+                class="{{#filtro_pendientes}}activo{{/filtro_pendientes}}">Pendientes ({{pendientes_reportes}})</a>
+            <a href="/administracion/show?seccion=reportes&estado=resueltos"
+                class="{{#filtro_resueltos}}activo{{/filtro_resueltos}}">Resueltos</a>
+            <a href="/administracion/show?seccion=reportes&estado=todos"
+                class="{{#filtro_todos}}activo{{/filtro_todos}}">Todos</a>
+        </div>
+
+        {{#hay_reportes}}
+        <div class="admin-lista">
+            {{#reportes}}
+            <article class="admin-card">
+                <header>
+                    <span class="admin-estado admin-estado-{{estado}}">{{estado_texto}}</span>
+                    <span class="admin-card-meta">Reportada por <strong>{{reportante_nombre}}</strong> · {{fecha}}</span>
+                </header>
+
+                {{#tiene_pregunta}}
+                <h3>{{pregunta_descripcion}}</h3>
+                {{^pregunta_activa}}<p class="admin-nota">Esta pregunta está desactivada.</p>{{/pregunta_activa}}
+                {{/tiene_pregunta}}
+                {{^tiene_pregunta}}
+                <h3 class="admin-texto-eliminado">La pregunta fue eliminada del banco.</h3>
+                {{/tiene_pregunta}}
+
+                <p class="admin-meta"><strong>Motivo:</strong> {{motivo_texto}}</p>
+                {{#detalle}}<p class="admin-detalle"><strong>Detalle del jugador:</strong> {{detalle}}</p>{{/detalle}}
+
+                {{#estado_pendiente}}
+                <div class="admin-acciones">
+                    {{#tiene_pregunta}}
+                    <a href="/administracion/preguntaForm?modo=editar&id={{pregunta_id}}&reporte_id={{id}}"
+                        class="admin-btn admin-btn-editar">Editar pregunta</a>
+
+                    <form method="post" action="/administracion/resolverReporte"
+                        data-confirm="¿Desactivar la pregunta? Dejará de aparecer en el juego, pero no se borra.">
+                        <input type="hidden" name="id" value="{{id}}">
+                        <input type="hidden" name="accion" value="desactivar">
+                        <button type="submit" class="admin-btn admin-btn-warn">Desactivar pregunta</button>
+                    </form>
+
+                    <form method="post" action="/administracion/resolverReporte"
+                        data-confirm="¿Eliminar la pregunta definitivamente? Se perderán sus respuestas y su historial. Esta acción no se puede deshacer.">
+                        <input type="hidden" name="id" value="{{id}}">
+                        <input type="hidden" name="accion" value="eliminar">
+                        <button type="submit" class="admin-btn admin-btn-peligro">Eliminar pregunta</button>
+                    </form>
+                    {{/tiene_pregunta}}
+
+                    <form method="post" action="/administracion/resolverReporte"
+                        data-confirm="¿Cerrar el reporte sin modificar la pregunta?">
+                        <input type="hidden" name="id" value="{{id}}">
+                        <input type="hidden" name="accion" value="cerrar">
+                        <button type="submit" class="admin-btn admin-btn-neutro">Cerrar reporte</button>
+                    </form>
+                </div>
+                {{/estado_pendiente}}
+
+                {{#resolucion_info}}<p class="admin-resolucion">{{resolucion_info}}</p>{{/resolucion_info}}
+            </article>
+            {{/reportes}}
+        </div>
+        {{/hay_reportes}}
+        {{^hay_reportes}}
+        <p class="admin-vacio">No hay reportes en este estado.</p>
+        {{/hay_reportes}}
+    </section>
+    {{/es_seccion_reportes}}
+
+    {{#es_seccion_preguntas}}
+    <section class="admin-seccion" aria-labelledby="titulo-preguntas">
+        <div class="admin-seccion-header admin-seccion-header-fila">
+            <div>
+                <h2 id="titulo-preguntas">Gestionar preguntas</h2>
+                <p>{{total_preguntas}} preguntas en total · {{total_preguntas_activas}} activas en el juego.</p>
+            </div>
+            <a href="/administracion/preguntaForm?modo=crear" class="admin-btn admin-btn-primario">+ Agregar pregunta</a>
+        </div>
+
+        {{#hay_preguntas}}
+        <div class="admin-tabla-wrap">
+            <table class="admin-tabla">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Pregunta</th>
+                        <th>Categoría</th>
+                        <th>Estado</th>
+                        <th>Origen</th>
+                        <th>Creada por</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#preguntas}}
+                    <tr class="{{^es_activa}}admin-fila-inactiva{{/es_activa}}">
+                        <td>{{id}}</td>
+                        <td class="admin-celda-pregunta" title="{{descripcion}}">{{descripcion_corta}}</td>
+                        <td>{{categoria}}</td>
+                        <td>
+                            <span class="admin-estado {{#es_activa}}admin-estado-activa{{/es_activa}}{{^es_activa}}admin-estado-inactiva{{/es_activa}}">
+                                {{estado_texto}}
+                            </span>
+                        </td>
+                        <td>{{origen_texto}}</td>
+                        <td>{{creador}}</td>
+                        <td>{{fecha}}</td>
+                        <td>
+                            <div class="admin-acciones-tabla">
+                                <a href="/administracion/preguntaForm?modo=editar&id={{id}}" class="admin-btn-mini">Editar</a>
+
+                                <form method="post" action="/administracion/cambiarEstadoPregunta">
+                                    <input type="hidden" name="id" value="{{id}}">
+                                    <input type="hidden" name="activa" value="{{#es_activa}}0{{/es_activa}}{{^es_activa}}1{{/es_activa}}">
+                                    <button type="submit" class="admin-btn-mini">
+                                        {{#es_activa}}Desactivar{{/es_activa}}{{^es_activa}}Activar{{/es_activa}}
+                                    </button>
+                                </form>
+
+                                <form method="post" action="/administracion/eliminarPregunta"
+                                    data-confirm="¿Eliminar definitivamente la pregunta #{{id}}? Esta acción no se puede deshacer.">
+                                    <input type="hidden" name="id" value="{{id}}">
+                                    <button type="submit" class="admin-btn-mini admin-btn-mini-peligro">Eliminar</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {{/preguntas}}
+                </tbody>
+            </table>
+        </div>
+        {{/hay_preguntas}}
+        {{^hay_preguntas}}
+        <p class="admin-vacio">Todavía no hay preguntas en el banco.</p>
+        {{/hay_preguntas}}
+    </section>
+    {{/es_seccion_preguntas}}
+</main>
+
+<div id="admin-confirm" class="admin-modal" hidden
+    role="dialog" aria-modal="true"
+    aria-labelledby="admin-confirm-titulo" aria-describedby="admin-confirm-mensaje">
+    <div class="admin-modal-panel">
+        <h2 id="admin-confirm-titulo">Confirmar acción</h2>
+        <p id="admin-confirm-mensaje"></p>
+        <div class="admin-modal-acciones">
+            <button type="button" id="admin-confirm-cancelar" class="admin-btn admin-btn-neutro">Cancelar</button>
+            <button type="button" id="admin-confirm-aceptar" class="admin-btn admin-btn-peligro">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var seccion = document.querySelector('.admin-seccion');
+        if (seccion) {
+            seccion.scrollIntoView({ block: 'start' });
+        }
+
+        var modal = document.getElementById('admin-confirm');
+        var mensaje = document.getElementById('admin-confirm-mensaje');
+        var aceptar = document.getElementById('admin-confirm-aceptar');
+        var cancelar = document.getElementById('admin-confirm-cancelar');
+        var variantes = ['admin-btn-ok', 'admin-btn-peligro', 'admin-btn-warn',
+            'admin-btn-neutro', 'admin-btn-primario', 'admin-btn-editar'];
+        var pendiente = null;
+        var focoAnterior = null;
+
+        function abrir(formulario) {
+            pendiente = formulario;
+            focoAnterior = document.activeElement;
+            var boton = formulario.querySelector('button[type="submit"]');
+            mensaje.textContent = formulario.getAttribute('data-confirm');
+
+            if (boton) {
+                aceptar.textContent = boton.textContent.trim();
+                var variante = boton.className.split(/\s+/).find(function (clase) {
+                    return variantes.indexOf(clase) !== -1;
+                });
+                aceptar.className = 'admin-btn ' + (variante || 'admin-btn-peligro');
+            }
+
+            modal.hidden = false;
+            document.body.classList.add('admin-modal-abierto');
+            cancelar.focus();
+        }
+
+        function cerrar() {
+            pendiente = null;
+            modal.hidden = true;
+            document.body.classList.remove('admin-modal-abierto');
+            if (focoAnterior && focoAnterior.focus) {
+                focoAnterior.focus();
+            }
+        }
+
+        document.querySelectorAll('form[data-confirm]').forEach(function (formulario) {
+            formulario.addEventListener('submit', function (evento) {
+                evento.preventDefault();
+                abrir(formulario);
+            });
+        });
+
+        aceptar.addEventListener('click', function () {
+            if (!pendiente) { return; }
+            var formulario = pendiente;
+            cerrar();
+            formulario.submit();
+        });
+
+        cancelar.addEventListener('click', cerrar);
+
+        modal.addEventListener('click', function (evento) {
+            if (evento.target === modal) { cerrar(); }
+        });
+
+        document.addEventListener('keydown', function (evento) {
+            if (modal.hidden) { return; }
+
+            if (evento.key === 'Escape') {
+                cerrar();
+                return;
+            }
+
+            if (evento.key === 'Tab') {
+                var enfoques = [cancelar, aceptar];
+                var indice = enfoques.indexOf(document.activeElement);
+                if (evento.shiftKey && indice <= 0) {
+                    evento.preventDefault();
+                    aceptar.focus();
+                } else if (!evento.shiftKey && indice === enfoques.length - 1) {
+                    evento.preventDefault();
+                    cancelar.focus();
+                }
+            }
+        });
+    })();
+</script>

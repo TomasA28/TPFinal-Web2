@@ -1,12 +1,16 @@
 CREATE DATABASE IF NOT EXISTS my_web CHARACTER SET utf8mb4;
 USE my_web;
 
-DROP TABLE IF EXISTS reportes;
+DROP TABLE IF EXISTS reportes_preguntas;
 DROP TABLE IF EXISTS respuestas;
 DROP TABLE IF EXISTS preguntas_activas;
+DROP TABLE IF EXISTS partida_pregunta;
 DROP TABLE IF EXISTS historial_partidas;
 DROP TABLE IF EXISTS partida_jugador;
 DROP TABLE IF EXISTS partida;
+DROP TABLE IF EXISTS movimiento_trampitas;
+DROP TABLE IF EXISTS compra_trampitas;
+DROP TABLE IF EXISTS preguntas_sugeridas;
 DROP TABLE IF EXISTS preguntas;
 DROP TABLE IF EXISTS usuarios;
 CREATE TABLE usuarios (
@@ -39,7 +43,38 @@ CREATE TABLE preguntas (
     opcion_c VARCHAR(255) NOT NULL,
     opcion_d VARCHAR(255) NOT NULL,
     respuesta_correcta CHAR(1) NOT NULL,
-    categoria VARCHAR(50) NOT NULL
+    categoria VARCHAR(50) NOT NULL,
+    creado_por INT NULL,
+    origen ENUM('directa', 'sugerencia') NOT NULL DEFAULT 'directa',
+    activa TINYINT(1) NOT NULL DEFAULT 1,
+    creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_preguntas_creador
+        FOREIGN KEY (creado_por) REFERENCES usuarios(id) ON DELETE SET NULL
+);
+
+CREATE TABLE preguntas_sugeridas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    descripcion TEXT NOT NULL,
+    opcion_a VARCHAR(255) NOT NULL,
+    opcion_b VARCHAR(255) NOT NULL,
+    opcion_c VARCHAR(255) NOT NULL,
+    opcion_d VARCHAR(255) NOT NULL,
+    respuesta_correcta CHAR(1) NOT NULL,
+    categoria VARCHAR(50) NOT NULL,
+    estado ENUM('pendiente', 'aprobada', 'rechazada') NOT NULL DEFAULT 'pendiente',
+    motivo_rechazo TEXT NULL,
+    revisado_por INT NULL,
+    revisado_en DATETIME NULL,
+    pregunta_id INT NULL,
+    creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_sugerencias_usuario
+        FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    CONSTRAINT fk_sugerencias_revisor
+        FOREIGN KEY (revisado_por) REFERENCES usuarios(id) ON DELETE SET NULL,
+    CONSTRAINT fk_sugerencias_pregunta
+        FOREIGN KEY (pregunta_id) REFERENCES preguntas(id) ON DELETE SET NULL,
+    INDEX idx_sugerencias_estado (estado)
 );
 
 CREATE TABLE preguntas_activas (
@@ -57,6 +92,7 @@ CREATE TABLE respuestas (
     usuario_id INT NOT NULL,
     pregunta_id INT NOT NULL,
     es_correcta BOOLEAN NOT NULL,
+    con_trampita BOOLEAN NOT NULL DEFAULT 0,
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_respuestas_usuario
         FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
@@ -66,20 +102,6 @@ CREATE TABLE respuestas (
     INDEX idx_respuestas_usuario (usuario_id)
 );
 
-CREATE TABLE reportes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario_id INT NOT NULL,
-    pregunta_id INT NOT NULL,
-    motivo VARCHAR(50) NOT NULL,
-    comentario VARCHAR(300) NULL,
-    fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_reportes_usuario
-        FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
-    CONSTRAINT fk_reportes_pregunta
-        FOREIGN KEY (pregunta_id) REFERENCES preguntas(id) ON DELETE CASCADE,
-    INDEX idx_reportes_pregunta (pregunta_id),
-    INDEX idx_reportes_usuario (usuario_id)
-);
 
 INSERT INTO preguntas (descripcion, opcion_a, opcion_b, opcion_c, opcion_d, respuesta_correcta, categoria) VALUES 
 -- HISTORIA
@@ -348,58 +370,39 @@ UPDATE preguntas SET categoria = 'Deporte' WHERE categoria = 'Deportes';
 ALTER TABLE respuestas
 ADD UNIQUE KEY uq_resp_partida (partida_id, pregunta_id, usuario_id);
 
-
-ALTER TABLE usuarios ADD rol ENUM('jugador','editor','admin') NOT NULL DEFAULT 'jugador';
-UPDATE usuarios SET rol = 'admin' WHERE usuario = 'admin';
-
-ALTER TABLE movimiento_trampitas
-    ADD partida_id INT NULL,
-  ADD pregunta_id INT NULL,
-  ADD INDEX idx_mov_usuario (usuario_id),
-  ADD INDEX idx_mov_fecha (fecha);
-
-ALTER TABLE compra_trampitas ADD INDEX idx_compra_fecha (fecha);
-
-INSERT INTO movimiento_trampitas (usuario_id, tipo, cantidad) VALUES (1, 'compra', 3)
+-- Partidas vs_bot: se registra si la respuesta usó trampita (el bot lo usa para su ratio).
+-- IF NOT EXISTS para no romper instalaciones que ya tienen la columna.
+ALTER TABLE respuestas
+ADD COLUMN IF NOT EXISTS con_trampita BOOLEAN NOT NULL DEFAULT 0;
 
 
-ALTER TABLE usuarios
-    ADD rol ENUM('jugador','editor','admin') NOT NULL DEFAULT 'jugador';
-UPDATE usuarios SET rol = 'admin' WHERE usuario = 'admin';
-
-
-
-ALTER TABLE movimiento_trampitas
-    ADD partida_id INT NULL,
-  ADD pregunta_id INT NULL,
-  ADD INDEX idx_mov_usuario (usuario_id),
-  ADD INDEX idx_mov_fecha (fecha);
-
-
-ALTER TABLE compra_trampitas ADD INDEX idx_compra_fecha (fecha);
-
-
-ALTER TABLE respuestas ADD con_trampita TINYINT(1) NOT NULL DEFAULT 0;
-
-
-
-ALTER TABLE usuarios
-    MODIFY rol ENUM('jugador','editor','administrador') NOT NULL DEFAULT 'jugador';
-UPDATE usuarios SET rol = 'administrador' WHERE usuario = 'admin';
-
+CREATE TABLE reportes_preguntas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    pregunta_id INT NULL,
+    usuario_id INT NOT NULL,
+    partida_id INT NULL,
+    motivo ENUM('respuesta_incorrecta', 'mal_formulada', 'ambigua',
+                'ofensiva', 'duplicada', 'otro') NOT NULL,
+    detalle TEXT NULL,
+    estado ENUM('pendiente', 'editada', 'desactivada', 'eliminada', 'cerrada')
+        NOT NULL DEFAULT 'pendiente',
+    resuelto_por INT NULL,
+    resuelto_en DATETIME NULL,
+    creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_reportes_pregunta FOREIGN KEY (pregunta_id) REFERENCES preguntas(id) ON DELETE SET NULL,
+    CONSTRAINT fk_reportes_usuario  FOREIGN KEY (usuario_id)  REFERENCES usuarios(id)  ON DELETE CASCADE,
+    CONSTRAINT fk_reportes_partida  FOREIGN KEY (partida_id)  REFERENCES partida(id)   ON DELETE SET NULL,
+    CONSTRAINT fk_reportes_revisor  FOREIGN KEY (resuelto_por) REFERENCES usuarios(id) ON DELETE SET NULL,
+    CONSTRAINT uq_reporte_usuario_pregunta UNIQUE (usuario_id, pregunta_id),
+    INDEX idx_reportes_estado (estado)
+);
 
 ALTER TABLE usuarios
     ADD fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ADD pais VARCHAR(80) NULL;
 
 ALTER TABLE preguntas
-    ADD fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ADD creada_por INT NULL;
-
-
-ALTER TABLE respuestas
-    ADD con_trampita TINYINT(1) NOT NULL DEFAULT 0;
-
+    ADD fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP;
 
 ALTER TABLE movimiento_trampitas
     ADD partida_id INT NULL,
@@ -408,3 +411,5 @@ ALTER TABLE movimiento_trampitas
     ADD INDEX idx_mov_fecha (fecha);
 
 ALTER TABLE compra_trampitas ADD INDEX idx_compra_fecha (fecha);
+
+INSERT INTO movimiento_trampitas (usuario_id, tipo, cantidad) VALUES (1, 'compra', 3);

@@ -6,6 +6,38 @@
             <a href="/juego/jugar" class="w3-button btn-cancha w3-round">Volver a la ruleta</a>
         </div>
     {{/error_respuesta}}
+    {{#es_correcta}}
+        <div class="resultado-juego" role="status">
+            <strong>Respuesta Correcta! </strong>
+            <p>Tu puntaje actual es: {{puntaje_actual}}</p>
+            <a href="/juego/jugar" class="w3-button btn-cancha w3-round">Siguiente pregunta</a>
+        </div>
+    {{/es_correcta}}
+
+    {{#es_incorrecta}}
+        <div class="resultado-juego resultado-juego--incorrecto" role="status">
+            <strong>Respuesta Incorrecta! </strong>
+            <p>Hiciste un total de: {{puntaje_final}} puntos. </p>
+            <a href="/lobby/show" class="w3-button btn-cancha w3-round">Volver al Lobby</a>
+        </div>
+    {{/es_incorrecta}}
+    {{#hay_resumen}}
+    <section class="resumen-preguntas">
+        <h2 class="resumen-preguntas-titulo">Preguntas de esta partida</h2>
+        <p class="resumen-preguntas-ayuda">Si alguna de las preguntas que jugaste tenía un error, podés reportarla para que un editor la revise.</p>
+        <ul class="resumen-preguntas-lista">
+            {{#resumen_preguntas}}
+            <li class="resumen-preguntas-item">
+                <div>
+                    <p class="resumen-preguntas-texto">{{descripcion}}</p>
+                    <span class="resumen-preguntas-categoria">Categoría: {{categoria}}</span>
+                </div>
+                <a href="/reportes/nueva?pregunta_id={{id}}&amp;volver=/juego/resumen" class="resumen-preguntas-reportar">Reportar</a>
+            </li>
+            {{/resumen_preguntas}}
+        </ul>
+    </section>
+    {{/hay_resumen}}
     {{#sin_pregunta}}
         <div class="resultado-juego resultado-juego--incorrecto" role="alert">
             <h2>No hay preguntas disponibles</h2>
@@ -39,7 +71,7 @@
             <p id="resultado-modal-mensaje">{{resultado_mensaje}} <strong id="resultado-modal-puntaje">{{puntaje_resultado}}</strong><span id="resultado-modal-sufijo">{{resultado_sufijo}}</span></p>
             <div class="resultado-modal__acciones">
                 <a id="resultado-modal-accion" href="{{resultado_url}}" class="w3-button btn-cancha w3-round">{{resultado_accion}}</a>
-                <a id="resultado-modal-reportar" href="/reporte/show?pregunta_id={{pregunta_id}}" class="resultado-modal__accion--secundaria">Reportar pregunta</a>
+                <a id="resultado-modal-reportar" href="/reportes/nueva?pregunta_id={{pregunta_id}}&amp;volver={{#es_correcta}}/juego/jugar{{/es_correcta}}{{#es_incorrecta}}/juego/resumen{{/es_incorrecta}}" class="resultado-modal__accion--secundaria">Reportar pregunta</a>
             </div>
             <p id="resultado-modal-error" class="resultado-modal__error" role="alert" hidden></p>
         </div>
@@ -55,7 +87,7 @@
 
         const preguntaId = form?.querySelector('input[name="pregunta_id"]')?.value;
         if (preguntaId) {
-            reportButton.href = `/reporte/show?pregunta_id=${encodeURIComponent(preguntaId)}`;
+            reportButton.href = `/reportes/nueva?pregunta_id=${encodeURIComponent(preguntaId)}&volver=${encodeURIComponent('/juego/jugar')}`;
         }
 
         modal.addEventListener('cancel', (event) => event.preventDefault());
@@ -135,6 +167,7 @@
                 suffix.textContent = isCorrect ? '' : ' puntos.';
                 action.href = result.url_redireccion;
                 action.textContent = isCorrect ? 'Siguiente pregunta' : 'Volver al lobby';
+                reportButton.href = `/reportes/nueva?pregunta_id=${encodeURIComponent(preguntaId)}&volver=${encodeURIComponent(isCorrect ? '/juego/jugar' : '/juego/resumen')}`;
                 modal.showModal();
             } catch (error) {
                 errorMessage.textContent = error.message;

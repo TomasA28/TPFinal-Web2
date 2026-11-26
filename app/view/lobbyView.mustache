@@ -15,8 +15,7 @@
                 <span>Jugar contra el bot</span>
                 <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0.5"
                     stroke-linecap="round" stroke-linejoin="round">
-                    <path
-                        d="M20,9V7c0-1.1-0.9-2-2-2h-3c0-1.66-1.34-3-3-3S9,3.34,9,5H6C4.9,5,4,5.9,4,7v2C2.34,9,1,10.34,1,12v4c0,1.66,1.34,3,3,3v3c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2v-3c1.66,0,3-1.34,3-3v-4C23,10.34,21.66,9,20,9zM7.5,15.5C6.67,15.5,6,14.83,6,14s0.67-1.5,1.5-1.5S9,13.17,9,14S8.33,15.5,7.5,15.5zM11,9.5h2v2h-2V9.5zM16.5,15.5C15.67,15.5,15,14.83,15,14s0.67-1.5,1.5-1.5s1.5,0.67,1.5,1.5S17.33,15.5,16.5,15.5z" />
+                    <path d="M4,15q-1.25,0-2.13-0.88T1,12T1.88,9.88T4,9V7Q4,6.18 4.59,5.59T6,5H9Q9,3.75 9.88,2.88T12,2t2.13,0.88T15,5h3q0.82,0 1.41,0.59Q20,6.18 20,7V9q1.25,0 2.13,0.88T23,12t-0.88,2.13T20,15v4q0,0.82-0.59,1.41T18,21H6q-0.82,0-1.41-0.59T4,19V15Zm6.06-2.44q0.44-0.44 0.44-1.06t-0.44-1.06T9,10T7.94,10.44T7.5,11.5t0.44,1.06T9,13t1.06-0.44Zm6,0q0.44-0.44 0.44-1.06t-0.44-1.06T15,10t-1.06,0.44T13.5,11.5t0.44,1.06T15,13t1.06-0.44ZM8,17h8V15H8v2ZM6,19H18V7H6V19Zm6-6Z"/>
                 </svg>
             </a>
             <a href="/ranking/show" class="lobby-play-button lobby-play-button--ranking">
@@ -26,7 +25,8 @@
                     <path d="M4,19H8V11H4v8Zm6,0h4V5H10V19Zm6,0h4V13H16v6ZM2,21V9H8V3h8v8h6V21H2Z" />
                 </svg>
             </a>
-            <a href="*" class="lobby-play-button lobby-play-button--sugerir">
+            {{#esJugador}}
+            <a href="/sugerencias/show" class="lobby-play-button lobby-play-button--sugerir">
                 <span>Sugerir Preguntas</span>
                 <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0.5"
                     stroke-linecap="round" stroke-linejoin="round">
@@ -34,6 +34,16 @@
                         d="M5,22q-0.83,0-1.41-0.59T3,20V8.73Q2.55,8.45 2.28,8.01T2,7V4Q2,3.17 2.59,2.59T4,2H20q0.83,0 1.41,0.59T22,4V7q0,0.57-0.27,1.01T21,8.73V20q0,0.82-0.59,1.41T19,22H5ZM5,9V20H19V9H5ZM4,7H20V4H4V7Zm5,7h6V12H9v2Zm3,0.5Z" />
                 </svg>
             </a>
+            {{/esJugador}}
+            {{#esEditor}}
+            <a href="/administracion/show" class="lobby-play-button lobby-play-button--crear">
+                <span>Administrar preguntas</span>
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3,5h18v2H3V5Zm0,6h18v2H3v-2Zm0,6h12v2H3v-2Z" />
+                </svg>
+            </a>
+            {{/esEditor}}
         </nav>
 
         <div class="lobby-center">
