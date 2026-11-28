@@ -117,6 +117,34 @@
     color: var(--texto-secundario);
 }
 
+.ranking-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 1rem 0;
+}
+
+.ranking-filter label {
+    color: var(--texto-secundario);
+    font-size: 0.9rem;
+}
+
+.ranking-filter select,
+.ranking-filter button {
+    min-height: 2.4rem;
+    padding: 0.4rem 0.7rem;
+    border: 1px solid var(--borde);
+    border-radius: 0.5rem;
+    background: rgba(9, 10, 28, 0.72);
+    color: var(--texto);
+    font: inherit;
+}
+
+.ranking-filter button {
+    cursor: pointer;
+}
+
 @media (max-width: 520px) {
     .ranking-table th,
     .ranking-table td {

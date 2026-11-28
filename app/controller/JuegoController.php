@@ -37,7 +37,12 @@ class JuegoController
 
     public function nuevaPartida()
     {
-        $this->juegoModel->limpiarPreguntaActiva($_SESSION['usuario_id']);
+        if (!isset($_SESSION['usuario_id'])) {
+            Redirect::to('/login/show');
+            return;
+        }
+
+        $this->juegoModel->limpiarPreguntaActiva((int) $_SESSION['usuario_id']);
         unset($_SESSION['pregunta_activa_id'], $_SESSION['pregunta_activa_expira_en']);
         $_SESSION['preguntas_vistas'] = [];
         $_SESSION['puntaje_actual'] = 0;
@@ -97,6 +102,8 @@ class JuegoController
 
     public function procesarRespuesta()
     {
+        $esAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH'])
+            && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
         $respuestaElegida = Request::post('respuesta');
         $preguntaId = Request::post('pregunta_id');
 
@@ -104,8 +111,14 @@ class JuegoController
             !isset($_SESSION['pregunta_activa_id'])
             || (int) $_SESSION['pregunta_activa_id'] !== (int) $preguntaId
         ) {
+            $mensajeError = 'La pregunta enviada ya no está activa. Volvé a elegir una pregunta.';
+            if ($esAjax) {
+                $this->responderAjax(['error' => $mensajeError], 409);
+                return;
+            }
+
             $this->render->renderiza('juegoView', [
-                'error_respuesta' => 'La pregunta enviada ya no está activa. Volvé a elegir una pregunta.',
+                'error_respuesta' => $mensajeError,
             ]);
             return;
         }
@@ -117,8 +130,14 @@ class JuegoController
         );
 
         if ($esCorrecta === null) {
+            $mensajeError = 'No se pudo registrar la respuesta. Volvé a elegir una pregunta.';
+            if ($esAjax) {
+                $this->responderAjax(['error' => $mensajeError], 422);
+                return;
+            }
+
             $this->render->renderiza('juegoView', [
-                'error_respuesta' => 'No se pudo registrar la respuesta. Volvé a elegir una pregunta.',
+                'error_respuesta' => $mensajeError,
             ]);
             return;
         }
@@ -139,9 +158,19 @@ class JuegoController
 
         if ($esCorrecta) {
             $_SESSION['puntaje_actual']++;
+            $puntaje = $_SESSION['puntaje_actual'];
+            $urlRedireccion = '/juego/jugar';
             $data = [
-                'es_correcta' => true,
-                'puntaje_actual' => $_SESSION['puntaje_actual']
+                'resultado_modal' => true,
+                'resultado_clase' => 'resultado-modal--correcta',
+                'resultado_icono' => '✓',
+                'resultado_titulo' => 'Respuesta Correcta!',
+                'resultado_mensaje' => 'Tu puntaje actual es:',
+                'puntaje_resultado' => $puntaje,
+                'resultado_sufijo' => '',
+                'resultado_url' => $urlRedireccion,
+                'resultado_accion' => 'Siguiente pregunta',
+                'pregunta_id' => (int) $preguntaId,
             ];
         } else {
 
@@ -157,19 +186,43 @@ class JuegoController
             $_SESSION['ultimo_resumen'] = $resumen;
             $_SESSION['ultimo_resumen_puntaje'] = $puntajeFinal;
 
+            $puntaje = $puntajeFinal;
+            $urlRedireccion = '/lobby/show';
             $data = [
-                'es_incorrecta' => true,
-                'puntaje_final' => $puntajeFinal,
-                'resumen_preguntas' => $resumen,
-                'hay_resumen' => count($resumen) > 0
+                'resultado_modal' => true,
+                'resultado_clase' => 'resultado-modal--incorrecta',
+                'resultado_icono' => '×',
+                'resultado_titulo' => 'Respuesta Incorrecta!',
+                'resultado_mensaje' => 'Hiciste un total de:',
+                'puntaje_resultado' => $puntajeFinal,
+                'resultado_sufijo' => ' puntos.',
+                'resultado_url' => $urlRedireccion,
+                'resultado_accion' => 'Volver al lobby',
+                'pregunta_id' => (int) $preguntaId,
             ];
 
             unset($_SESSION['preguntas_vistas'], $_SESSION['puntaje_actual']);
         }
 
+        if ($esAjax) {
+            $respuesta = [
+                'es_correcta' => (bool) $esCorrecta,
+                'url_redireccion' => $urlRedireccion,
+            ];
+            $respuesta[$esCorrecta ? 'puntaje_actual' : 'puntaje_final'] = $puntaje;
+            $this->responderAjax($respuesta);
+            return;
+        }
+
         $this->render->renderiza('juegoView', $data);
     }
 
+    private function responderAjax($datos, $codigoEstado = 200)
+    {
+        http_response_code($codigoEstado);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($datos);
+    }
     /**
      * GET del resumen de la partida de la ruleta, para que el botón "Volver"
      * del reporte pueda volver al mismo lugar donde se generó el link.
@@ -187,10 +240,10 @@ class JuegoController
         }
 
         $this->render->renderiza('juegoView', [
-            'es_incorrecta'     => true,
-            'puntaje_final'     => (int) ($_SESSION['ultimo_resumen_puntaje'] ?? 0),
+            'es_incorrecta' => true,
+            'puntaje_final' => (int) ($_SESSION['ultimo_resumen_puntaje'] ?? 0),
             'resumen_preguntas' => $_SESSION['ultimo_resumen'],
-            'hay_resumen'       => true,
+            'hay_resumen' => true,
         ]);
     }
 
@@ -214,8 +267,10 @@ class JuegoController
         $uid = (int) $_SESSION['usuario_id'];
         $preguntaId = (int) Request::post('pregunta_id');
 
-        if (!isset($_SESSION['pregunta_activa_id'])
-            || (int) $_SESSION['pregunta_activa_id'] !== $preguntaId) {
+        if (
+            !isset($_SESSION['pregunta_activa_id'])
+            || (int) $_SESSION['pregunta_activa_id'] !== $preguntaId
+        ) {
             $this->render->renderiza('juegoView', [
                 'error_respuesta' => 'La pregunta ya no está activa.',
             ]);
@@ -242,9 +297,9 @@ class JuegoController
         $_SESSION['puntaje_actual'] = ($_SESSION['puntaje_actual'] ?? 0) + 1;
 
         $this->render->renderiza('juegoView', [
-            'es_correcta'    => true,
+            'es_correcta' => true,
             'puntaje_actual' => $_SESSION['puntaje_actual'],
-            'uso_trampita'   => true,
+            'uso_trampita' => true,
         ]);
     }
 }

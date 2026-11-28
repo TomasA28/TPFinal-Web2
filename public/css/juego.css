@@ -293,6 +293,209 @@
     border: 1px solid red;
 }
 
+.resultado-modal {
+    width: min(calc(100% - 2rem), 31rem);
+    max-width: none;
+    max-height: calc(100vh - 2rem);
+    padding: 0;
+    overflow-y: auto;
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+    background: transparent;
+    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.55), 0 0 24px rgba(33, 192, 194, 0.12);
+    color: var(--texto);
+    font-family: inherit;
+    text-align: center;
+
+    /* 1. Aplicar animación de entrada al abrirse */
+    animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.resultado-modal::backdrop {
+    background: rgba(5, 6, 20, 0);
+    /* Empieza totalmente transparente */
+    backdrop-filter: blur(0px);
+
+    /* 2. Aplicar animación al fondo (backdrop) */
+    animation: backdropFadeIn 0.3s ease forwards;
+}
+
+/* --- Keyframes de las animaciones --- */
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+        /* Opcional: un pequeño efecto de zoom y elevación */
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes backdropFadeIn {
+    from {
+        background: rgba(5, 6, 20, 0);
+        backdrop-filter: blur(0px);
+    }
+
+    to {
+        background: rgba(5, 6, 20, 0.8);
+        backdrop-filter: blur(1px);
+        /* O el blur que tenías de 4px */
+    }
+}
+
+.resultado-modal__contenido {
+    padding: clamp(1.5rem, 5vw, 2.25rem);
+    border-radius: inherit;
+    background: linear-gradient(145deg, var(--tarjeta), var(--superficie));
+}
+
+.resultado-modal__icono {
+    display: grid;
+    width: 3.5rem;
+    height: 3.5rem;
+    place-items: center;
+    margin: 0 auto 0.9rem;
+    border: 1px solid var(--juego-acento);
+    border-radius: 50%;
+    background: rgba(33, 192, 194, 0.1);
+    color: var(--juego-acento);
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.resultado-modal--correcta {
+    --juego-acento: var(--cian);
+}
+
+.resultado-modal--incorrecta {
+    --juego-acento: var(--magenta);
+    border-color: rgba(212, 20, 216, 0.48);
+}
+
+.resultado-modal--incorrecta .resultado-modal__icono {
+    background: rgba(212, 20, 216, 0.12);
+}
+
+.resultado-modal h2 {
+    margin: 0 0 0.65rem;
+    color: var(--juego-acento);
+    font-size: clamp(1.35rem, 5vw, 1.7rem);
+}
+
+.resultado-modal p {
+    margin: 0 0 1.4rem;
+    color: var(--texto-secundario);
+    font-size: 1rem;
+}
+
+.resultado-modal p strong {
+    color: var(--texto);
+}
+
+.resultado-modal__acciones {
+    display: grid;
+    gap: 0.7rem;
+}
+
+.resultado-modal__acciones>* {
+    display: inline-flex;
+    min-height: 2.8rem;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0.65rem 1rem;
+    border-radius: 9px;
+    font: inherit;
+    font-weight: 700;
+    text-align: center;
+}
+
+.resultado-modal__accion--secundaria {
+    border: 1px solid var(--borde);
+    background: rgba(9, 10, 28, 0.45);
+    box-shadow: none;
+    color: var(--texto-secundario) !important;
+}
+
+.resultado-modal__accion--secundaria:hover,
+.resultado-modal__accion--secundaria:focus-visible {
+    border-color: var(--juego-acento);
+    background: rgba(33, 192, 194, 0.1) !important;
+    color: var(--texto) !important;
+}
+
+.reporte-pregunta {
+    width: min(100%, 38rem);
+    margin: 1.5rem auto;
+    padding: clamp(1.25rem, 4vw, 2rem);
+}
+
+.reporte-pregunta h1 {
+    margin-top: 0;
+}
+
+.reporte-pregunta__formulario {
+    display: grid;
+    gap: 1rem;
+}
+
+.reporte-pregunta__formulario fieldset {
+    display: grid;
+    gap: 0.7rem;
+    padding: 1rem;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+}
+
+.reporte-pregunta__formulario legend {
+    padding: 0 0.4rem;
+    color: var(--texto);
+    font-weight: 700;
+}
+
+.reporte-pregunta__formulario label {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+.reporte-pregunta__formulario input[type="radio"] {
+    accent-color: var(--cian);
+}
+
+.reporte-pregunta__formulario textarea {
+    min-height: 7rem;
+    padding: 0.75rem;
+    resize: vertical;
+}
+
+.reporte-pregunta__formulario button {
+    justify-self: start;
+    padding: 0.7rem 1rem;
+}
+
+.reporte-pregunta__resultado {
+    margin: 1rem 0;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--borde);
+    border-radius: 9px;
+    background: rgba(18, 18, 49, 0.72);
+}
+
+.reporte-pregunta__resultado--exito {
+    border-color: rgba(33, 192, 194, 0.55);
+}
+
+.reporte-pregunta__resultado--error {
+    border-color: rgba(212, 20, 216, 0.55);
+}
+
 @media (max-width: 520px) {
     .ruleta-escenario {
         width: min(100%, 260px);

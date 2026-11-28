@@ -6,7 +6,17 @@
         <h1>Ranking</h1>
     </div>
 
-    <p class="ranking-intro">Puntaje total acumulado de los jugadores</p>
+    <p class="ranking-intro">Puntaje acumulado de los jugadores en el período seleccionado</p>
+
+    <form class="ranking-filter" method="get" action="/ranking/show">
+        <label for="ranking-periodo">Período:</label>
+        <select id="ranking-periodo" name="periodo">
+            <option value="dia" {{#periodo_dia}}selected{{/periodo_dia}}>Diario</option>
+            <option value="semana" {{#periodo_semana}}selected{{/periodo_semana}}>Semanal</option>
+            <option value="mes" {{#periodo_mes}}selected{{/periodo_mes}}>Mensual</option>
+        </select>
+        <button type="submit">Filtrar</button>
+    </form>
 
     {{#hay_ranking}}
         <div class="ranking-tableBox">

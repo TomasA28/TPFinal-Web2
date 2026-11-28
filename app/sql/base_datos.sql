@@ -102,6 +102,7 @@ CREATE TABLE respuestas (
     INDEX idx_respuestas_usuario (usuario_id)
 );
 
+
 INSERT INTO preguntas (descripcion, opcion_a, opcion_b, opcion_c, opcion_d, respuesta_correcta, categoria) VALUES 
 -- HISTORIA
 (
